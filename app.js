@@ -271,7 +271,7 @@ window.toast = window.toast || function(message, type='info'){
 const Auth = {
     login(username, password) {
         // In production, replace with secure backend validation
-        const valid = username === 'admin' && password === 'admin123';
+        const valid = username === 'Anori' && password === 'Anori@1245';
         if (valid) {
             sessionStorage.setItem('anori_auth', JSON.stringify({
                 user: 'admin',
