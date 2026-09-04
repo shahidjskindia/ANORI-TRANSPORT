@@ -1,0 +1,2372 @@
+/* =========================================
+   Anori ERP - Premium Modern UI (FINAL)
+   ========================================= */
+:root {
+    --primary: #6366f1;
+    --primary-hover: #4f46e5;
+    --primary-light: rgba(99, 102, 241, 0.1);
+    --secondary: #8b5cf6;
+    --success: #10b981;
+    --danger: #ef4444;
+    --warning: #f59e0b;
+    --info: #3b82f6;
+    
+    --bg-body: #f8fafc;
+    --bg-card: #ffffff;
+    --bg-sidebar: #0f172a;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border: #e2e8f0;
+    
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+    --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    
+    --radius: 12px;
+    --radius-sm: 8px;
+}
+
+[data-theme="dark"] {
+    --bg-body: #0f172a;
+    --bg-card: #1e293b;
+    --bg-sidebar: #020617;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border: #334155;
+    --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.3);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { 
+    font-family: 'Inter', sans-serif; 
+    background: var(--bg-body); 
+    color: var(--text-main); 
+    display: flex; 
+    min-height: 100vh; 
+    transition: all 0.3s ease;
+    overflow-x: hidden;
+}
+
+/* ----- LOGIN ----- */
+.login-overlay {
+    position: fixed; inset: 0;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(8px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    transition: opacity 0.4s;
+}
+.login-overlay.hidden { opacity: 0; pointer-events: none; }
+.login-card {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 40px 32px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border);
+}
+.login-header { text-align: center; margin-bottom: 30px; }
+.login-header .logo-icon {
+    width: 64px; height: 64px;
+    margin: 0 auto 12px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+    color: #fff;
+}
+.login-header h1 { font-size: 24px; font-weight: 800; color: var(--text-main); }
+.login-header p { color: var(--text-muted); font-size: 14px; }
+.login-body .btn-block { width: 100%; justify-content: center; }
+.login-error { color: var(--danger); font-size: 13px; margin-top: 12px; text-align: center; }
+.login-footer { text-align: center; font-size: 12px; color: var(--text-muted); margin-top: 20px; border-top: 1px solid var(--border); padding-top: 16px; }
+
+/* ----- SIDEBAR ----- */
+.sidebar { 
+    width: 260px; 
+    background: var(--bg-sidebar); 
+    color: #fff; 
+    position: fixed; 
+    height: 100vh; 
+    z-index: 50; 
+    display: flex; 
+    flex-direction: column; 
+    transition: transform 0.3s; 
+    border-right: 1px solid rgba(255,255,255,0.05);
+}
+.sidebar-header { 
+    padding: 24px; 
+    display: flex; 
+    align-items: center; 
+    gap: 12px; 
+    border-bottom: 1px solid rgba(255,255,255,0.05); 
+}
+.logo-icon { 
+    width: 42px; height: 42px; 
+    background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+    color: #fff; border-radius: 12px; 
+    display: flex; align-items: center; justify-content: center; 
+    font-size: 20px; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4); 
+}
+.logo-text h1 { font-size: 18px; font-weight: 800; line-height: 1.2; }
+.logo-text span { font-size: 11px; color: #94a3b8; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; }
+.nav-menu { padding: 20px 12px; flex: 1; overflow-y: auto; }
+.nav-item { 
+    display: flex; align-items: center; padding: 12px 16px; 
+    color: #94a3b8; text-decoration: none; font-size: 14px; font-weight: 500; 
+    border-radius: 10px; margin-bottom: 4px; cursor: pointer; transition: all 0.2s; 
+}
+.nav-item:hover { background: rgba(255,255,255,0.05); color: #fff; transform: translateX(4px); }
+.nav-item.active { 
+    background: linear-gradient(135deg, var(--primary), var(--secondary)); 
+    color: #fff; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); 
+}
+.nav-item i { width: 20px; margin-right: 12px; text-align: center; font-size: 16px; }
+.sidebar-footer { padding: 20px; border-top: 1px solid rgba(255,255,255,0.05); font-size: 12px; color: #64748b; text-align: center; }
+
+/* ----- MAIN ----- */
+.main-wrapper { flex: 1; margin-left: 260px; display: flex; flex-direction: column; min-height: 100vh; transition: margin 0.3s; }
+.topbar { 
+    padding: 16px 32px; 
+    display: flex; align-items: center; justify-content: space-between; 
+    background: var(--bg-card); border-bottom: 1px solid var(--border); 
+    position: sticky; top: 0; z-index: 40; box-shadow: var(--shadow-sm);
+}
+.topbar-left { display: flex; align-items: center; gap: 20px; flex: 1; }
+.search-container { 
+    position: relative; max-width: 400px; width: 100%; 
+}
+.search-container i { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--text-muted); }
+.search-container input { 
+    width: 100%; padding: 10px 16px 10px 40px; 
+    border: 1px solid var(--border); border-radius: 10px; 
+    background: var(--bg-body); color: var(--text-main); font-size: 14px; transition: 0.2s;
+}
+.search-container input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); }
+.topbar-actions { display: flex; align-items: center; gap: 16px; }
+.icon-btn { 
+    width: 40px; height: 40px; border-radius: 10px; 
+    border: 1px solid var(--border); background: var(--bg-body); 
+    color: var(--text-muted); cursor: pointer; display: flex; 
+    align-items: center; justify-content: center; transition: 0.2s; 
+}
+.icon-btn:hover { background: var(--primary-light); color: var(--primary); border-color: var(--primary); }
+.user-profile { display: flex; align-items: center; gap: 12px; padding-left: 16px; border-left: 1px solid var(--border); }
+.user-profile img { width: 40px; height: 40px; border-radius: 10px; }
+.user-info { display: flex; flex-direction: column; }
+.user-name { font-size: 14px; font-weight: 600; color: var(--text-main); }
+.user-role { font-size: 12px; color: var(--text-muted); }
+
+/* ----- CONTENT ----- */
+.content { padding: 32px; flex: 1; }
+.page-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+.page-title { font-size: 24px; font-weight: 800; color: var(--text-main); letter-spacing: -0.5px; }
+.card { 
+    background: var(--bg-card); border-radius: var(--radius); padding: 24px; 
+    box-shadow: var(--shadow-sm); border: 1px solid var(--border); 
+    margin-bottom: 24px; transition: all 0.3s ease;
+}
+.card:hover { box-shadow: var(--shadow-md); }
+.card-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; gap: 10px; color: var(--text-main); }
+.card-title i { color: var(--primary); }
+
+/* ----- EMPTY STATE ----- */
+.empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: var(--text-muted);
+}
+.empty-state i { font-size: 56px; margin-bottom: 16px; opacity: 0.3; }
+.empty-state h3 { font-size: 20px; font-weight: 700; color: var(--text-main); margin-bottom: 8px; }
+.empty-state p { font-size: 14px; max-width: 400px; margin: 0 auto 20px; }
+
+/* ----- GRID & KPI ----- */
+.grid { display: grid; gap: 20px; }
+.grid-4 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+.grid-2 { grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); }
+.kpi-card { display: flex; justify-content: space-between; align-items: center; position: relative; overflow: hidden; }
+.kpi-card::after { content: ''; position: absolute; right: -20px; top: -20px; width: 100px; height: 100px; border-radius: 50%; background: var(--primary-light); opacity: 0.5; }
+.kpi-info h4 { font-size: 12px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px; }
+.kpi-info p { font-size: 28px; font-weight: 800; color: var(--text-main); letter-spacing: -1px; }
+.kpi-info small { font-size: 12px; color: var(--success); font-weight: 600; display: block; margin-top: 4px; }
+.kpi-icon { width: 52px; height: 52px; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-size: 22px; z-index: 1; }
+.bg-blue { background: rgba(59, 130, 246, 0.1); color: #3b82f6; }
+.bg-green { background: rgba(16, 185, 129, 0.1); color: #10b981; }
+.bg-red { background: rgba(239, 68, 68, 0.1); color: #ef4444; }
+.bg-purple { background: rgba(139, 92, 246, 0.1); color: #8b5cf6; }
+
+/* ----- BUTTONS ----- */
+.btn { padding: 10px 20px; border-radius: 10px; font-weight: 600; font-size: 14px; cursor: pointer; border: none; display: inline-flex; align-items: center; gap: 8px; transition: all 0.2s; }
+.btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: #fff; box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3); }
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(99, 102, 241, 0.4); }
+.btn-outline { background: var(--bg-card); border: 1px solid var(--border); color: var(--text-main); }
+.btn-outline:hover { background: var(--bg-body); border-color: var(--text-muted); }
+.btn-danger { background: var(--danger); color: #fff; }
+.btn-success { background: var(--success); color: #fff; }
+.btn-sm { padding: 6px 12px; font-size: 12px; border-radius: 8px; }
+.btn-icon { width: 34px; height: 34px; padding: 0; justify-content: center; border-radius: 8px; }
+.btn-block { width: 100%; justify-content: center; }
+
+/* ----- TABLES ----- */
+.table-wrapper { overflow-x: auto; border-radius: var(--radius); border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; }
+th, td { padding: 14px 16px; text-align: left; border-bottom: 1px solid var(--border); font-size: 14px; }
+th { background: var(--bg-body); font-size: 11px; text-transform: uppercase; color: var(--text-muted); font-weight: 700; letter-spacing: 0.5px; position: sticky; top: 0; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: var(--primary-light); }
+.expense-red { color: var(--danger); font-weight: 600; }
+
+/* ----- FORMS ----- */
+.form-group { margin-bottom: 16px; }
+.form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; color: var(--text-main); }
+.form-control { width: 100%; padding: 10px 14px; border: 1px solid var(--border); border-radius: 10px; font-size: 14px; background: var(--bg-body); color: var(--text-main); transition: 0.2s; font-family: inherit; }
+.form-control:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px var(--primary-light); background: var(--bg-card); }
+.form-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; }
+textarea.form-control { resize: vertical; min-height: 80px; }
+
+/* ----- MODALS ----- */
+.modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 100; }
+.modal-backdrop.active { display: flex; animation: fadeIn 0.2s; }
+.modal { width: 100%; max-width: 500px; border-radius: 16px; overflow: hidden; background: var(--bg-card); box-shadow: var(--shadow-lg); max-height: 90vh; display: flex; flex-direction: column; }
+.modal-lg { max-width: 900px; }
+.modal-header { padding: 20px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; }
+.modal-header h3 { font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+.modal-body { padding: 24px; overflow-y: auto; flex: 1; }
+.preview-body { background: #e2e8f0; padding: 20px; display: flex; justify-content: center; }
+.modal-footer { padding: 16px 24px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 12px; background: var(--bg-body); flex-shrink: 0; }
+
+/* ----- TRIP FORM BACKGROUND ----- */
+.modal-body.trip-form-bg { background: linear-gradient(135deg, #e0e7ff 0%, #c7d2fe 100%); }
+.modal-body.trip-form-bg .form-control { background: #fff; border-color: #a5b4fc; }
+.modal-body.trip-form-bg label { color: #3730a3; }
+
+/* ----- STATUS BADGES ----- */
+.status-badge { padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+.status-pending { background: rgba(245, 158, 11, 0.1); color: #d97706; }
+.status-shared { background: rgba(59, 130, 246, 0.1); color: #2563eb; }
+.status-paid { background: rgba(16, 185, 129, 0.1); color: #059669; }
+
+/* ----- SETTLEMENT ----- */
+.ledger-card { border-left: 4px solid var(--primary); }
+.settlement-badge { padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 700; }
+.settlement-credit { background: rgba(16, 185, 129, 0.1); color: #059669; }
+.settlement-debit { background: rgba(239, 68, 68, 0.1); color: #dc2626; }
+.settlement-balance { font-weight: 800; font-size: 16px; }
+
+/* ----- LOADER ----- */
+.loader-backdrop { position: fixed; inset: 0; background: rgba(255,255,255,0.9); background: color-mix(in srgb, var(--bg-body) 92%, transparent); display: none; align-items: center; justify-content: center; z-index: 99999; flex-direction: column; gap: 20px; backdrop-filter: blur(4px); }
+.loader-backdrop.active { display: flex; }
+.spinner { width: 50px; height: 50px; border: 4px solid var(--border); border-top-color: var(--primary); border-radius: 50%; animation: spin 0.8s linear infinite; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+.view { display: none; animation: slideUp 0.3s ease; } .view.active { display: block; }
+
+/* ----- RESPONSIVE ----- */
+.menu-toggle { display: none; background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text-main); }
+@media (max-width: 1024px) { .grid-4 { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 768px) {
+    .sidebar { transform: translateX(-100%); } .sidebar.open { transform: translateX(0); }
+    .main-wrapper { margin-left: 0; }
+    .menu-toggle { display: block; }
+    .grid-4, .grid-2, .form-row { grid-template-columns: 1fr; }
+    .user-info { display: none; }
+    .preview-body { padding: 8px; }
+    .modal-lg { max-width: 100%; margin: 10px; }
+    .login-card { margin: 20px; }
+}
+
+/* ----- PRINT STYLES (for PDF) ----- */
+@media print {
+    body { background: #fff; }
+    .sidebar, .topbar, .modal-backdrop, .loader-backdrop { display: none !important; }
+    .main-wrapper { margin: 0 !important; padding: 0 !important; }
+    .content { padding: 0 !important; }
+    .card { box-shadow: none !important; border: none !important; }
+    .preview-body { background: #fff !important; padding: 0 !important; }
+    #previewContent { height: auto !important; background: #fff !important; }
+}
+/* ============================================================
+   ANORI TRANSPORT ERP v2.4 — SIMPLE UX LAYER
+   ============================================================ */
+.anori-section-intro{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 14px;padding:14px 16px;background:var(--card-bg,#fff);border:1px solid var(--border,#e2e8f0);border-radius:12px;box-shadow:0 2px 8px rgba(15,23,42,.04)}
+.anori-section-intro strong{display:block;font-size:1.05rem;color:var(--text,#172033)}
+.anori-section-intro span,.anori-help{display:block;color:var(--text-light,#64748b);font-size:.78rem;margin-top:3px}
+.anori-section-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:12px}
+.anori-section-head .card-title{margin:0}
+.anori-kpi-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:0 0 14px}
+.anori-kpi-card{appearance:none;border:1px solid var(--border,#e2e8f0);background:var(--card-bg,#fff);border-radius:12px;padding:14px;text-align:left;cursor:pointer;box-shadow:0 2px 8px rgba(15,23,42,.04);transition:.16s ease;color:var(--text,#172033)}
+.anori-kpi-card:hover{transform:translateY(-1px);box-shadow:0 6px 18px rgba(15,23,42,.08)}
+.anori-kpi-card span{display:block;font-size:.76rem;font-weight:700;color:var(--text-light,#64748b)}
+.anori-kpi-card strong{display:block;font-size:1.55rem;line-height:1.15;margin-top:6px}
+.anori-kpi-card small{display:block;color:var(--text-light,#64748b);margin-top:3px}
+.anori-work-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:14px;margin-bottom:16px}
+.anori-work-card{background:var(--card-bg,#fff);border:1px solid var(--border,#e2e8f0);border-radius:12px;padding:14px;box-shadow:0 2px 8px rgba(15,23,42,.04)}
+.anori-work-card h3{margin:0;font-size:.95rem}.anori-alert-row{display:flex;align-items:center;gap:9px;padding:9px 0;border-top:1px solid var(--border,#e2e8f0);font-size:.82rem}.anori-alert-row strong{flex:1}.anori-alert-row small{display:block;color:var(--text-light,#64748b);font-size:.72rem;margin-top:2px}.anori-alert-row.bad{color:#991b1b}.anori-alert-row.warn{color:#92400e}.anori-alert-row.info{color:var(--text,#172033)}.anori-clear{padding:16px 8px;text-align:center;color:#15803d;font-weight:700;background:#f0fdf4;border-radius:8px}
+.anori-profit-good{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border-radius:999px;background:#dcfce7;color:#166534;font-size:.7rem;font-weight:800}.anori-profit-warn{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border-radius:999px;background:#fef3c7;color:#92400e;font-size:.7rem;font-weight:800}.anori-profit-bad{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border-radius:999px;background:#fee2e2;color:#991b1b;font-size:.7rem;font-weight:800}.anori-mini-btn{padding:2px 6px!important;line-height:1!important}
+.anori-calc-box{padding:14px;background:#f8fafc;border:1px solid #dbe3ee;border-radius:10px;text-align:center}.anori-calc-box div{color:#64748b;margin-bottom:8px}.anori-calc-box strong{font-size:1.2rem;color:#172033}
+.anori-simple-form{display:grid;gap:7px;text-align:left}.anori-simple-form label{font-size:.8rem;font-weight:700;color:#334155}.anori-simple-form input,.anori-simple-form select{width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:7px;box-sizing:border-box}
+.anori-doc-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px}.anori-doc-card{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:10px;background:var(--card-bg,#fff);border:1px solid var(--border,#e2e8f0);border-radius:12px;padding:13px}.anori-doc-icon{width:40px;height:40px;border-radius:10px;display:grid;place-items:center;background:#eef4ff;font-size:1.2rem}.anori-doc-card strong,.anori-doc-card span{display:block}.anori-doc-card span{font-size:.72rem;color:var(--text-light,#64748b);margin-top:2px}
+.anori-expense-master{margin-top:14px}.anori-expense-select-row{display:grid;grid-template-columns:1fr 150px;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--border,#e2e8f0)}.anori-expense-select-row label{font-size:.82rem}.anori-expense-select-row input[type=number]{width:100%;padding:8px;border:1px solid #cbd5e1;border-radius:7px}.anori-generator-bottom{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px;padding-top:12px;border-top:1px solid var(--border,#e2e8f0)}.anori-generator-bottom label{display:grid;gap:5px;text-align:left;font-size:.78rem;font-weight:700}.anori-generator-bottom select,.anori-generator-bottom input{padding:9px;border:1px solid #cbd5e1;border-radius:7px}.anori-status-select{min-width:125px}
+.anori-switch{position:relative;display:inline-flex;width:42px;height:23px}.anori-switch input{opacity:0;width:0;height:0}.anori-switch span{position:absolute;inset:0;background:#cbd5e1;border-radius:999px;cursor:pointer;transition:.2s}.anori-switch span:before{content:'';position:absolute;width:17px;height:17px;left:3px;top:3px;background:#fff;border-radius:50%;transition:.2s;box-shadow:0 1px 3px rgba(0,0,0,.2)}.anori-switch input:checked+span{background:#16a34a}.anori-switch input:checked+span:before{transform:translateX(19px)}
+.anori-search-results{display:none;position:absolute;left:0;right:0;top:calc(100% + 7px);z-index:10050;background:var(--card-bg,#fff);border:1px solid var(--border,#dbe3ee);border-radius:10px;box-shadow:0 18px 40px rgba(15,23,42,.16);overflow:hidden}.anori-search-results.show{display:block}.anori-search-row{width:100%;display:grid;grid-template-columns:78px 1fr;gap:8px;padding:9px 10px;border:0;background:transparent;text-align:left;cursor:pointer;color:var(--text,#172033)}.anori-search-row:hover{background:#f8fafc}.anori-search-type{font-size:.67rem;font-weight:800;color:#2563eb;text-transform:uppercase;padding-top:2px}.anori-search-row strong,.anori-search-row small{display:block}.anori-search-row small{font-size:.7rem;color:#64748b;margin-top:2px}.anori-search-empty{padding:14px;color:#64748b;font-size:.78rem}.search-container{position:relative}
+.anori-invoice-frame{width:100%;height:82vh;min-height:650px;border:0;background:#e8edf4;display:block}.invoice-wrapper{box-shadow:none!important}
+@media(max-width:900px){.anori-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.anori-work-grid,.anori-doc-grid{grid-template-columns:1fr}.anori-section-intro{align-items:flex-start;flex-direction:column}.anori-generator-bottom{grid-template-columns:1fr}.anori-expense-select-row{grid-template-columns:1fr 120px}}
+@media(max-width:600px){.anori-kpi-grid{grid-template-columns:1fr 1fr;gap:8px}.anori-kpi-card{padding:11px}.anori-kpi-card strong{font-size:1.25rem}.anori-actions{display:flex;flex-wrap:wrap;gap:5px}.anori-actions .btn{flex:1 1 auto}.anori-invoice-frame{height:75vh;min-height:520px}.anori-section-head{align-items:flex-start;flex-direction:column}.anori-search-results{position:fixed;left:10px;right:10px;top:64px}.anori-doc-card{grid-template-columns:auto 1fr}.anori-doc-card .btn{grid-column:1/-1;width:100%}}
+
+/* ============================================================
+   ANORI v2.5 — Simple Workflow UI
+   ============================================================ */
+.anori-table-toolbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 0;margin-bottom:8px;border-bottom:1px solid var(--border,#e2e8f0)}
+.anori-toolbar-left,.anori-toolbar-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.anori-selection-count{font-size:.78rem;font-weight:700;color:var(--text-light,#64748b)}
+.anori-action-list{display:grid;gap:9px}.anori-action-list .btn-block{width:100%;justify-content:center}.anori-subtitle{font-size:.88rem;font-weight:800;color:var(--text-main,#172033);margin:14px 0 7px;padding-bottom:6px;border-bottom:1px solid var(--border,#e2e8f0)}
+.anori-filter-bar{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap}.anori-filter-bar label{display:grid;gap:5px;min-width:160px;font-size:.76rem;font-weight:700;color:var(--text-main,#172033)}.anori-filter-bar .form-control{min-width:150px}.anori-quick-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}.anori-kpi-good{border-left:4px solid #16a34a}.anori-kpi-warn{border-left:4px solid #f59e0b}.anori-kpi-bad{border-left:4px solid #dc2626}.anori-kpi-info{border-left:4px solid #2563eb}.status-cancelled{background:#f1f5f9;color:#475569}.status-partpaid{background:#ffedd5;color:#c2410c}.status-overdue{background:#fee2e2;color:#b91c1c}
+.anori-expense-picker{margin-top:12px;padding:10px;border:1px solid var(--border,#e2e8f0);border-radius:10px;background:var(--bg-body,#f8fafc)}
+@media(max-width:700px){.anori-table-toolbar,.anori-filter-bar{align-items:stretch;flex-direction:column}.anori-toolbar-left,.anori-toolbar-right{width:100%}.anori-toolbar-right .btn,.anori-toolbar-left .btn{flex:1}.anori-filter-bar label,.anori-filter-bar .form-control{width:100%;min-width:0}.anori-filter-bar .btn{width:100%}.anori-kpi-grid{grid-template-columns:1fr 1fr}}
+
+/* ============================================================
+   ANORI v2.6 — TABLE ACTION TOOLBARS
+   Pattern only: compact selection + actions above each table.
+   Branding remains Anori Transport.
+   ============================================================ */
+.anori-action-toolbar{min-height:46px;padding:9px 0;margin:0 0 10px;border-bottom:1px solid var(--border,#e2e8f0)}
+.anori-action-toolbar .anori-toolbar-left,.anori-action-toolbar .anori-toolbar-right{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.anori-action-toolbar .btn-sm{padding:7px 10px;font-size:.76rem}
+.anori-action-toolbar .btn-primary{font-weight:800;min-width:118px}
+.anori-billing-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:0 0 14px}
+.anori-billing-strip>div{background:var(--card-bg,#fff);border:1px solid var(--border,#e2e8f0);border-radius:10px;padding:11px 13px}
+.anori-billing-strip span{display:block;font-size:.72rem;font-weight:700;color:var(--text-light,#64748b)}
+.anori-billing-strip strong{display:block;margin-top:4px;font-size:1.1rem;color:var(--text,#172033)}
+.anori-kpi-grid-5{grid-template-columns:repeat(5,minmax(0,1fr))}
+
+/* Invoice preview shell: the embedded document remains A4; only the viewer scales. */
+#previewContent{overflow:auto;background:#e8edf4;padding:16px;display:flex;justify-content:center;align-items:flex-start}
+.anori-invoice-frame{display:block;width:210mm;height:297mm;min-height:297mm;max-width:none;border:0;background:#fff;flex:0 0 auto;box-shadow:0 12px 35px rgba(15,23,42,.18)}
+@media(max-width:1100px){.anori-kpi-grid-5{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:700px){.anori-billing-strip{grid-template-columns:1fr}.anori-kpi-grid-5{grid-template-columns:1fr 1fr}.anori-action-toolbar{align-items:stretch;flex-direction:column}.anori-action-toolbar .anori-toolbar-left,.anori-action-toolbar .anori-toolbar-right{width:100%}.anori-action-toolbar .anori-toolbar-right .btn{width:100%}#previewContent{padding:8px;justify-content:flex-start}.anori-invoice-frame{transform-origin:top left}}
+
+/* ============================================================
+   ANORI v2.7 — UNIVERSAL TABLE FORMAT
+   Same action-bar + table pattern across Anori data screens.
+   ============================================================ */
+.anori-table-shell{width:100%;margin:0 0 12px}
+.anori-standard-toolbar{min-height:42px;background:#fff;border:1px solid #e3e8ef;border-radius:9px;box-shadow:0 1px 3px rgba(15,23,42,.05);display:flex;align-items:center;justify-content:space-between;gap:10px;padding:7px 10px;margin:0 0 8px}
+.anori-standard-toolbar-left,.anori-standard-toolbar-right{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.anori-standard-actions-label{color:#51657e;font-size:15px;font-weight:700;margin-right:4px}
+.anori-standard-btn{border:0!important;border-radius:7px!important;color:#fff!important;font-weight:800!important;font-size:12px!important;line-height:1!important;padding:8px 12px!important;min-height:30px;box-shadow:none!important;transform:none!important}
+.anori-standard-btn:hover{filter:brightness(.95);transform:translateY(-1px)!important}
+.anori-standard-preview{background:#079ddd!important}.anori-standard-pdf{background:#8050e8!important}.anori-standard-email{background:#ea3b8d!important}.anori-standard-duplicate{background:#08a8c8!important}.anori-standard-edit{background:#f3a13a!important}.anori-standard-delete,.anori-standard-cancel{background:#ef3f45!important}.anori-standard-invoice{background:#1f4b9d!important}.anori-standard-payment{background:#10a56b!important}.anori-standard-add{background:#1f4b9d!important}.anori-standard-download{background:#8050e8!important}
+.anori-standard-clear{border:0;background:transparent;color:#60758f;font-size:12px;font-weight:700;padding:6px 7px;cursor:pointer}
+.anori-standard-toolbar-right .anori-selection-count{color:#60758f;font-size:12px;font-weight:600;min-width:74px;text-align:right}
+.anori-standard-table{width:100%;border-collapse:separate!important;border-spacing:0!important;border:1px solid #d7deea;border-radius:9px;overflow:hidden;background:#fff}
+.anori-standard-table thead th{background:#203f91!important;color:#fff!important;border-bottom:0!important;font-size:12px!important;font-weight:800!important;text-transform:uppercase;letter-spacing:.35px;padding:9px 12px!important;white-space:nowrap;position:static!important}
+.anori-standard-table thead th:first-child{width:42px;text-align:center}
+.anori-standard-table tbody td{padding:8px 12px!important;font-size:12px!important;font-weight:600;color:#172b4d;border-bottom:1px solid #dce3ec!important;background:#fff;white-space:nowrap}
+.anori-standard-table tbody tr:nth-child(even) td{background:#ccefeb!important}.anori-standard-table tbody tr:hover td{background:#bde7e2!important}.anori-standard-table tbody tr:last-child td{border-bottom:0!important}
+.anori-standard-table .anori-select-col{text-align:center}.anori-standard-table .anori-select-col input{width:16px;height:16px;accent-color:#203f91;cursor:pointer}
+.anori-standard-table .status-badge{font-size:10px!important}.anori-standard-table select.form-control{font-size:11px!important;padding:5px 7px!important;border-radius:6px!important}
+@media(max-width:800px){.anori-standard-toolbar{align-items:flex-start;flex-direction:column}.anori-standard-toolbar-left,.anori-standard-toolbar-right{width:100%}.anori-standard-toolbar-left{overflow-x:auto;flex-wrap:nowrap;padding-bottom:2px}.anori-standard-btn{flex:0 0 auto}.anori-standard-table{min-width:780px}}
+
+/* v2.8 — data portability / backup controls */
+.anori-data-tools{margin-top:18px}
+.anori-data-tools-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.anori-tool-card{border:1px solid var(--border);border-radius:12px;padding:14px;background:var(--bg-card)}
+.anori-tool-card h4{margin-bottom:6px;font-size:14px}.anori-tool-card p{font-size:12px;color:var(--text-muted);margin-bottom:10px}
+.anori-backup-status{display:flex;align-items:center;gap:8px;padding:10px 12px;border-radius:9px;background:var(--bg-body);border:1px solid var(--border);font-size:13px}
+.anori-folder-path{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:11px;word-break:break-all;color:var(--text-muted)}
+.anori-inline-actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+@media(max-width:900px){.anori-data-tools-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.anori-data-tools-grid{grid-template-columns:1fr}}
+
+/* v2.11 invoice preview/PDF: one physical A4 canvas, no iframe/file:// dependency */
+#previewContent.anori-invoice-preview-host,
+#previewContent { box-sizing:border-box; }
+.anori-invoice-preview-stage{
+  width:100%; min-height:100%; padding:18px; box-sizing:border-box;
+  background:#e2e8f0; overflow:auto; display:flex; align-items:flex-start; justify-content:center;
+}
+.anori-invoice-preview-stage > .invoice-page{
+  flex:0 0 auto; width:210mm; min-height:297mm; margin:0 auto;
+  background:#fff; box-shadow:0 2px 12px rgba(15,23,42,.12);
+}
+@media(max-width:700px){
+  .anori-invoice-preview-stage{justify-content:flex-start;padding:8px;}
+}
+
+/* v2.13 universal toolbar / ledger */
+.anori-universal-toolbar{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;background:#fff;border:1px solid var(--border);border-radius:10px;margin-bottom:12px}.anori-universal-toolbar .anori-toolbar-left,.anori-universal-toolbar .anori-toolbar-right{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.anori-filter-bar{display:flex;align-items:flex-end;gap:10px;flex-wrap:wrap;padding:12px;background:#f8fafc;border:1px solid var(--border);border-radius:10px;margin-bottom:12px}.anori-filter-bar label{display:flex;flex-direction:column;gap:5px;font-size:12px;font-weight:700;min-width:150px}.anori-ledger-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px}.anori-ledger-summary>div{padding:12px;border:1px solid var(--border);border-radius:10px;background:#fff}.anori-ledger-summary strong{display:block;font-size:18px;margin-top:4px}.anori-data-tools .anori-universal-toolbar{margin:0}.anori-invoice-preview-stage{width:100%;min-height:100%;padding:18px;background:#e2e8f0;overflow:auto;display:flex;justify-content:center;align-items:flex-start;box-sizing:border-box}.anori-invoice-preview-stage>.invoice-page{flex:0 0 auto;width:210mm;min-height:297mm;background:#fff;margin:0;box-shadow:0 2px 12px rgba(15,23,42,.12)}
+@media(max-width:700px){.anori-universal-toolbar{align-items:stretch;flex-direction:column}.anori-ledger-summary{grid-template-columns:1fr 1fr}.anori-filter-bar label{width:100%;min-width:0}.anori-filter-bar .form-control{width:100%}.anori-invoice-preview-stage{justify-content:flex-start;padding:8px}}
+
+
+/* ============================================================
+   ANORI TRANSPORT v2.14 — ACTION TOOLBAR + A4 5MM INVOICE
+   ============================================================ */
+.anori-action-toolbar{
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+  padding:7px 10px;background:#fff;border:1px solid #e2e8f0;
+  border-radius:9px;margin-bottom:12px;min-height:44px;
+}
+.anori-action-toolbar .anori-toolbar-label{font-size:14px;font-weight:600;color:#475569;margin-right:2px}
+.anori-action-toolbar .anori-toolbar-spacer{flex:1 1 auto}
+.anori-action-toolbar .anori-selection-count{font-size:12px;color:#64748b;white-space:nowrap;margin-left:4px}
+.anori-action-btn{border:0!important;color:#fff!important;font-weight:700!important;font-size:12px!important;
+  padding:7px 12px!important;border-radius:8px!important;box-shadow:none!important;transform:none!important;
+  display:inline-flex!important;align-items:center!important;gap:6px!important;white-space:nowrap!important}
+.anori-action-btn:hover{filter:brightness(.95);transform:none!important;box-shadow:none!important}
+.anori-action-preview{background:#0ea5e9!important}
+.anori-action-pdf{background:#8b5cf6!important}
+.anori-action-email{background:#ec4899!important}
+.anori-action-convert{background:#10b981!important}
+.anori-action-duplicate{background:#06b6d4!important}
+.anori-action-edit{background:#64748b!important}
+.anori-action-delete{background:#ef4444!important}
+.anori-action-payment{background:#16a34a!important}
+.anori-action-cancel{background:#dc2626!important}
+.anori-action-export{background:#2563eb!important}
+.anori-action-toolbar .btn-outline{background:#fff!important;color:#475569!important;border:1px solid #cbd5e1!important}
+.anori-action-toolbar .btn-outline:hover{background:#f8fafc!important}
+
+/* Invoice preview: true A4 page with 5mm clearance on every edge. */
+.anori-invoice-preview-stage{width:100%;min-height:100%;padding:0;background:#e2e8f0;overflow:auto;display:flex;justify-content:center;align-items:flex-start;box-sizing:border-box}
+.anori-invoice-preview-stage>.invoice-page{flex:0 0 auto;width:210mm;min-height:297mm;background:#fff;margin:0;box-shadow:0 2px 12px rgba(15,23,42,.12)}
+#previewContent{width:100%!important;overflow:auto!important}
+@media(max-width:900px){.anori-action-toolbar{gap:6px}.anori-action-btn{padding:6px 9px!important;font-size:11px!important}}
+@media(max-width:600px){.anori-action-toolbar{align-items:stretch}.anori-action-toolbar .anori-toolbar-spacer{display:none}.anori-action-btn{flex:0 0 auto}.anori-invoice-preview-stage{justify-content:flex-start}}
+
+
+/* v2.15 — exact Shahid-style action buttons */
+.anori-shahid-toolbar{display:flex!important;align-items:center!important;gap:7px!important;flex-wrap:wrap!important;padding:7px 10px!important;background:#fff!important;border:1px solid #e5e7eb!important;border-radius:9px!important;margin-bottom:12px!important;min-height:44px!important}
+.anori-shahid-toolbar .anori-toolbar-label{font-size:16px!important;font-weight:500!important;color:#64748b!important;margin-right:2px!important}
+.anori-shahid-toolbar .anori-action-btn{height:34px!important;padding:0 13px!important;border:0!important;border-radius:8px!important;color:#fff!important;font-family:Inter,Arial,sans-serif!important;font-size:12px!important;font-weight:800!important;letter-spacing:.1px!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;box-shadow:none!important;transform:none!important;white-space:nowrap!important}
+.anori-shahid-toolbar .anori-action-btn i{font-size:11px!important}
+.anori-shahid-toolbar .anori-action-preview{background:#0ea5e9!important}
+.anori-shahid-toolbar .anori-action-pdf{background:#8b5cf6!important}
+.anori-shahid-toolbar .anori-action-email{background:#ec4899!important}
+.anori-shahid-toolbar .anori-action-payment{background:#10b981!important}
+.anori-shahid-toolbar .anori-action-duplicate{background:#06b6d4!important}
+.anori-shahid-toolbar .anori-action-edit{background:#64748b!important}
+.anori-shahid-toolbar .anori-action-delete{background:#ef4444!important}
+.anori-shahid-toolbar .anori-action-cancel{background:#dc2626!important}
+.anori-shahid-toolbar .anori-selection-count{font-size:13px!important;color:#64748b!important;margin-left:auto!important;white-space:nowrap!important}
+.anori-shahid-toolbar .anori-toolbar-spacer{display:none!important}
+.anori-shahid-toolbar .anori-action-btn:hover{filter:brightness(.96)!important;transform:none!important;box-shadow:none!important}
+
+/* v2.15 — invoice screen scaling; PDF remains true A4 */
+#previewContent{width:100%!important;overflow:hidden!important;display:block!important;padding:0!important}
+.anori-invoice-preview-stage{width:100%!important;overflow:hidden!important;padding:0!important;background:#e2e8f0!important;display:flex!important;align-items:flex-start!important;justify-content:center!important}
+.anori-invoice-preview-stage>.invoice-page{width:210mm!important;min-width:210mm!important;min-height:297mm!important;margin:0!important;flex:0 0 auto!important;transform-origin:top left!important;background:#fff!important;box-shadow:0 2px 12px rgba(15,23,42,.12)!important}
+@media(max-width:900px){.anori-shahid-toolbar{gap:5px!important}.anori-shahid-toolbar .anori-action-btn{padding:0 10px!important;font-size:11px!important}}
+@media(max-width:600px){.anori-shahid-toolbar{align-items:flex-start!important}.anori-shahid-toolbar .anori-selection-count{margin-left:auto!important}.anori-shahid-toolbar .anori-action-btn{height:32px!important;padding:0 9px!important;font-size:10px!important}}
+
+/* v2.16 runtime hotfix — make every existing action toolbar match the Shahid-style format */
+.anori-action-toolbar{display:flex!important;align-items:center!important;gap:7px!important;flex-wrap:wrap!important;padding:7px 10px!important;background:#fff!important;border:1px solid #e5e7eb!important;border-radius:9px!important;margin-bottom:12px!important;min-height:44px!important}
+.anori-action-toolbar .anori-toolbar-label{font-size:16px!important;font-weight:500!important;color:#64748b!important;margin-right:2px!important}
+.anori-action-toolbar .anori-action-btn{height:34px!important;padding:0 13px!important;border:0!important;border-radius:8px!important;color:#fff!important;font-family:Inter,Arial,sans-serif!important;font-size:12px!important;font-weight:800!important;display:inline-flex!important;align-items:center!important;justify-content:center!important;gap:6px!important;box-shadow:none!important;transform:none!important;white-space:nowrap!important}
+.anori-action-toolbar .anori-action-btn:hover{filter:brightness(.96)!important;transform:none!important}
+.anori-action-toolbar .anori-selection-count{font-size:13px!important;color:#64748b!important;margin-left:auto!important;white-space:nowrap!important}
+.anori-action-toolbar .anori-toolbar-spacer{display:none!important}
+.anori-cancelled-row td{opacity:.72!important;background:#f8fafc!important}
+.status-cancelled{background:rgba(239,68,68,.10);color:#dc2626}
+@media(max-width:900px){.anori-action-toolbar{gap:5px!important}.anori-action-toolbar .anori-action-btn{padding:0 10px!important;font-size:11px!important}}
+@media(max-width:600px){.anori-action-toolbar{align-items:flex-start!important}.anori-action-toolbar .anori-selection-count{margin-left:auto!important}.anori-action-toolbar .anori-action-btn{height:32px!important;padding:0 9px!important;font-size:10px!important}}
+
+/* v2.20 backup folder selector */
+.anori-backup-panel{margin-top:12px;padding:16px;border:1px solid var(--border);border-radius:12px;background:var(--bg-card,#fff)}
+.anori-action-bar{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:12px 0}
+.anori-badge{display:inline-block;margin-left:8px;padding:4px 8px;border-radius:999px;background:var(--bg-body);border:1px solid var(--border);font-size:12px}
+.anori-help{color:var(--text-muted);font-size:12px}
+
+/* ============================================================
+   ANORI TRANSPORT v2.25 — NEW TRIP FORM LAYOUT
+   Approved layout: Date+Vehicle, Driver, Customer, From+To,
+   Freight+Trip Advance, Driver Amount, Trip Advice.
+   ============================================================ */
+.trip-form-layout .form-row { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.trip-form-layout .form-row.single { grid-template-columns: 1fr; }
+.trip-form-layout .form-group { margin-bottom: 16px; }
+.trip-form-layout .trip-advice-box { min-height: 90px; }
+@media (max-width: 700px) {
+  .trip-form-layout .form-row { grid-template-columns: 1fr; }
+}
+
+/* v2.26 — Invoice preview always shows the complete A4 page; viewer scales only the page. */
+#previewContent.anori-invoice-preview-host,
+#previewContent{
+  width:100%!important;
+  height:85vh!important;
+  min-height:0!important;
+  overflow:hidden!important;
+  display:block!important;
+  padding:0!important;
+  box-sizing:border-box!important;
+}
+.anori-invoice-preview-stage{
+  width:100%!important;
+  height:100%!important;
+  min-height:0!important;
+  padding:8px!important;
+  overflow:hidden!important;
+  display:flex!important;
+  align-items:flex-start!important;
+  justify-content:center!important;
+  box-sizing:border-box!important;
+}
+.anori-invoice-preview-stage>.invoice-page{
+  flex:0 0 auto!important;
+  width:210mm!important;
+  min-width:210mm!important;
+  min-height:297mm!important;
+  margin:0!important;
+  transform-origin:top left!important;
+  overflow:visible!important;
+  background:#fff!important;
+  box-shadow:0 2px 12px rgba(15,23,42,.12)!important;
+}
+
+/* ============================================================
+   v2.29 — Trip table approved layout
+   ============================================================ */
+.anori-trip-table-wrap{overflow-x:auto}
+.anori-trip-table{width:100%;border-collapse:separate;border-spacing:0}
+.anori-trip-table thead th{white-space:nowrap}
+.anori-trip-table tbody tr{background:#fff}
+.anori-trip-table tbody tr.anori-trip-alt-row{background:#91edc2}
+.anori-trip-table tbody tr:hover{filter:brightness(.985)}
+.anori-trip-table td,.anori-trip-table th{vertical-align:middle}
+.anori-trip-table .profit-positive{font-weight:700}
+.anori-trip-pagination{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:16px 8px 4px}
+.anori-trip-page-info{color:#64748b;font-size:14px}
+.anori-trip-page-controls{display:flex;align-items:center;gap:8px}
+.anori-page-btn,.anori-page-current{min-width:40px;height:40px;border:1px solid #dbe3ee;border-radius:8px;background:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:700;cursor:pointer}
+.anori-page-current{background:#263edb;color:#fff;border-color:#263edb}
+.anori-page-btn:disabled{opacity:.45;cursor:not-allowed}
+@media(max-width:900px){.anori-trip-pagination{flex-direction:column;align-items:flex-start}.anori-trip-table{min-width:900px}}
+
+
+/* ----- NEW TRIP FORM — SHIPPER-STYLE 3-COLUMN LAYOUT ----- */
+.modal:has(.modal-body.trip-form-bg) {
+  width: 100%;
+  max-width: 1180px;
+}
+
+.modal-body.trip-form-bg {
+  background: #f8fafc;
+  padding: 20px;
+}
+
+.modal-body.trip-form-bg .trip-form-layout {
+  display: block;
+  width: 100%;
+  max-width: none;
+}
+
+.modal-body.trip-form-bg .trip-form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  column-gap: 12px;
+  row-gap: 12px;
+}
+
+.modal-body.trip-form-bg .trip-form-grid .form-group,
+.modal-body.trip-form-bg .trip-notes-field {
+  min-width: 0;
+}
+
+.modal-body.trip-form-bg .trip-form-full {
+  grid-column: 1 / -1;
+}
+
+.modal-body.trip-form-bg label {
+  display: block;
+  margin: 0 0 7px;
+  color: #516b91;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: .2px;
+  text-transform: uppercase;
+}
+
+.modal-body.trip-form-bg .form-control {
+  width: 100%;
+  min-height: 46px;
+  padding: 0 13px;
+  box-sizing: border-box;
+  border: 2px solid #dce4ef;
+  border-radius: 9px;
+  background: #fff;
+  color: #173b70;
+  font-size: 13px;
+  box-shadow: none;
+}
+
+.modal-body.trip-form-bg textarea.form-control {
+  min-height: 96px;
+  padding: 12px 13px;
+  resize: vertical;
+}
+
+.modal-body.trip-form-bg .form-control:focus {
+  border-color: #9eb6d7;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(30, 64, 175, .06);
+}
+
+.modal-body.trip-form-bg .anori-help {
+  display: block;
+  margin-top: 5px;
+  color: #64748b;
+  font-size: 11px;
+}
+
+.modal-body.trip-form-bg .trip-form-section-title {
+  margin: 18px 0 9px;
+  color: #516b91;
+  font-size: 13px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .2px;
+}
+
+.modal-body.trip-form-bg .trip-expenses-list {
+  display: grid;
+  gap: 9px;
+}
+
+.modal-body.trip-form-bg .anori-trip-exp-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: end;
+  margin-bottom: 0 !important;
+}
+
+.modal-body.trip-form-bg .anori-trip-exp-row .form-group {
+  min-width: 0;
+}
+
+.modal-body.trip-form-bg .trip-add-expense {
+  margin-top: 10px;
+}
+
+.modal-body.trip-form-bg .trip-notes-field {
+  margin-top: 16px;
+}
+
+@media (max-width: 900px) {
+  .modal:has(.modal-body.trip-form-bg) {
+    max-width: 96vw;
+  }
+
+  .modal-body.trip-form-bg .trip-form-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .modal-body.trip-form-bg .trip-form-grid,
+  .modal-body.trip-form-bg .anori-trip-exp-row {
+    grid-template-columns: 1fr;
+  }
+
+  .modal-body.trip-form-bg .trip-form-full {
+    grid-column: auto;
+  }
+}
+
+/* Global input focus appearance: focused field only, matching the approved light-red style. */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]):focus,
+textarea:focus,
+select:focus {
+  background-color: #fee2e2 !important;
+  border-color: #ef4444 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.18) !important;
+}
+
+/* Keep all non-focused form fields white. */
+input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),
+textarea,
+select {
+  background-color: #fff;
+}
+
+/* ANORI v32 — Invoice billable expenses: 1 row / 2 columns + manual charges */
+.anori-v32-expense-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:8px}.anori-v32-expense-card{display:grid;grid-template-columns:minmax(0,1fr) 120px;gap:8px;align-items:center;padding:9px;border:1px solid var(--border,#e2e8f0);border-radius:8px;background:#fff}.anori-v32-expense-card label{font-size:.8rem}.anori-v32-expense-card input[type=number]{width:100%}.anori-v32-manual-wrap{margin-top:14px;padding:10px;border:1px solid var(--border,#e2e8f0);border-radius:10px;background:#fff}.anori-v32-manual-charge{display:grid;grid-template-columns:minmax(0,1fr) 160px 38px;gap:8px;align-items:end;margin:8px 0}.anori-v32-manual-charge label{display:block;font-size:.76rem;font-weight:700;margin-bottom:4px}.anori-v32-manual-charge .btn{height:38px}.anori-v32-generator .form-control{width:100%}
+@media(max-width:700px){.anori-v32-expense-grid{grid-template-columns:1fr}.anori-v32-manual-charge{grid-template-columns:1fr}.anori-v32-manual-charge .btn{width:100%}}
+
+/* ANORI TRANSPORT — Invoice Preview centered and fit to available screen */
+#previewModal .modal.modal-lg{width:95vw!important;max-width:1200px!important;max-height:95vh!important}
+#previewModal .preview-body{padding:0!important;display:flex!important;justify-content:center!important;align-items:stretch!important;overflow:hidden!important}
+#previewModal #previewContent{width:100%!important;height:100%!important;min-height:0!important;overflow:hidden!important;padding:0!important;display:block!important}
+#previewModal .anori-invoice-preview-stage{position:relative!important;width:100%!important;height:100%!important;min-height:0!important;padding:0!important;overflow:hidden!important;display:block!important;background:#e2e8f0!important}
+#previewModal .anori-invoice-preview-stage>.invoice-page{position:absolute!important;left:50%!important;top:8px!important;margin:0!important;transform-origin:top center!important}
+
+/* ANORI TRANSPORT — Invoice Preview viewport height fix
+   Keep the preview modal as a real flex column so the preview body receives
+   usable height. This prevents the invoice page from disappearing/collapsing. */
+#previewModal .modal.modal-lg{
+  height:95vh !important;
+  max-height:95vh !important;
+  display:flex !important;
+  flex-direction:column !important;
+}
+#previewModal .preview-body{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  height:auto !important;
+  display:flex !important;
+  flex-direction:column !important;
+  overflow:hidden !important;
+}
+#previewModal #previewContent{
+  flex:1 1 auto !important;
+  min-height:0 !important;
+  height:auto !important;
+}
+#previewModal .anori-invoice-preview-stage{
+  min-height:100% !important;
+}
+
+/* ANORI TRANSPORT — Invoice Preview wider viewport; scrolling is allowed for larger invoice view */
+#previewModal .modal.modal-lg{
+  width:98vw !important;
+  max-width:1500px !important;
+  height:95vh !important;
+  max-height:95vh !important;
+}
+#previewModal .preview-body{
+  overflow:hidden !important;
+}
+#previewModal #previewContent{
+  width:100% !important;
+  height:100% !important;
+  overflow:auto !important;
+  padding:18px 24px !important;
+  box-sizing:border-box !important;
+}
+#previewModal .anori-invoice-preview-stage{
+  width:100% !important;
+  min-height:100% !important;
+  height:auto !important;
+  overflow:visible !important;
+  display:flex !important;
+  justify-content:center !important;
+  align-items:flex-start !important;
+  padding:0 0 24px !important;
+  box-sizing:border-box !important;
+  background:#e2e8f0 !important;
+}
+#previewModal .anori-invoice-preview-stage > .invoice-page{
+  position:relative !important;
+  left:auto !important;
+  top:auto !important;
+  flex:0 0 auto !important;
+  transform-origin:top center !important;
+  margin:0 auto !important;
+}
+@media(max-width:900px){
+  #previewModal .modal.modal-lg{width:98vw !important;max-width:none !important;}
+  #previewModal #previewContent{padding:12px !important;}
+}
+
+
+/* ANORI TRANSPORT — FINAL INVOICE PREVIEW CENTERING FIX
+   Keep the A4 page as a normal flex item. This prevents left-edge clipping
+   caused by absolute positioning + transform in Chromium/Electron. */
+#previewModal #previewContent{
+  width:100% !important;
+  height:100% !important;
+  min-height:0 !important;
+  overflow:auto !important;
+  padding:0 !important;
+  box-sizing:border-box !important;
+}
+#previewModal .anori-invoice-preview-stage{
+  position:relative !important;
+  width:100% !important;
+  min-height:100% !important;
+  height:auto !important;
+  overflow:auto !important;
+  display:flex !important;
+  flex-direction:column !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+  padding:18px 24px 28px !important;
+  box-sizing:border-box !important;
+}
+#previewModal .anori-invoice-preview-stage > .invoice-page{
+  position:relative !important;
+  left:auto !important;
+  top:auto !important;
+  margin:0 auto !important;
+  transform:none !important;
+  transform-origin:top center !important;
+  flex:0 0 auto !important;
+}
+
+/* ANORI TRANSPORT — Invoice Preview: only 1cm side clearance.
+   The A4 page keeps its natural 210mm width; JavaScript scales the page
+   proportionally so its visible width fills the viewer with 1cm clearance. */
+#previewModal .anori-invoice-preview-stage{
+  padding:1cm !important;
+  box-sizing:border-box !important;
+  overflow:auto !important;
+  align-items:center !important;
+  justify-content:flex-start !important;
+}
+#previewModal .anori-invoice-preview-stage > .invoice-page{
+  width:210mm !important;
+  min-width:210mm !important;
+  max-width:none !important;
+  min-height:297mm !important;
+  height:auto !important;
+  margin:0 auto !important;
+  flex:0 0 auto !important;
+  transform-origin:top center !important;
+  box-sizing:border-box !important;
+}
+
+/* ANORI TRANSPORT — Manual field search */
+.anori-manual-search{
+  margin:0 0 16px !important;
+  padding:14px 16px !important;
+  border:1px solid var(--border) !important;
+}
+.anori-manual-search-title{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:12px;
+}
+.anori-manual-search-title strong{font-size:15px;color:var(--text-primary)}
+.anori-manual-search-title span{font-size:12px;color:var(--text-muted)}
+.anori-manual-search-controls{
+  display:flex;
+  align-items:flex-end;
+  gap:10px;
+  flex-wrap:wrap;
+}
+.anori-manual-search-controls label{
+  display:flex;
+  flex-direction:column;
+  gap:5px;
+  min-width:180px;
+  font-size:12px;
+  font-weight:700;
+  color:var(--text-secondary);
+}
+.anori-manual-search-controls .anori-manual-search-query{flex:1 1 280px}
+.anori-manual-search-controls .form-control{min-height:40px}
+.anori-manual-search-count{
+  min-height:40px;
+  display:flex;
+  align-items:center;
+  font-size:12px;
+  font-weight:700;
+  color:var(--primary);
+  white-space:nowrap;
+}
+@media(max-width:800px){
+  .anori-manual-search-controls label,
+  .anori-manual-search-controls .anori-manual-search-query{width:100%;min-width:0;flex-basis:100%}
+  .anori-manual-search-controls .btn{flex:1}
+}
+
+/* ANORI TRANSPORT — restrained application-wide colour accents */
+:root{
+  --anori-navy:#173b7a;
+  --anori-blue:#2563eb;
+  --anori-cyan:#0891b2;
+  --anori-green:#059669;
+  --anori-purple:#7c3aed;
+  --anori-amber:#d97706;
+}
+.sidebar{background:linear-gradient(180deg,#10224a 0%,#0f172a 62%,#111827 100%) !important}
+.nav-item{transition:background .16s ease,color .16s ease,transform .16s ease}
+.nav-item:hover{background:rgba(59,130,246,.16) !important;color:#dbeafe !important}
+.nav-item.active{background:linear-gradient(90deg,rgba(37,99,235,.32),rgba(124,58,237,.22)) !important;color:#fff !important;border-left:3px solid #60a5fa !important}
+.anori-section-intro{border-left:4px solid var(--anori-blue);background:linear-gradient(90deg,#eff6ff 0%,#ffffff 72%) !important}
+.anori-section-intro strong{color:var(--anori-navy) !important}
+.anori-manual-search{background:linear-gradient(135deg,#ffffff 0%,#f8fbff 100%) !important;border-top:3px solid var(--anori-purple) !important}
+.anori-manual-search-title strong{color:var(--anori-navy) !important}
+.anori-filter-bar{background:linear-gradient(135deg,#f8fbff 0%,#f0fdf9 100%) !important;border-left:3px solid var(--anori-cyan) !important}
+.anori-kpi-card:nth-child(1){border-top:3px solid var(--anori-blue) !important}
+.anori-kpi-card:nth-child(2){border-top:3px solid var(--anori-green) !important}
+.anori-kpi-card:nth-child(3){border-top:3px solid var(--anori-amber) !important}
+.anori-kpi-card:nth-child(4){border-top:3px solid var(--anori-purple) !important}
+.anori-kpi-card:nth-child(5){border-top:3px solid #dc2626 !important}
+.anori-ledger-summary>div{position:relative;overflow:hidden}
+.anori-ledger-summary>div:before{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--anori-blue)}
+.anori-ledger-summary .anori-ledger-given:before{background:#2563eb}
+.anori-ledger-summary .anori-ledger-paid:before{background:#059669}
+.anori-ledger-summary .anori-ledger-advance:before{background:#7c3aed}
+.anori-ledger-summary .anori-ledger-balance:before{background:#d97706}
+.anori-ledger-summary .anori-ledger-advance{background:#faf5ff !important}
+.anori-ledger-summary .anori-ledger-balance{background:#fffbeb !important}
+.card{box-shadow:0 3px 12px rgba(15,23,42,.045)}
+.table-wrapper table thead th{background:#eef5ff !important;color:#173b7a !important}
+.btn-success{background:linear-gradient(135deg,#10b981,#059669) !important}
+.btn-primary{background:linear-gradient(135deg,#2563eb,#7c3aed) !important}
+
+
+/* v2.25 — Inline manual search controls beside Apply */
+.anori-filter-bar .anori-manual-search-inline{
+  display:flex;align-items:flex-end;gap:10px;flex:1;min-width:420px;margin-left:8px;padding-left:14px;border-left:3px solid #7c3aed;
+}
+.anori-manual-search-inline-title{align-self:center;white-space:nowrap;color:#123f87;font-size:14px}
+.anori-manual-search-inline label{display:flex;flex-direction:column;gap:5px;min-width:140px}
+.anori-manual-search-inline label span{font-size:12px;font-weight:700;color:#123f87}
+.anori-manual-search-inline .anori-manual-search-query{flex:1;min-width:190px}
+.anori-manual-search-inline .anori-manual-search-count{font-size:11px;font-weight:700;color:#16a34a;white-space:nowrap;padding-bottom:10px}
+@media (max-width:1100px){.anori-filter-bar .anori-manual-search-inline{flex-wrap:wrap;min-width:100%;margin-left:0;padding-left:0;border-left:0;border-top:1px solid #dbe4f0;padding-top:10px}.anori-manual-search-inline .anori-manual-search-query{min-width:240px}}
+
+/* Trip Management: green New Trip + custom column selector */
+.anori-action-toolbar .anori-action-add{background:#16a34a!important;color:#fff!important}
+.anori-action-toolbar .anori-action-columns{background:#0f766e!important;color:#fff!important}
+.anori-trip-table th.anori-select-heading{white-space:nowrap;text-align:left}
+.anori-trip-table th.anori-select-heading input{margin-right:6px;vertical-align:middle}
+.anori-trip-table th.anori-select-heading div{display:inline;font-size:11px;font-weight:800}
+
+
+/* FINAL FILTER + SEARCH COMBINED UI */
+.anori-filter-bar:has(.anori-manual-search-inline){
+  display:flex!important;
+  align-items:flex-end!important;
+  flex-wrap:nowrap!important;
+  gap:12px!important;
+  padding:14px!important;
+  background:linear-gradient(135deg,#f8fbff 0%,#f4f1ff 100%)!important;
+  border:1px solid #d9e2ef!important;
+  border-left:3px solid #2563eb!important;
+  border-radius:14px!important;
+  box-shadow:0 4px 14px rgba(15,23,42,.04)!important;
+}
+.anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline{
+  display:contents!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+  background:transparent!important;
+  box-shadow:none!important;
+}
+.anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>.anori-manual-search-inline-title{
+  align-self:flex-end!important;
+  white-space:nowrap!important;
+  min-width:auto!important;
+  padding:0 4px 11px 2px!important;
+  color:#123f87!important;
+  font-size:14px!important;
+  font-weight:800!important;
+  letter-spacing:.01em!important;
+}
+.anori-filter-bar:has(.anori-manual-search-inline)>label{
+  min-width:150px!important;
+}
+.anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>label{
+  display:flex!important;
+  flex-direction:column!important;
+  gap:5px!important;
+  min-width:145px!important;
+  margin:0!important;
+}
+.anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>label>span{
+  font-size:12px!important;
+  font-weight:800!important;
+  color:#123f87!important;
+  text-transform:uppercase!important;
+}
+.anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>.anori-manual-search-query{
+  flex:1 1 250px!important;
+  min-width:210px!important;
+}
+.anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>.btn{
+  flex:0 0 auto!important;
+  white-space:nowrap!important;
+  height:42px!important;
+}
+.anori-filter-bar:has(.anori-manual-search-inline)>button{
+  height:42px!important;
+  flex:0 0 auto!important;
+}
+.anori-filter-bar:has(.anori-manual-search-inline) .anori-manual-search-count{
+  font-size:11px!important;
+  font-weight:800!important;
+  color:#16a34a!important;
+  white-space:nowrap!important;
+  padding-bottom:11px!important;
+}
+/* Search-only modules keep a clean full-width panel. */
+.anori-manual-search-inline:not(:is(.anori-filter-bar *)){
+  box-sizing:border-box;
+}
+@media(max-width:1200px){
+  .anori-filter-bar:has(.anori-manual-search-inline){flex-wrap:wrap!important;}
+  .anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>.anori-manual-search-query{flex:1 1 320px!important;}
+}
+@media(max-width:700px){
+  .anori-filter-bar:has(.anori-manual-search-inline){display:grid!important;grid-template-columns:1fr!important;align-items:stretch!important;}
+  .anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>.anori-manual-search-inline-title{padding:2px 0 0!important;}
+  .anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>label,
+  .anori-filter-bar:has(.anori-manual-search-inline)>label{width:100%!important;min-width:0!important;}
+  .anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>.btn,
+  .anori-filter-bar:has(.anori-manual-search-inline)>button{width:100%!important;}
+}
+
+/* INVOICES & BILLING FINAL UI */
+.anori-invoice-searchbar{
+  display:flex;align-items:flex-end;gap:12px;flex-wrap:wrap;
+  margin:14px 0;padding:14px 16px;background:linear-gradient(90deg,#f7fbff,#faf7ff);
+  border:1px solid #dbe4f0;border-left:3px solid #6d4aff;border-radius:12px;
+}
+.anori-invoice-search-title{font-size:15px;color:#173b7a;white-space:nowrap;padding-bottom:10px}
+.anori-invoice-searchbar label{display:flex;flex-direction:column;gap:5px;min-width:170px;font-size:11px;font-weight:800;color:#173b7a;text-transform:uppercase}
+.anori-invoice-searchbar .anori-invoice-search-query{flex:1;min-width:280px}
+.anori-invoice-searchbar .form-control{height:42px;background:#fff}
+.anori-invoice-searchbar .btn{height:42px;white-space:nowrap}
+.anori-invoice-table-wrap{overflow-x:auto}
+.anori-invoice-table{min-width:1050px}
+.anori-invoice-row{cursor:pointer;transition:background .15s ease,box-shadow .15s ease}
+.anori-invoice-row:hover{background:#f8fbff}
+.anori-invoice-row.anori-row-selected{background:#ecfdf3!important;box-shadow:inset 4px 0 0 #16a34a}
+.anori-days-badge{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:50%;font-size:11px;font-weight:900;line-height:1}
+.anori-days-badge-green{background:#dcfce7;color:#15803d;border:2px solid #22c55e}
+.anori-days-badge-red{background:#fee2e2;color:#dc2626;border:2px solid #ef4444}
+@media(max-width:1100px){
+  .anori-invoice-search-title{width:100%;padding-bottom:0}
+  .anori-invoice-searchbar label{flex:1;min-width:150px}
+  .anori-invoice-searchbar .anori-invoice-search-query{min-width:220px}
+}
+
+/* Selection column headers: keep checkbox, hide heading text completely. */
+.anori-trip-table th.anori-select-heading,
+.anori-invoice-table th.anori-select-col,
+.anori-standard-table th.anori-select-col {
+  font-size: 0 !important;
+  text-align: center !important;
+  white-space: nowrap;
+}
+.anori-trip-table th.anori-select-heading input,
+.anori-invoice-table th.anori-select-col input,
+.anori-standard-table th.anori-select-col input {
+  font-size: initial !important;
+  margin: 0;
+}
+
+/* v2.26 — Reports & Analytics: parent-width-safe combined Filter + Search layout */
+.anori-filter-bar:has(.anori-manual-search-inline){
+  box-sizing:border-box!important;
+  width:100%!important;
+  max-width:100%!important;
+  min-width:0!important;
+  display:grid!important;
+  grid-template-columns:minmax(145px,1.05fr) minmax(135px,.9fr) minmax(135px,.9fr) auto minmax(135px,.9fr) minmax(180px,1.55fr) auto auto!important;
+  align-items:end!important;
+  gap:10px!important;
+  padding:14px!important;
+  overflow:hidden!important;
+}
+.anori-filter-bar:has(.anori-manual-search-inline)>label,
+.anori-filter-bar:has(.anori-manual-search-inline)>button,
+.anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>label,
+.anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>.btn{
+  min-width:0!important;
+  width:auto!important;
+  max-width:100%!important;
+  box-sizing:border-box!important;
+}
+.anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline{
+  display:contents!important;
+  min-width:0!important;
+  width:auto!important;
+  margin:0!important;
+  padding:0!important;
+  border:0!important;
+}
+.anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>.anori-manual-search-inline-title{display:none!important}
+.anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>label{min-width:0!important;width:100%!important}
+.anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>.anori-manual-search-query{min-width:0!important;flex:none!important;width:100%!important}
+.anori-filter-bar:has(.anori-manual-search-inline) .form-control{min-width:0!important;max-width:100%!important;width:100%!important}
+.anori-filter-bar:has(.anori-manual-search-inline)>button,
+.anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>.btn{white-space:nowrap!important;justify-self:stretch!important}
+
+@media(max-width:1200px){
+  .anori-filter-bar:has(.anori-manual-search-inline){
+    grid-template-columns:minmax(0,1fr) minmax(0,1fr) minmax(0,1fr) minmax(92px,auto)!important;
+    align-items:end!important;
+  }
+}
+@media(max-width:700px){
+  .anori-filter-bar:has(.anori-manual-search-inline){
+    grid-template-columns:1fr!important;
+    gap:10px!important;
+  }
+  .anori-filter-bar:has(.anori-manual-search-inline)>label,
+  .anori-filter-bar:has(.anori-manual-search-inline)>button,
+  .anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>label,
+  .anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>.btn{width:100%!important}
+}
+
+/* ANORI TRANSPORT - Global Data Transfer Center */
+.anori-data-transfer-path{display:flex;align-items:center;justify-content:space-between;gap:18px;padding:16px;border:1px solid var(--border,#dbe3ef);border-radius:12px;background:linear-gradient(90deg,#f8fbff,#f6f4ff);margin-bottom:16px;min-width:0}
+.anori-data-transfer-path>div:first-child{display:flex;flex-direction:column;gap:4px;min-width:180px}
+.anori-data-transfer-path>div:first-child strong{font-size:11px;letter-spacing:.08em;color:#0f3b78}
+.anori-data-transfer-path>div:first-child span{font-size:13px;color:#64748b;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:360px}
+.anori-data-transfer-path-actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap;min-width:0}
+.anori-data-transfer-path-actions .form-control{width:130px;min-width:120px}
+.anori-transfer-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.anori-transfer-card{border:1px solid var(--border,#dbe3ef);border-radius:12px;padding:16px;background:#fff;min-width:0}
+.anori-transfer-card h4{margin:0 0 5px;color:#0f3b78;font-size:15px}
+.anori-transfer-card p{margin:0 0 12px;color:#64748b;font-size:11px}
+.anori-transfer-card>div{display:flex;gap:8px;flex-wrap:wrap}
+.anori-transfer-card .anori-action-btn{min-width:0}
+@media(max-width:900px){.anori-data-transfer-path{align-items:flex-start;flex-direction:column}.anori-data-transfer-path-actions{width:100%;justify-content:flex-start}.anori-transfer-grid{grid-template-columns:1fr}}
+
+/* ANORI TRANSPORT — COMPANY STAMP & AUTHORIZED SIGNATURE UPLOAD */
+.anori-sign-upload-box{border:1px solid var(--border,#dbe3ef);border-radius:10px;padding:12px;background:#f8fafc;margin-top:6px}
+.anori-sign-upload-preview{margin-top:10px;min-height:72px;border:1px dashed var(--border,#cbd5e1);border-radius:8px;background:#fff;padding:10px;display:flex;align-items:center;justify-content:flex-end;gap:12px}
+.anori-sign-upload-preview img{max-width:260px;max-height:100px;object-fit:contain;display:block}
+.company-signature-stamp{max-width:150px;max-height:62px;object-fit:contain;display:block}
+.authorized-signatory-label{font-weight:700;white-space:nowrap}
+
+/* Dashboard improvements */
+.anori-dashboard-kpi-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+.anori-kpi-payment{border-top:3px solid #0ea5e9!important}
+.anori-attention-card{padding:18px 20px;margin-bottom:16px}
+.anori-attention-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:14px}
+.anori-attention-title{font-size:1.08rem;font-weight:800;color:#0f172a}
+.anori-attention-subtitle{font-size:.88rem;color:#64748b;margin-top:3px}
+.anori-attention-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.anori-attention-item{appearance:none;border:1px solid #dbe3ef;background:#fff;border-radius:12px;padding:13px 12px;display:flex;align-items:center;gap:10px;text-align:left;cursor:pointer;min-width:0}
+.anori-attention-item:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(15,23,42,.08)}
+.anori-attention-icon{font-size:1.25rem;flex:0 0 auto}
+.anori-attention-copy{display:flex;flex-direction:column;min-width:0;flex:1}
+.anori-attention-copy strong{font-size:1.35rem;line-height:1.1;color:#0f172a}
+.anori-attention-copy b{font-size:.78rem;color:#334155;margin-top:3px}
+.anori-attention-copy small{font-size:.7rem;color:#64748b;margin-top:2px}
+.anori-attention-arrow{font-size:1.35rem;color:#94a3b8}
+.anori-attention-item.warn{border-top:3px solid #f59e0b}
+.anori-attention-item.payment{border-top:3px solid #0ea5e9}
+.anori-attention-item.bad{border-top:3px solid #ef4444}
+.anori-attention-item.info{border-top:3px solid #6366f1}
+@media(max-width:1200px){.anori-dashboard-kpi-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media(max-width:900px){.anori-dashboard-kpi-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.anori-attention-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:600px){.anori-dashboard-kpi-grid{grid-template-columns:1fr 1fr}.anori-attention-head{align-items:flex-start;flex-direction:column}.anori-attention-grid{grid-template-columns:1fr}.anori-attention-item{padding:12px}}
+
+
+/* =========================================================
+   ANORI TRANSPORT — Actual Dashboard UI refinement
+   ========================================================= */
+.anori-dashboard-attention{background:#fff;border:1px solid #dbe3ef;border-radius:16px;padding:20px;box-shadow:0 4px 18px rgba(15,23,42,.055);margin-bottom:16px}
+.anori-dashboard-section-head,.anori-dashboard-summary-head{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.anori-dashboard-eyebrow{font-size:.68rem;font-weight:800;letter-spacing:.12em;color:#64748b;margin-bottom:3px}
+.anori-dashboard-section-head h2{margin:0;font-size:1.25rem;color:#0f172a}
+.anori-dashboard-section-head p{margin:4px 0 0;color:#64748b;font-size:.86rem}
+.anori-dashboard-attention-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:16px}
+.anori-dashboard-attention-card{appearance:none;min-width:0;min-height:106px;background:#fff;border:1px solid #dbe3ef;border-top:4px solid #94a3b8;border-radius:12px;padding:13px;display:flex;align-items:center;gap:11px;text-align:left;cursor:pointer;transition:transform .15s ease,box-shadow .15s ease}
+.anori-dashboard-attention-card:hover{transform:translateY(-2px);box-shadow:0 7px 18px rgba(15,23,42,.09)}
+.anori-dashboard-attention-card.warn{border-top-color:#f59e0b}
+.anori-dashboard-attention-card.payment{border-top-color:#0ea5e9}
+.anori-dashboard-attention-card.danger{border-top-color:#ef4444}
+.anori-dashboard-attention-card.info{border-top-color:#6366f1}
+.anori-dashboard-attention-icon{font-size:1.45rem;flex:0 0 auto}
+.anori-dashboard-attention-main{display:flex;flex-direction:column;min-width:0;flex:1}
+.anori-dashboard-attention-main strong{font-size:1.42rem;line-height:1.05;color:#0f172a;font-variant-numeric:tabular-nums}
+.anori-dashboard-attention-main b{font-size:.78rem;color:#334155;margin-top:4px;line-height:1.2}
+.anori-dashboard-attention-main small{font-size:.68rem;color:#64748b;margin-top:3px;line-height:1.2}
+.anori-dashboard-attention-arrow{font-size:1.45rem;color:#94a3b8;flex:0 0 auto}
+.anori-dashboard-summary{background:#fff;border:1px solid #dbe3ef;border-radius:16px;padding:18px 20px;margin-bottom:16px;box-shadow:0 3px 14px rgba(15,23,42,.045)}
+.anori-dashboard-summary-head h3{margin:0;font-size:1rem}
+.anori-dashboard-summary-head span{display:block;color:#64748b;font-size:.78rem;margin-top:3px}
+.anori-dashboard-summary-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
+.anori-dashboard-summary-card{appearance:none;border:1px solid #e2e8f0;border-left:4px solid #94a3b8;background:#f8fafc;border-radius:11px;padding:13px;display:flex;align-items:center;gap:11px;text-align:left;cursor:pointer}
+.anori-dashboard-summary-card:hover{background:#fff;box-shadow:0 4px 12px rgba(15,23,42,.06)}
+.anori-dashboard-summary-card>span{font-size:1.35rem}
+.anori-dashboard-summary-card div{display:flex;flex-direction:column;min-width:0}
+.anori-dashboard-summary-card small{font-size:.7rem;color:#64748b}
+.anori-dashboard-summary-card strong{font-size:1.25rem;color:#0f172a;line-height:1.15;font-variant-numeric:tabular-nums}
+.anori-dashboard-summary-card em{font-style:normal;font-size:.66rem;color:#64748b;margin-top:2px}
+.anori-dashboard-summary-card.blue{border-left-color:#2563eb}
+.anori-dashboard-summary-card.amber{border-left-color:#f59e0b}
+.anori-dashboard-summary-card.red{border-left-color:#ef4444}
+.anori-dashboard-summary-card.purple{border-left-color:#7c3aed}
+.anori-dashboard-action-row{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#eff6ff;border:1px solid #bfdbfe;border-radius:12px;padding:11px 13px;margin-bottom:16px}
+.anori-dashboard-action-note{display:flex;align-items:center;gap:9px;min-width:0}
+.anori-dashboard-action-note>span{font-size:1.15rem}
+.anori-dashboard-action-note div{display:flex;flex-direction:column;min-width:0}
+.anori-dashboard-action-note strong{font-size:.8rem;color:#1e3a8a}
+.anori-dashboard-action-note small{font-size:.7rem;color:#475569;margin-top:2px}
+@media(max-width:1100px){.anori-dashboard-attention-grid,.anori-dashboard-summary-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.anori-dashboard-attention-grid,.anori-dashboard-summary-grid{grid-template-columns:1fr}.anori-dashboard-section-head{align-items:flex-start}.anori-dashboard-action-row{align-items:flex-start;flex-direction:column}}
+
+
+/* =========================================================
+   ANORI TRANSPORT — Dashboard Control Center
+   ========================================================= */
+.anori-cc-head{display:flex;align-items:center;justify-content:space-between;gap:18px;margin:0 0 16px}
+.anori-cc-eyebrow{font-size:.66rem;font-weight:800;letter-spacing:.12em;color:#64748b}
+.anori-cc-head h1{margin:3px 0 0;font-size:1.55rem;color:#0f172a}
+.anori-cc-head p{margin:3px 0 0;color:#64748b;font-size:.84rem}
+.anori-cc-head-actions{display:flex;gap:8px}
+.anori-cc-panel{background:#fff;border:1px solid #dbe3ef;border-radius:15px;padding:18px;margin-bottom:15px;box-shadow:0 3px 14px rgba(15,23,42,.045)}
+.anori-cc-panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}
+.anori-cc-panel-head h2{margin:0;font-size:1rem;color:#0f172a}
+.anori-cc-panel-head span{display:block;color:#64748b;font-size:.73rem;margin-top:3px}
+.anori-cc-attention-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px}
+.anori-cc-attention{appearance:none;border:1px solid #dbe3ef;border-top:4px solid #94a3b8;border-radius:11px;background:#fff;padding:13px;text-align:left;display:grid;grid-template-columns:auto 1fr auto;grid-template-rows:auto auto auto;column-gap:9px;cursor:pointer;transition:.15s;min-width:0}
+.anori-cc-attention:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(15,23,42,.08)}
+.anori-cc-attention.warn{border-top-color:#f59e0b}.anori-cc-attention.payment{border-top-color:#0ea5e9}.anori-cc-attention.danger{border-top-color:#ef4444}.anori-cc-attention.info{border-top-color:#6366f1}
+.anori-cc-icon{grid-row:1/4;font-size:1.35rem}.anori-cc-count{font-size:1.45rem;font-weight:850;color:#0f172a;line-height:1}.anori-cc-label{grid-column:2/4;font-size:.76rem;font-weight:800;color:#334155;margin-top:3px}.anori-cc-attention small{grid-column:2/4;color:#64748b;font-size:.65rem;margin-top:3px}.anori-cc-attention b{grid-column:2/4;color:#2563eb;font-size:.67rem;margin-top:7px}
+.anori-cc-finance-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.anori-cc-finance{appearance:none;text-align:left;border:1px solid #e2e8f0;border-left:4px solid #2563eb;background:#f8fafc;border-radius:10px;padding:13px;cursor:pointer}
+.anori-cc-finance:hover{background:#fff;box-shadow:0 4px 12px rgba(15,23,42,.06)}
+.anori-cc-finance small{display:block;color:#64748b;font-size:.7rem}.anori-cc-finance strong{display:block;color:#0f172a;font-size:1.28rem;margin:4px 0;font-variant-numeric:tabular-nums}.anori-cc-finance span{color:#64748b;font-size:.66rem}
+.anori-cc-finance.billed{border-left-color:#2563eb}.anori-cc-finance.received{border-left-color:#16a34a}.anori-cc-finance.outstanding{border-left-color:#f59e0b}.anori-cc-finance.expenses{border-left-color:#7c3aed}
+.anori-cc-ops-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.anori-cc-ops-grid button{appearance:none;border:1px solid #e2e8f0;background:#fff;border-radius:10px;padding:13px;display:flex;align-items:center;gap:10px;text-align:left;cursor:pointer}
+.anori-cc-ops-grid button:hover{background:#f8fafc}.anori-cc-ops-grid button>span{font-size:1.3rem}.anori-cc-ops-grid div{display:flex;flex-direction:column}.anori-cc-ops-grid small{font-size:.68rem;color:#64748b}.anori-cc-ops-grid strong{font-size:1.2rem;color:#0f172a}.anori-cc-ops-grid em{font-style:normal;font-size:.63rem;color:#64748b}
+.anori-cc-two-col{display:grid;grid-template-columns:1.35fr 1fr;gap:15px}
+.anori-action-list{display:flex;flex-direction:column;gap:7px}.anori-action-line{display:flex;align-items:center;gap:9px;border:1px solid #e2e8f0;border-radius:9px;padding:9px}.anori-action-line>span{font-size:1rem}.anori-action-line>div{display:flex;flex-direction:column;flex:1;min-width:0}.anori-action-line strong{font-size:.76rem;color:#334155}.anori-action-line small{font-size:.65rem;color:#64748b;margin-top:2px}.anori-action-line.warn{border-left:3px solid #f59e0b}.anori-action-line.payment{border-left:3px solid #0ea5e9}.anori-action-line.danger{border-left:3px solid #ef4444}.anori-action-line.info{border-left:3px solid #6366f1}
+.anori-cc-clear{text-align:center;padding:18px;color:#15803d;background:#f0fdf4;border:1px solid #bbf7d0;border-radius:9px;font-size:.8rem;font-weight:700}
+.anori-quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.anori-quick-grid button{appearance:none;border:1px solid #e2e8f0;background:#f8fafc;border-radius:9px;padding:11px;text-align:left;cursor:pointer}.anori-quick-grid button:hover{background:#fff;box-shadow:0 3px 10px rgba(15,23,42,.06)}.anori-quick-grid span{font-size:1rem}.anori-quick-grid b,.anori-quick-grid small{display:block}.anori-quick-grid b{font-size:.75rem;color:#334155;margin-top:4px}.anori-quick-grid small{font-size:.62rem;color:#64748b;margin-top:2px}
+@media(max-width:1100px){.anori-cc-attention-grid,.anori-cc-finance-grid,.anori-cc-ops-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.anori-cc-two-col{grid-template-columns:1fr}}
+@media(max-width:650px){.anori-cc-head{align-items:flex-start;flex-direction:column}.anori-cc-head-actions{width:100%}.anori-cc-head-actions .btn{flex:1}.anori-cc-attention-grid,.anori-cc-finance-grid,.anori-cc-ops-grid,.anori-quick-grid{grid-template-columns:1fr}.anori-cc-panel{padding:13px}}
+
+
+/* =========================================================
+   ANORI TRANSPORT — Reference UI Theme
+   Visual-only overrides. Existing structure/functionality
+   and component selectors are intentionally preserved.
+   ========================================================= */
+:root{
+  --ref-navy:#1f397d;
+  --ref-navy-dark:#172d62;
+  --ref-blue:#2f80ed;
+  --ref-bg:#eef3f8;
+  --ref-border:#dbe3ee;
+  --ref-text:#17345f;
+  --ref-muted:#60708a;
+}
+
+html,body{
+  background:var(--ref-bg)!important;
+  color:var(--ref-text);
+}
+
+body{
+  font-family:Inter,Arial,sans-serif!important;
+}
+
+/* Sidebar */
+.sidebar{
+  width:280px!important;
+  background:linear-gradient(180deg,#26354d 0%,#172235 100%)!important;
+  border-right:1px solid #cbd5e1!important;
+  box-shadow:2px 0 12px rgba(15,23,42,.08)!important;
+}
+.sidebar-header{
+  min-height:80px!important;
+  padding:18px 18px!important;
+  background:#1f3150!important;
+  border-bottom:1px solid rgba(255,255,255,.08)!important;
+}
+.sidebar-header .logo-icon{
+  width:38px!important;height:38px!important;border-radius:8px!important;
+  background:#fff!important;color:var(--ref-navy)!important;
+  box-shadow:none!important;font-size:18px!important;
+}
+.logo-text h1{
+  font-size:17px!important;
+  letter-spacing:.1px!important;
+}
+.nav-menu{
+  padding:12px 10px!important;
+}
+.nav-item{
+  min-height:48px!important;
+  padding:13px 14px!important;
+  border-radius:0!important;
+  margin:0 0 2px!important;
+  color:#eef4ff!important;
+  font-size:14px!important;
+  font-weight:700!important;
+  text-transform:uppercase!important;
+  letter-spacing:.1px!important;
+  position:relative!important;
+}
+.nav-item i{
+  width:20px!important;
+  margin-right:10px!important;
+  color:#d9e6ff!important;
+}
+.nav-item::after{
+  content:"\25B6";
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  font-size:10px;
+  color:#fff;
+  opacity:.95;
+}
+.nav-item:hover{
+  background:rgba(96,165,250,.13)!important;
+  color:#fff!important;
+  transform:none!important;
+}
+.nav-item.active{
+  background:#263f78!important;
+  color:#fff!important;
+  border-left:4px solid #60a5fa!important;
+  box-shadow:none!important;
+}
+.sidebar-footer{
+  padding:14px!important;
+  background:rgba(2,6,23,.12)!important;
+}
+
+/* Main/top bar */
+.main-wrapper{
+  margin-left:280px!important;
+  width:calc(100% - 280px)!important;
+  max-width:calc(100% - 280px)!important;
+  background:var(--ref-bg)!important;
+}
+.topbar{
+  height:80px!important;
+  min-height:80px!important;
+  padding:0 18px!important;
+  background:var(--ref-navy)!important;
+  border-bottom:0!important;
+  box-shadow:0 2px 8px rgba(15,23,42,.18)!important;
+  color:#fff!important;
+  position:sticky!important;
+}
+.topbar-left{
+  gap:14px!important;
+}
+.menu-toggle{
+  width:50px!important;height:50px!important;
+  border-radius:6px!important;
+  background:#3d5b98!important;
+  color:#fff!important;
+  border:0!important;
+  flex:0 0 auto!important;
+}
+.topbar-brand{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  color:#fff;
+  font-size:21px;
+  font-weight:800;
+  white-space:nowrap;
+  letter-spacing:.1px;
+}
+.topbar-brand-icon{font-size:20px;line-height:1}
+.search-container{
+  margin-left:auto!important;
+  max-width:300px!important;
+}
+.search-container input{
+  height:40px!important;
+  border-radius:22px!important;
+  border:1px solid rgba(255,255,255,.28)!important;
+  background:rgba(255,255,255,.12)!important;
+  color:#fff!important;
+  padding-left:40px!important;
+}
+.search-container input::placeholder{color:#e4ecfb!important}
+.search-container i{color:#c9d7ef!important}
+.topbar-actions{gap:10px!important}
+.topbar-actions .icon-btn{
+  width:auto!important;
+  min-width:44px!important;
+  height:40px!important;
+  padding:0 14px!important;
+  border:0!important;
+  border-radius:8px!important;
+  background:#304b83!important;
+  color:#fff!important;
+}
+.topbar-actions .icon-btn:hover{
+  background:#4162a3!important;
+  color:#fff!important;
+  border:0!important;
+}
+#backupBtn::after{
+  content:" Action Center";
+  font-size:13px;
+  font-weight:800;
+  margin-left:6px;
+}
+#themeToggle::after{
+  content:" Dark Mode";
+  font-size:13px;
+  font-weight:800;
+  margin-left:6px;
+}
+.user-profile{
+  padding-left:8px!important;
+  border-left:0!important;
+}
+.user-profile img{
+  width:36px!important;height:36px!important;border-radius:50%!important;
+}
+.user-name,.user-role{color:#fff!important}
+.user-role{opacity:.72}
+
+/* Content */
+.content{
+  padding:24px 32px 36px!important;
+  background:var(--ref-bg)!important;
+}
+.page-header{
+  margin-bottom:16px!important;
+}
+.page-title{
+  color:var(--ref-navy)!important;
+  font-size:25px!important;
+  font-weight:800!important;
+}
+.card{
+  border:1px solid var(--ref-border)!important;
+  border-radius:10px!important;
+  background:#fff!important;
+  box-shadow:0 3px 14px rgba(30,55,90,.08)!important;
+}
+.card-title{
+  color:var(--ref-navy)!important;
+}
+
+/* KPI cards */
+.kpi-card{
+  border-radius:10px!important;
+  min-height:96px!important;
+  padding:18px 22px!important;
+  box-shadow:0 3px 14px rgba(30,55,90,.07)!important;
+}
+.kpi-info h4{
+  color:#536783!important;
+  font-size:12px!important;
+}
+.kpi-info p{
+  color:var(--ref-navy)!important;
+  font-size:30px!important;
+}
+
+/* Generic toolbars / filters */
+.anori-filter-bar,
+.anori-action-toolbar,
+.anori-universal-toolbar,
+.anori-standard-toolbar{
+  background:#fff!important;
+  border:1px solid var(--ref-border)!important;
+  border-radius:9px!important;
+  box-shadow:0 2px 9px rgba(30,55,90,.05)!important;
+}
+.form-control,
+select,
+input,
+textarea{
+  border-color:#d8e1ec!important;
+}
+.form-control{
+  background:#fff!important;
+  border-radius:7px!important;
+  min-height:36px;
+}
+.btn{
+  border-radius:8px!important;
+  font-weight:800!important;
+  box-shadow:none!important;
+}
+.btn-primary{
+  background:#2f80ed!important;
+}
+.btn-success{
+  background:#10b981!important;
+}
+.btn-danger{
+  background:#ef4444!important;
+}
+
+/* Tables */
+.table-wrapper{
+  border:1px solid var(--ref-border)!important;
+  border-radius:9px!important;
+  background:#fff!important;
+  box-shadow:0 2px 10px rgba(30,55,90,.05)!important;
+}
+table th{
+  background:#24438c!important;
+  color:#fff!important;
+  font-size:11px!important;
+  padding:10px 12px!important;
+}
+table td{
+  padding:11px 12px!important;
+  color:#17345f!important;
+  font-size:13px!important;
+}
+table tbody tr:nth-child(even) td{
+  background:#f5f8fc!important;
+}
+table tbody tr:hover td{
+  background:#eaf2ff!important;
+}
+
+/* Status/select controls */
+.status-badge,
+.badge{
+  border-radius:999px!important;
+}
+
+/* Mobile/tablet */
+@media(max-width:1050px){
+  .sidebar{width:280px!important}
+  .main-wrapper{
+    margin-left:0!important;
+    width:100%!important;
+    max-width:100%!important;
+  }
+  .topbar-brand{font-size:18px}
+}
+@media(max-width:760px){
+  .topbar{height:auto!important;min-height:68px!important;padding:10px!important}
+  .topbar-brand{font-size:16px}
+  .topbar-brand-icon{display:none}
+  #backupBtn::after,#themeToggle::after{display:none}
+  .content{padding:14px!important}
+}
+
+.anori-action-bar{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.anori-backup-panel .anori-help{display:block;margin-top:10px}.anori-folder-path{word-break:break-all}
+
+
+/* ===== BEGIN ui-modern.css ===== */
+/* ANORI TRANSPORT — Modern UI layer
+   Visual-only redesign. Functional selectors/IDs remain untouched. */
+:root{
+  --ui-navy:#0f1f3d;
+  --ui-blue:#2563eb;
+  --ui-indigo:#4f46e5;
+  --ui-cyan:#0891b2;
+  --ui-green:#10b981;
+  --ui-amber:#f59e0b;
+  --ui-red:#ef4444;
+  --ui-surface:#ffffff;
+  --ui-soft:#f6f8fc;
+  --ui-line:#dbe3ef;
+  --ui-text:#12213b;
+  --ui-muted:#64748b;
+  --ui-shadow:0 12px 30px rgba(15,31,61,.08);
+}
+html,body{background:#f3f6fb!important;color:var(--ui-text);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+body{letter-spacing:.01em}
+.sidebar{width:248px!important;background:linear-gradient(180deg,#0b1833 0%,#102a55 58%,#0f274b 100%)!important;box-shadow:8px 0 28px rgba(15,31,61,.10);border-right:0!important}
+.sidebar-header{padding:22px 20px!important;border-bottom:1px solid rgba(255,255,255,.10)!important}
+.logo-icon{width:44px;height:44px;border-radius:13px!important;background:linear-gradient(135deg,#2563eb,#7c3aed)!important;box-shadow:0 10px 24px rgba(37,99,235,.30)!important}
+.logo-text h1{font-size:17px!important;letter-spacing:.04em}
+.logo-text span{color:#a8b8d3!important}
+.nav-menu{padding:18px 12px!important}
+.nav-item{padding:12px 14px!important;border-radius:12px!important;margin:5px 0!important;color:#b9c7dd!important;font-weight:600!important}
+.nav-item:hover{background:rgba(255,255,255,.08)!important;color:#fff!important;transform:translateX(3px)!important}
+.nav-item.active{background:linear-gradient(90deg,#2563eb,#4f46e5)!important;color:#fff!important;box-shadow:0 8px 18px rgba(37,99,235,.24)!important;border-left:0!important}
+.nav-item i{width:22px!important;margin-right:11px!important}
+.sidebar-footer{padding:16px!important;color:#90a4c4!important;border-top:1px solid rgba(255,255,255,.10)!important}
+.main-wrapper{margin-left:248px!important}
+.topbar{height:70px;padding:12px 26px!important;background:rgba(255,255,255,.94)!important;border-bottom:1px solid var(--ui-line)!important;box-shadow:0 5px 18px rgba(15,31,61,.05)!important;backdrop-filter:blur(12px)}
+.search-container{max-width:520px!important}
+.search-container input{height:42px!important;border-radius:12px!important;background:#f7f9fc!important;border-color:#d9e2ee!important}
+.topbar-actions{gap:10px!important}
+.user-profile{border-left:0!important;padding-left:8px!important}
+.user-profile img{border-radius:12px!important}
+.content{padding:26px!important;max-width:1700px;margin:0 auto;width:100%;box-sizing:border-box}
+.page-header{margin-bottom:18px!important}
+.page-title{font-size:26px!important;letter-spacing:-.03em!important}
+.card{border-radius:16px!important;border:1px solid var(--ui-line)!important;box-shadow:var(--ui-shadow)!important;background:var(--ui-surface)!important;padding:20px!important;margin-bottom:18px!important}
+.card:hover{transform:translateY(-1px);box-shadow:0 16px 34px rgba(15,31,61,.10)!important}
+.card-title{font-size:17px!important}
+.btn{border-radius:11px!important;min-height:40px;font-weight:700!important;box-shadow:none!important;transition:.18s ease!important}
+.btn:hover{transform:translateY(-1px);filter:brightness(.98)}
+.btn-primary{background:linear-gradient(135deg,#4f46e5,#7c3aed)!important;border-color:transparent!important}
+.btn-success{background:linear-gradient(135deg,#059669,#10b981)!important;border-color:transparent!important}
+.btn-danger{background:linear-gradient(135deg,#ef4444,#dc2626)!important;border-color:transparent!important}
+.btn-outline{background:#fff!important;border:1px solid #cfd9e7!important;color:#1e293b!important}
+.form-control,select.form-control,input.form-control,textarea.form-control{border:1px solid #d5deea!important;border-radius:11px!important;background:#fff!important;color:#16243c!important;min-height:42px;box-sizing:border-box}
+.form-control:focus{background:#fff4f4!important;border-color:#f87171!important;box-shadow:0 0 0 3px rgba(248,113,113,.16)!important;outline:none!important}
+label{font-weight:700;color:#30435f}
+.table-wrapper{border:1px solid var(--ui-line);border-radius:14px;overflow:auto;background:#fff}
+table{border-collapse:separate!important;border-spacing:0!important;width:100%!important}
+thead th{background:#eef4ff!important;color:#1e477f!important;font-size:12px!important;text-transform:uppercase;letter-spacing:.06em;border-bottom:1px solid #d5e0ee!important;position:sticky;top:0;z-index:2}
+tbody td{border-bottom:1px solid #edf1f6!important;color:#20314d}
+tbody tr:hover td{background:#f8fbff!important}
+tbody tr:last-child td{border-bottom:0!important}
+.kpi-card{border-radius:15px!important;box-shadow:0 8px 22px rgba(15,31,61,.06)!important}
+.anori-section-intro{border-radius:16px!important;border:1px solid #d8e4f4!important;background:linear-gradient(135deg,#f4f8ff,#fff)!important;box-shadow:0 8px 20px rgba(37,99,235,.06)!important;padding:16px 18px!important;margin-bottom:14px!important}
+.anori-action-toolbar{border:1px solid #dbe4f0!important;background:#fbfcff!important;border-radius:13px!important;padding:9px 12px!important;box-shadow:0 5px 14px rgba(15,31,61,.04)!important}
+.anori-filter-bar{border-radius:14px!important;border:1px solid #cfe4ef!important;background:linear-gradient(135deg,#f8fcff,#f2fbf8)!important;padding:13px!important}
+.anori-filter-bar label{font-size:12px!important;text-transform:uppercase;letter-spacing:.04em}
+.anori-filter-bar .form-control{margin-top:5px}
+.status-badge,.settlement-badge,.anori-badge{border-radius:999px!important;font-weight:800!important}
+.modal-backdrop{background:rgba(7,18,38,.68)!important;backdrop-filter:blur(4px)}
+.modal{border-radius:18px!important;box-shadow:0 24px 70px rgba(0,0,0,.25)!important;border:1px solid #dce4ef!important;overflow:hidden}
+.modal-header{background:#fff!important;border-bottom:1px solid #e5ebf3!important;padding:18px 22px!important}
+.modal-footer{background:#f8fafc!important;border-top:1px solid #e5ebf3!important;padding:14px 20px!important}
+.preview-body{background:#e7edf6!important}
+#previewContent{background:#e7edf6!important}
+/* Invoice preview: use available width while retaining scroll */
+#previewContent > *{box-sizing:border-box}
+.loader-backdrop{background:rgba(8,20,40,.55)!important;backdrop-filter:blur(3px)}
+@media (max-width:1050px){.sidebar{transform:translateX(-100%)}.main-wrapper{margin-left:0!important}.content{padding:18px!important}.topbar{padding:10px 16px!important}}
+@media (max-width:720px){.content{padding:12px!important}.card{padding:14px!important}.topbar{height:auto;min-height:62px}.search-container{display:none}.page-title{font-size:22px!important}.anori-filter-bar{overflow:auto}.anori-action-toolbar{overflow:auto;white-space:nowrap}}
+
+/* ANORI TRANSPORT — final viewport/layout stability fix */
+html,body{width:100%;max-width:100%;overflow-x:hidden!important}
+*,*::before,*::after{box-sizing:border-box}
+.main-wrapper{width:calc(100% - 248px)!important;max-width:calc(100% - 248px)!important;min-width:0!important;margin-left:248px!important;overflow-x:hidden!important}
+.topbar{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important}
+.topbar-left,.topbar-actions{min-width:0!important;max-width:100%!important}
+.topbar-left{flex:1 1 auto!important}
+.topbar-actions{flex:0 0 auto!important}
+.search-container{min-width:0!important;max-width:520px!important;width:min(520px,100%)!important}
+.search-container input{width:100%!important;min-width:0!important}
+.content{width:100%!important;max-width:none!important;min-width:0!important;margin:0!important;overflow-x:hidden!important}
+.content>.card,.content>.anori-section-intro{max-width:100%!important;min-width:0!important}
+.anori-action-toolbar,.anori-universal-toolbar,.anori-standard-toolbar{max-width:100%!important;min-width:0!important}
+.anori-filter-bar{width:100%!important;max-width:100%!important;min-width:0!important;box-sizing:border-box!important;overflow:visible!important}
+.anori-filter-bar label{flex:0 1 180px;min-width:150px;max-width:100%}
+.anori-filter-bar .form-control{width:100%;min-width:0!important;max-width:100%!important}
+.anori-manual-search-inline{flex:1 1 100%;width:100%;min-width:0!important;max-width:100%!important;box-sizing:border-box!important;display:flex!important;align-items:flex-end!important;gap:10px!important;flex-wrap:wrap!important;margin:8px 0 0!important;padding:0!important;border:0!important;background:transparent!important}
+.anori-manual-search-inline-title{flex:0 0 auto;align-self:center;white-space:nowrap}
+.anori-manual-search-inline label{flex:0 1 180px;min-width:150px;max-width:100%}
+.anori-manual-search-inline .anori-manual-search-query{flex:1 1 260px;min-width:200px}
+.anori-manual-search-inline .form-control{width:100%;min-width:0!important}
+.anori-manual-search-inline .btn{flex:0 0 auto;white-space:nowrap}
+.anori-trip-search-filter-row{display:flex!important;align-items:flex-end!important;flex-wrap:wrap!important}
+.anori-trip-search-filter-row .anori-trip-search-input{flex:1 1 320px;min-width:220px}
+.table-wrapper{max-width:100%!important;min-width:0!important}
+
+@media (max-width:1200px){
+  .topbar{padding-left:16px!important;padding-right:16px!important}
+  .search-container{max-width:380px!important}
+  .anori-filter-bar label{flex:1 1 150px}
+  .anori-manual-search-inline .anori-manual-search-query{flex:1 1 220px}
+}
+@media (max-width:1050px){
+  .main-wrapper{width:100%!important;max-width:100%!important;margin-left:0!important}
+  .topbar{width:100%!important}
+}
+@media (max-width:760px){
+  .topbar-actions .user-info{display:none}
+  .anori-filter-bar{align-items:stretch!important}
+  .anori-filter-bar label,.anori-trip-search-filter-row .anori-trip-search-input,.anori-manual-search-inline label{flex:1 1 100%;width:100%;min-width:0!important}
+  .anori-manual-search-inline{align-items:stretch!important}
+  .anori-manual-search-inline-title{flex:1 1 100%;}
+  .anori-manual-search-inline .btn{flex:1 1 140px}
+}
+
+/* Invoice selection checkbox column: checkbox retained, heading text intentionally blank. */
+.anori-invoice-table th.anori-select-col,
+.anori-invoice-table td.anori-select-col{width:42px;min-width:42px;text-align:center;padding-left:8px;padding-right:8px}
+.anori-invoice-table .invoice-row-check{width:16px;height:16px;accent-color:#2563eb;cursor:pointer}
+
+/* Trip Preview - modern transport summary */
+.tp-preview-popup{border-radius:22px!important;overflow:hidden!important;box-shadow:0 24px 70px rgba(15,23,42,.24)!important;max-width:calc(100vw - 32px)!important}
+.tp-preview{font-family:inherit;text-align:left;color:#0f172a;background:#fff}
+.tp-preview-head{display:flex;align-items:center;gap:14px;padding:22px 24px;background:linear-gradient(135deg,#0f2d63,#1f4fb4);color:#fff}
+.tp-head-icon{width:48px;height:48px;border-radius:14px;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center;font-size:21px;flex:0 0 48px}
+.tp-head-main{min-width:0;flex:1}.tp-eyebrow{font-size:10px;letter-spacing:1.3px;font-weight:800;opacity:.78;margin-bottom:2px}.tp-trip-no{font-size:25px;font-weight:800;line-height:1.15;word-break:break-word}.tp-head-route{font-size:12px;opacity:.9;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tp-head-route span{margin:0 5px;opacity:.7}
+.tp-status{font-size:10px;font-weight:800;padding:8px 11px;border-radius:999px;white-space:nowrap}.tp-status-blue{background:#dbeafe;color:#1d4ed8}.tp-status-green{background:#dcfce7;color:#15803d}.tp-status-amber{background:#fef3c7;color:#b45309}
+.tp-info-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:16px 20px 8px}.tp-info-card{display:flex;align-items:center;gap:10px;padding:12px;border:1px solid #e2e8f0;border-radius:14px;background:#f8fafc;min-width:0}.tp-info-icon{width:34px;height:34px;border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;flex:0 0 34px;font-size:14px}.tp-blue{background:#2563eb}.tp-purple{background:#7c3aed}.tp-green{background:#10b981}.tp-orange{background:#f59e0b}.tp-label{font-size:9px;font-weight:800;letter-spacing:.65px;color:#64748b}.tp-value{font-size:12px;font-weight:700;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:135px}
+.tp-finance-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:8px 20px 16px}.tp-finance-card{display:flex;align-items:center;gap:11px;padding:14px;border-radius:15px;border:1px solid #e2e8f0}.tp-freight{background:#eff6ff;border-color:#bfdbfe}.tp-advance{background:#f5f3ff;border-color:#ddd6fe}.tp-profit{background:#ecfdf5;border-color:#bbf7d0}.tp-loss{background:#fef2f2;border-color:#fecaca}.tp-finance-icon{width:36px;height:36px;border-radius:11px;display:flex;align-items:center;justify-content:center;background:#fff;box-shadow:0 3px 10px rgba(15,23,42,.08);color:#2563eb}.tp-advance .tp-finance-icon{color:#7c3aed}.tp-profit .tp-finance-icon{color:#059669}.tp-loss .tp-finance-icon{color:#dc2626}.tp-finance-value{font-size:18px;font-weight:800;margin-top:2px}
+.tp-expense-card{margin:0 20px 14px;border:1px solid #fecaca;border-radius:15px;overflow:hidden;background:#fff}.tp-section-title{display:flex;justify-content:space-between;align-items:center;padding:12px 15px;background:#fff7f7;color:#b91c1c;font-size:12px;font-weight:800}.tp-section-title strong{font-size:13px}.tp-expense-list{padding:4px 15px}.tp-expense-row{display:flex;justify-content:space-between;align-items:center;padding:9px 2px;border-bottom:1px solid #f1f5f9;font-size:12px}.tp-expense-row:last-child{border-bottom:0}.tp-expense-name{display:flex;align-items:center;gap:8px;font-weight:600}.tp-expense-dot{width:7px;height:7px;border-radius:50%;background:#ef4444}.tp-expense-amount{font-weight:700;color:#dc2626}.tp-empty-expense{padding:11px 2px;color:#94a3b8;font-size:11px;font-weight:700}.tp-notes{margin:0 20px 14px;padding:12px 14px;border-radius:14px;background:#f8fafc;border:1px solid #e2e8f0}.tp-notes-title{font-size:10px;font-weight:800;color:#475569;margin-bottom:5px}.tp-notes-text{font-size:12px;color:#334155;line-height:1.5}.tp-route-strip{margin:0 20px 20px;padding:12px 14px;border-radius:14px;background:#f1f5f9;display:flex;align-items:center;gap:15px}.tp-route-strip>div{flex:1;min-width:0}.tp-route-strip span{display:block;font-size:9px;font-weight:800;color:#64748b;margin-bottom:2px}.tp-route-strip strong{display:block;font-size:12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.tp-route-strip>i{color:#2563eb}.tp-route-to{text-align:right}.tp-close-btn{border:0!important;border-radius:10px!important;background:#2563eb!important;color:#fff!important;padding:11px 24px!important;font-weight:800!important;font-size:12px!important;margin:0 0 18px!important;box-shadow:0 8px 18px rgba(37,99,235,.2)!important}
+@media(max-width:700px){.tp-info-grid{grid-template-columns:repeat(2,1fr)}.tp-finance-grid{grid-template-columns:1fr}.tp-preview-head{padding:18px}.tp-trip-no{font-size:20px}.tp-status{display:none}.tp-head-route{white-space:normal}.tp-preview-popup{width:calc(100vw - 20px)!important}.tp-info-card{padding:10px}.tp-value{max-width:180px}}
+
+.tp-invoice-no{display:inline-flex;align-items:center;gap:6px;margin:5px 0 7px;font-size:11px;font-weight:700;letter-spacing:.35px;color:#ffffff !important}.tp-invoice-no i{color:#ffffff !important}.tp-invoice-no strong{color:#ffffff !important}
+
+/* FINAL TRIP PREVIEW INVOICE NUMBER VISIBILITY */
+.trip-preview .tp-invoice-no,
+.trip-preview .tp-invoice-no i,
+.trip-preview .tp-invoice-no strong,
+.tp-invoice-no,
+.tp-invoice-no i,
+.tp-invoice-no strong {
+  color: #ffffff !important;
+}
+
+/* Reports table: selection checkbox + serial number column */
+#reportHost table th:first-child,
+#reportHost table td:first-child { width: 42px; text-align: center; }
+#reportHost table th:nth-child(2),
+#reportHost table td:nth-child(2) { width: 70px; text-align: center; }
+#reportHost table th:first-child input,
+#reportHost table td:first-child input { cursor: pointer; }
+
+/* Expenses tab */
+.anori-expense-filter-bar{align-items:flex-end;gap:10px;}
+.anori-expense-filter-bar label{min-width:135px;flex:1;}
+.anori-expense-filter-bar .expense-search-field{min-width:220px;flex:1.6;}
+.expense-summary{grid-template-columns:repeat(3,minmax(160px,1fr));margin:14px 0;}
+.expense-summary>div:first-child{border-left:4px solid #ef4444;}
+.expense-summary>div:nth-child(2){border-left:4px solid #3b82f6;}
+.expense-summary>div:nth-child(3){border-left:4px solid #10b981;}
+.expense-type-badge{display:inline-block;padding:4px 9px;border-radius:999px;background:#fff1f2;color:#b91c1c;font-weight:700;font-size:12px;}
+@media(max-width:1100px){.anori-expense-filter-bar{flex-wrap:wrap}.anori-expense-filter-bar label{min-width:180px}.expense-summary{grid-template-columns:1fr 1fr 1fr;}}
+@media(max-width:760px){.expense-summary{grid-template-columns:1fr}.anori-expense-filter-bar label,.anori-expense-filter-bar .expense-search-field{min-width:100%;}}
+
+/* ANORI TRANSPORT — Reports filter/search overflow fix
+   Keep the combined filter + search controls inside the card at all desktop widths. */
+#view-reports .anori-filter-bar:has(.anori-manual-search-inline){
+  display:flex!important;
+  align-items:flex-end!important;
+  flex-wrap:wrap!important;
+  gap:10px!important;
+  width:100%!important;
+  max-width:100%!important;
+  overflow:visible!important;
+}
+#view-reports .anori-filter-bar:has(.anori-manual-search-inline)>label{
+  flex:1 1 150px!important;
+  min-width:130px!important;
+  max-width:220px!important;
+}
+#view-reports .anori-filter-bar:has(.anori-manual-search-inline)>button{
+  flex:0 0 auto!important;
+  max-width:100%!important;
+}
+#view-reports .anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>.anori-manual-search-inline-title{
+  flex:0 0 auto!important;
+  min-width:100px!important;
+  max-width:130px!important;
+  overflow:hidden!important;
+  white-space:nowrap!important;
+}
+#view-reports .anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>label{
+  flex:1 1 145px!important;
+  min-width:130px!important;
+  max-width:210px!important;
+}
+#view-reports .anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>.anori-manual-search-query{
+  flex:1 1 220px!important;
+  min-width:180px!important;
+  max-width:none!important;
+}
+#view-reports .anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>.btn,
+#view-reports .anori-filter-bar:has(.anori-manual-search-inline)>button{
+  flex:0 1 auto!important;
+  min-width:78px!important;
+  white-space:nowrap!important;
+}
+@media(max-width:1250px){
+  #view-reports .anori-filter-bar:has(.anori-manual-search-inline)>label,
+  #view-reports .anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>label{
+    flex:1 1 145px!important;
+  }
+  #view-reports .anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>.anori-manual-search-query{
+    flex:1 1 240px!important;
+  }
+}
+@media(max-width:760px){
+  #view-reports .anori-filter-bar:has(.anori-manual-search-inline){display:grid!important;grid-template-columns:1fr!important;align-items:stretch!important;}
+  #view-reports .anori-filter-bar:has(.anori-manual-search-inline)>label,
+  #view-reports .anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>label,
+  #view-reports .anori-filter-bar:has(.anori-manual-search-inline)>.anori-manual-search-inline>.btn,
+  #view-reports .anori-filter-bar:has(.anori-manual-search-inline)>button{width:100%!important;max-width:none!important;}
+}
+
+/* =========================================================
+   ANORI TRANSPORT — FINAL COLOR CONSISTENCY PATCH
+   Visual-only correction: restrained transport/navy + blue theme.
+   Existing HTML/JS structure and behavior are untouched.
+   ========================================================= */
+:root{
+  --primary:#2563eb;
+  --primary-hover:#1d4ed8;
+  --primary-light:rgba(37,99,235,.10);
+  --secondary:#0f4c81;
+  --success:#16a34a;
+  --danger:#dc2626;
+  --warning:#d97706;
+  --info:#0284c7;
+  --bg-body:#f5f7fb;
+  --bg-card:#ffffff;
+  --text-main:#172033;
+  --text-muted:#64748b;
+  --border:#dbe2ea;
+}
+
+html,body{background:#f5f7fb!important;color:#172033!important}
+
+/* Sidebar */
+.sidebar{
+  width:260px!important;
+  background:#102a43!important;
+  border-right:1px solid #0b2034!important;
+  box-shadow:4px 0 18px rgba(15,42,67,.10)!important;
+}
+.sidebar-header{
+  min-height:78px!important;
+  padding:17px 18px!important;
+  background:#0d2438!important;
+  border-bottom:1px solid rgba(255,255,255,.08)!important;
+}
+.sidebar-header .logo-icon{
+  width:42px!important;height:42px!important;border-radius:11px!important;
+  background:#2563eb!important;color:#fff!important;
+  box-shadow:0 6px 16px rgba(37,99,235,.28)!important;
+}
+.logo-text h1{font-size:17px!important;letter-spacing:.02em!important;color:#fff!important}
+.logo-text span{color:#9fb3c8!important}
+.nav-menu{padding:14px 10px!important}
+.nav-item{
+  min-height:44px!important;
+  padding:11px 13px!important;
+  margin:3px 0!important;
+  border-radius:9px!important;
+  color:#c9d6e4!important;
+  font-size:13px!important;
+  font-weight:650!important;
+  text-transform:none!important;
+  letter-spacing:0!important;
+}
+.nav-item i{color:#9fb3c8!important;width:21px!important;margin-right:10px!important}
+.nav-item::after{display:none!important}
+.nav-item:hover{background:rgba(255,255,255,.07)!important;color:#fff!important;transform:none!important}
+.nav-item:hover i{color:#fff!important}
+.nav-item.active{
+  background:#2563eb!important;
+  color:#fff!important;
+  border-left:0!important;
+  box-shadow:0 6px 14px rgba(37,99,235,.22)!important;
+}
+.nav-item.active i{color:#fff!important}
+.sidebar-footer{background:#0d2438!important;color:#8fa6bd!important}
+
+/* Topbar */
+.main-wrapper{
+  margin-left:260px!important;
+  width:calc(100% - 260px)!important;
+  max-width:calc(100% - 260px)!important;
+  background:#f5f7fb!important;
+}
+.topbar{
+  height:68px!important;
+  min-height:68px!important;
+  padding:10px 22px!important;
+  background:#fff!important;
+  color:#172033!important;
+  border-bottom:1px solid #dbe2ea!important;
+  box-shadow:0 2px 10px rgba(15,23,42,.05)!important;
+}
+.menu-toggle{
+  width:40px!important;height:40px!important;
+  border-radius:9px!important;
+  background:#eef4ff!important;color:#2563eb!important;
+  border:1px solid #d7e3f5!important;
+}
+.menu-toggle:hover{background:#e2edff!important;color:#1d4ed8!important}
+.topbar-brand{color:#17345f!important;font-size:18px!important;font-weight:800!important}
+.topbar-brand-icon{font-size:18px!important}
+.search-container{max-width:420px!important}
+.search-container input{
+  height:40px!important;
+  border-radius:10px!important;
+  border:1px solid #d8e1ec!important;
+  background:#f8fafc!important;
+  color:#172033!important;
+}
+.search-container input::placeholder{color:#94a3b8!important}
+.search-container i{color:#64748b!important}
+.search-container input:focus{
+  border-color:#60a5fa!important;
+  box-shadow:0 0 0 3px rgba(37,99,235,.10)!important;
+  background:#fff!important;
+}
+.topbar-actions .icon-btn{
+  min-width:40px!important;width:40px!important;height:40px!important;
+  padding:0!important;border:1px solid #d8e1ec!important;
+  border-radius:9px!important;background:#fff!important;color:#475569!important;
+}
+.topbar-actions .icon-btn:hover{background:#eef4ff!important;color:#2563eb!important;border-color:#bfdbfe!important}
+#backupBtn::after,#themeToggle::after{display:none!important}
+.user-name{color:#172033!important}
+.user-role{color:#64748b!important;opacity:1!important}
+
+/* Content / cards */
+.content{padding:24px 28px 34px!important;background:#f5f7fb!important}
+.page-title{color:#17345f!important}
+.card{
+  background:#fff!important;
+  border:1px solid #dbe2ea!important;
+  border-radius:12px!important;
+  box-shadow:0 3px 12px rgba(15,42,67,.055)!important;
+}
+.card:hover{transform:none!important;box-shadow:0 5px 16px rgba(15,42,67,.07)!important}
+.card-title{color:#17345f!important}
+.card-title i{color:#2563eb!important}
+
+/* KPI */
+.kpi-card{box-shadow:0 3px 12px rgba(15,42,67,.055)!important}
+.kpi-info h4{color:#64748b!important}
+.kpi-info p{color:#17345f!important}
+
+/* Buttons */
+.btn{border-radius:9px!important;font-weight:700!important}
+.btn-primary{background:#2563eb!important;color:#fff!important;box-shadow:0 4px 10px rgba(37,99,235,.18)!important}
+.btn-primary:hover{background:#1d4ed8!important;box-shadow:0 6px 14px rgba(37,99,235,.22)!important}
+.btn-success{background:#16a34a!important;color:#fff!important}
+.btn-danger{background:#dc2626!important;color:#fff!important}
+.btn-outline{background:#fff!important;color:#334155!important;border:1px solid #cbd5e1!important}
+.btn-outline:hover{background:#f8fafc!important;border-color:#94a3b8!important;color:#17345f!important}
+
+/* Forms — consistent blue focus, no accidental red focus */
+.form-control,select,input,textarea{
+  background:#fff!important;
+  color:#172033!important;
+  border:1px solid #d5dee9!important;
+  border-radius:9px!important;
+}
+.form-control:focus,select:focus,input:focus,textarea:focus{
+  background:#fff!important;
+  color:#172033!important;
+  border-color:#60a5fa!important;
+  box-shadow:0 0 0 3px rgba(37,99,235,.11)!important;
+  outline:none!important;
+}
+label{color:#334155!important}
+
+/* Filters / toolbars */
+.anori-filter-bar,.anori-action-toolbar,.anori-universal-toolbar,.anori-standard-toolbar{
+  background:#fff!important;
+  border:1px solid #dbe2ea!important;
+  box-shadow:0 2px 8px rgba(15,42,67,.045)!important;
+}
+.anori-filter-bar{background:#fff!important}
+
+/* Tables — remove inconsistent green striping */
+.table-wrapper{background:#fff!important;border:1px solid #dbe2ea!important}
+table th,thead th{background:#173f6f!important;color:#fff!important;border-bottom:1px solid #15365e!important}
+table td,tbody td{color:#26384f!important;border-bottom:1px solid #edf1f5!important;background:#fff!important}
+table tbody tr:nth-child(even) td{background:#f8fafc!important}
+table tbody tr:hover td,tbody tr:hover td{background:#eef5ff!important}
+.anori-standard-table tbody td{background:#fff!important;color:#26384f!important}
+.anori-standard-table tbody tr:nth-child(even) td{background:#f8fafc!important}
+.anori-standard-table tbody tr:hover td{background:#eef5ff!important}
+.anori-trip-table tbody tr,.anori-trip-table tbody tr.anori-trip-alt-row{background:#fff!important}
+.anori-trip-table tbody tr:nth-child(even){background:#f8fafc!important}
+.anori-trip-table tbody tr:hover td{background:#eef5ff!important}
+
+/* Badges / status */
+.status-badge,.settlement-badge,.anori-badge,.badge{border-radius:999px!important}
+
+/* Modal / preview */
+.modal-backdrop{background:rgba(15,23,42,.62)!important}
+.modal{border:1px solid #dbe2ea!important;border-radius:14px!important}
+.modal-header{background:#fff!important;border-bottom:1px solid #e5eaf0!important}
+.modal-footer{background:#f8fafc!important;border-top:1px solid #e5eaf0!important}
+.preview-body,#previewContent{background:#eef2f7!important}
+
+/* Preserve dark-mode readability without allowing light-theme overrides to leak */
+[data-theme="dark"] html,[data-theme="dark"] body{background:#0f172a!important;color:#e2e8f0!important}
+[data-theme="dark"] .main-wrapper,[data-theme="dark"] .content{background:#0f172a!important}
+[data-theme="dark"] .topbar{background:#111c2e!important;color:#e2e8f0!important;border-bottom-color:#26354a!important}
+[data-theme="dark"] .topbar-brand{color:#e2e8f0!important}
+[data-theme="dark"] .search-container input{background:#172235!important;color:#e2e8f0!important;border-color:#334155!important}
+[data-theme="dark"] .topbar-actions .icon-btn{background:#172235!important;color:#cbd5e1!important;border-color:#334155!important}
+[data-theme="dark"] .user-name{color:#e2e8f0!important}
+[data-theme="dark"] .user-role{color:#94a3b8!important}
+[data-theme="dark"] .card,[data-theme="dark"] .table-wrapper,[data-theme="dark"] .anori-filter-bar,[data-theme="dark"] .anori-action-toolbar,[data-theme="dark"] .anori-universal-toolbar,[data-theme="dark"] .anori-standard-toolbar{background:#162235!important;border-color:#2c3d53!important;color:#e2e8f0!important}
+[data-theme="dark"] .card-title,[data-theme="dark"] .page-title{color:#e2e8f0!important}
+[data-theme="dark"] .form-control,[data-theme="dark"] select,[data-theme="dark"] input,[data-theme="dark"] textarea{background:#111c2e!important;color:#e2e8f0!important;border-color:#334155!important}
+[data-theme="dark"] table td,[data-theme="dark"] tbody td{background:#162235!important;color:#dbe5f0!important;border-bottom-color:#26354a!important}
+[data-theme="dark"] table tbody tr:nth-child(even) td{background:#132033!important}
+[data-theme="dark"] table tbody tr:hover td{background:#1d3554!important}
+[data-theme="dark"] .modal{background:#162235!important;border-color:#334155!important}
+[data-theme="dark"] .modal-header{background:#162235!important;border-color:#334155!important}
+[data-theme="dark"] .modal-footer{background:#111c2e!important;border-color:#334155!important}
+
+@media(max-width:1050px){
+  .sidebar{width:260px!important}
+  .main-wrapper{width:100%!important;max-width:100%!important;margin-left:0!important}
+}
+
+/* =========================================================
+   ANORI TRANSPORT — DEEP UI VISIBILITY / TAB CONSISTENCY PASS
+   Scope: presentation only. No business logic or data behavior.
+   ========================================================= */
+
+/* Global readable type system */
+#mainContent .view,
+#mainContent .view *{box-sizing:border-box}
+#mainContent .view{color:#172033;font-size:13px;line-height:1.45}
+#mainContent .view h1,#mainContent .view h2,#mainContent .view h3,#mainContent .view h4{color:#17345f;line-height:1.25}
+#mainContent .view h3{font-size:16px}
+#mainContent .view h4{font-size:13px}
+#mainContent .view p{color:#475569}
+#mainContent .view strong{color:#1e3552}
+#mainContent .view small{color:#64748b}
+#mainContent .view a{color:#1d4ed8}
+#mainContent .view ::selection{background:#bfdbfe;color:#0f2f55}
+
+/* Page-level whitespace and hierarchy */
+#mainContent .view > div{min-width:0}
+#mainContent .view .page-header{align-items:flex-start}
+#mainContent .view .page-title{font-size:24px;font-weight:800;letter-spacing:-.2px;margin:0}
+#mainContent .view .card{overflow:hidden}
+#mainContent .view .card-title{font-size:16px;font-weight:800;margin-bottom:16px}
+
+/* Labels and helper text: never use pale grey for primary labels */
+#mainContent .view label,
+#mainContent .view .form-label{color:#334155!important;font-size:12px;font-weight:700}
+#mainContent .view .anori-help,
+#mainContent .view .help-text,
+#mainContent .view .form-help{color:#64748b!important;font-size:11px;line-height:1.45}
+#mainContent .view .muted{color:#64748b!important}
+
+/* Inputs/selects: high contrast and predictable focus */
+#mainContent .view .form-control,
+#mainContent .view select,
+#mainContent .view input:not([type="checkbox"]):not([type="radio"]),
+#mainContent .view textarea{
+  min-height:38px!important;
+  color:#172033!important;
+  background:#fff!important;
+  border:1px solid #cbd5e1!important;
+  font-size:13px!important;
+  font-weight:500;
+}
+#mainContent .view textarea{line-height:1.45}
+#mainContent .view .form-control::placeholder,
+#mainContent .view input::placeholder,
+#mainContent .view textarea::placeholder{color:#94a3b8!important;opacity:1}
+#mainContent .view .form-control:focus,
+#mainContent .view select:focus,
+#mainContent .view input:not([type="checkbox"]):not([type="radio"]):focus,
+#mainContent .view textarea:focus{
+  border-color:#2563eb!important;
+  box-shadow:0 0 0 3px rgba(37,99,235,.12)!important;
+  outline:none!important;
+}
+#mainContent .view input:disabled,
+#mainContent .view select:disabled,
+#mainContent .view textarea:disabled{background:#f1f5f9!important;color:#64748b!important;cursor:not-allowed}
+
+/* Keyboard visibility */
+#mainContent .view button:focus-visible,
+#mainContent .view a:focus-visible,
+#mainContent .view input:focus-visible,
+#mainContent .view select:focus-visible,
+#mainContent .view textarea:focus-visible{
+  outline:3px solid rgba(37,99,235,.22)!important;
+  outline-offset:2px!important;
+}
+
+/* Buttons: text remains readable at every size */
+#mainContent .view .btn{min-height:36px;font-size:12px;line-height:1.2;white-space:nowrap}
+#mainContent .view .btn-sm{min-height:32px;font-size:11px}
+#mainContent .view .btn-primary{background:#2563eb!important;color:#fff!important}
+#mainContent .view .btn-success{background:#15803d!important;color:#fff!important}
+#mainContent .view .btn-danger{background:#dc2626!important;color:#fff!important}
+#mainContent .view .btn-outline{background:#fff!important;color:#1f2937!important;border-color:#cbd5e1!important}
+#mainContent .view .btn-outline:hover{background:#f1f5f9!important;color:#17345f!important;border-color:#94a3b8!important}
+
+/* Toolbar/filter text */
+#mainContent .view .anori-filter-bar,
+#mainContent .view .anori-action-toolbar,
+#mainContent .view .anori-universal-toolbar,
+#mainContent .view .anori-standard-toolbar{
+  color:#334155!important;
+}
+#mainContent .view .anori-filter-bar strong,
+#mainContent .view .anori-action-toolbar strong,
+#mainContent .view .anori-universal-toolbar strong,
+#mainContent .view .anori-standard-toolbar strong{color:#17345f!important}
+
+/* Tables: strongest readable body text, no low-contrast zebra */
+#mainContent .view .table-wrapper{overflow:auto;background:#fff!important}
+#mainContent .view table{color:#26384f!important}
+#mainContent .view table th,
+#mainContent .view table thead th{
+  background:#173f6f!important;
+  color:#fff!important;
+  font-weight:800!important;
+  font-size:11px!important;
+  letter-spacing:.15px;
+  white-space:nowrap;
+}
+#mainContent .view table td,
+#mainContent .view table tbody td{
+  color:#26384f!important;
+  background:#fff!important;
+  font-size:12.5px!important;
+  font-weight:500;
+  vertical-align:middle;
+}
+#mainContent .view table tbody tr:nth-child(even) td{background:#f8fafc!important}
+#mainContent .view table tbody tr:hover td{background:#eef5ff!important}
+#mainContent .view table td strong{color:#17345f!important;font-weight:800}
+
+/* Status/badges: contrast-safe */
+#mainContent .view .status-badge,
+#mainContent .view .settlement-badge,
+#mainContent .view .anori-badge,
+#mainContent .view .badge{font-weight:800!important}
+#mainContent .view .status-pending{background:#fff7ed!important;color:#9a3412!important;border:1px solid #fed7aa!important}
+#mainContent .view .status-shared{background:#eff6ff!important;color:#1d4ed8!important;border:1px solid #bfdbfe!important}
+#mainContent .view .status-paid{background:#f0fdf4!important;color:#166534!important;border:1px solid #bbf7d0!important}
+#mainContent .view .settlement-credit{background:#f0fdf4!important;color:#166534!important;border:1px solid #bbf7d0!important}
+#mainContent .view .settlement-debit{background:#fef2f2!important;color:#991b1b!important;border:1px solid #fecaca!important}
+
+/* Dashboard */
+#view-dashboard .kpi-info h4{color:#64748b!important;font-weight:800!important;letter-spacing:.25px}
+#view-dashboard .kpi-info p{color:#17345f!important;font-weight:850!important}
+#view-dashboard .card-title{margin-bottom:12px}
+#view-dashboard canvas{max-width:100%}
+
+/* Trip Management */
+#view-trips .anori-section-intro,
+#view-trips .anori-universal-toolbar{color:#334155!important}
+#view-trips .anori-trip-table td{white-space:nowrap}
+#view-trips .anori-trip-table td:nth-child(7){white-space:normal;min-width:180px}
+#view-trips .trip-form-layout label{color:#334155!important}
+#view-trips .trip-form-section-title{color:#17345f!important}
+
+/* Invoices & Billing */
+#view-invoices .anori-invoice-search-title{color:#173f6f!important;font-weight:800!important}
+#view-invoices .anori-invoice-table td{font-size:12.5px!important}
+#view-invoices .anori-invoice-row.anori-row-selected td{background:#effcf4!important;color:#1f5132!important}
+#view-invoices .anori-invoice-row.anori-row-selected td strong{color:#166534!important}
+
+/* Reports */
+#view-reports .anori-filter-bar label{color:#334155!important}
+#view-reports .anori-section-intro,
+#view-reports .card-title{color:#17345f!important}
+
+/* Driver Settlement */
+#view-settlements .ledger-card,
+#view-settlements .card{color:#26384f!important}
+#view-settlements table td{font-variant-numeric:tabular-nums}
+
+/* Expenses */
+#view-expenses .expense-search-field{color:#334155!important;font-weight:700!important}
+#view-expenses .expense-summary strong{color:#17345f!important}
+#view-expenses .expense-type-badge{background:#fff7ed!important;color:#9a3412!important;border:1px solid #fed7aa!important}
+
+/* Master Data */
+#view-masters .card-title{color:#17345f!important}
+#view-masters table td{font-size:12.5px!important}
+
+/* Settings */
+#view-settings .anori-backup-panel{color:#334155!important}
+#view-settings .anori-backup-status strong,
+#view-settings .anori-backup-panel strong{color:#17345f!important}
+
+/* Empty states: readable but secondary */
+#mainContent .view .empty-state h3{color:#334155!important;font-weight:800!important}
+#mainContent .view .empty-state p{color:#64748b!important}
+#mainContent .view .empty-state i{color:#2563eb!important}
+
+/* Modal forms */
+.modal .modal-header h3{color:#17345f!important;font-weight:800!important}
+.modal .modal-body label{color:#334155!important}
+.modal .modal-body .form-control,
+.modal .modal-body select,
+.modal .modal-body input,
+.modal .modal-body textarea{color:#172033!important;background:#fff!important;border-color:#cbd5e1!important}
+.modal .modal-body .form-control:focus,
+.modal .modal-body select:focus,
+.modal .modal-body input:focus,
+.modal .modal-body textarea:focus{border-color:#2563eb!important;box-shadow:0 0 0 3px rgba(37,99,235,.12)!important}
+
+/* Invoice Preview viewer: neutral stage + crisp document */
+#previewModal .modal-header{background:#fff!important}
+#previewModal .modal-header h3{color:#17345f!important}
+#previewModal .modal-footer{background:#f8fafc!important}
+#previewModal #previewContent,
+#previewModal .anori-invoice-preview-stage{background:#dbe4ef!important}
+#previewModal .anori-invoice-preview-stage > .invoice-page{
+  background:#fff!important;
+  color:#0f172a!important;
+  box-shadow:0 10px 28px rgba(15,23,42,.18)!important;
+}
+
+/* Correct dark-mode root selector: html carries data-theme. */
+html[data-theme="dark"],
+html[data-theme="dark"] body{background:#0f172a!important;color:#e2e8f0!important}
+html[data-theme="dark"] #mainContent .view{color:#dbe5f0!important}
+html[data-theme="dark"] #mainContent .view h1,
+html[data-theme="dark"] #mainContent .view h2,
+html[data-theme="dark"] #mainContent .view h3,
+html[data-theme="dark"] #mainContent .view h4,
+html[data-theme="dark"] #mainContent .view .card-title,
+html[data-theme="dark"] #mainContent .view .page-title{color:#e8eef7!important}
+html[data-theme="dark"] #mainContent .view p,
+html[data-theme="dark"] #mainContent .view small,
+html[data-theme="dark"] #mainContent .view .muted,
+html[data-theme="dark"] #mainContent .view .anori-help{color:#a9b8ca!important}
+html[data-theme="dark"] #mainContent .view label{color:#d4deea!important}
+html[data-theme="dark"] #mainContent .view .card,
+html[data-theme="dark"] #mainContent .view .table-wrapper,
+html[data-theme="dark"] #mainContent .view .anori-filter-bar,
+html[data-theme="dark"] #mainContent .view .anori-action-toolbar,
+html[data-theme="dark"] #mainContent .view .anori-universal-toolbar,
+html[data-theme="dark"] #mainContent .view .anori-standard-toolbar{background:#162235!important;border-color:#2c3d53!important;color:#dbe5f0!important}
+html[data-theme="dark"] #mainContent .view .form-control,
+html[data-theme="dark"] #mainContent .view select,
+html[data-theme="dark"] #mainContent .view input:not([type="checkbox"]):not([type="radio"]),
+html[data-theme="dark"] #mainContent .view textarea{background:#111c2e!important;color:#e8eef7!important;border-color:#3a4b60!important}
+html[data-theme="dark"] #mainContent .view table td,
+html[data-theme="dark"] #mainContent .view table tbody td{background:#162235!important;color:#dbe5f0!important;border-bottom-color:#2c3d53!important}
+html[data-theme="dark"] #mainContent .view table tbody tr:nth-child(even) td{background:#132033!important}
+html[data-theme="dark"] #mainContent .view table tbody tr:hover td{background:#1d3554!important}
+html[data-theme="dark"] #mainContent .view .btn-outline{background:#162235!important;color:#dbe5f0!important;border-color:#475569!important}
+html[data-theme="dark"] #mainContent .view .btn-outline:hover{background:#22324a!important;color:#fff!important}
+
+@media(max-width:760px){
+  #mainContent .view{font-size:12.5px}
+  #mainContent .view .page-title{font-size:20px}
+  #mainContent .view table th,#mainContent .view table td{font-size:11.5px!important}
+  #mainContent .view .btn{min-height:38px}
+  #previewModal .modal.modal-lg{width:98vw!important;height:96vh!important;max-height:96vh!important}
+}
+
+/* =========================================================
+   ANORI TRANSPORT — FINAL UI VISIBILITY + COLOUR SYSTEM
+   This is the last-loaded visual layer. No HTML/JS selectors are renamed.
+   ========================================================= */
+:root{
+  --anori-bg:#e8eef7;
+  --anori-surface:#ffffff;
+  --anori-surface-2:#f4f7fb;
+  --anori-navy:#0b2342;
+  --anori-navy-2:#123c6d;
+  --anori-blue:#2563eb;
+  --anori-cyan:#0891b2;
+  --anori-green:#059669;
+  --anori-purple:#6d28d9;
+  --anori-amber:#d97706;
+  --anori-red:#dc2626;
+  --anori-text:#14253d;
+  --anori-muted:#53677f;
+  --anori-line:#cbd7e6;
+}
+html,body{background:var(--anori-bg)!important;color:var(--anori-text)!important}
+body{font-family:Inter,Segoe UI,Arial,sans-serif!important}
+.sidebar{background:linear-gradient(180deg,#09213b 0%,#0d3154 52%,#0a2038 100%)!important;border-right:1px solid #173b5e!important;box-shadow:8px 0 24px rgba(8,33,59,.16)!important}
+.sidebar-header{background:linear-gradient(135deg,#0a2440,#123e6d)!important}
+.logo-icon{background:linear-gradient(135deg,#2563eb,#0ea5e9)!important;color:#fff!important}
+.nav-item{color:#d7e5f5!important}
+.nav-item:hover{background:rgba(59,130,246,.20)!important;color:#fff!important}
+.nav-item.active{background:linear-gradient(90deg,#2563eb,#1d4ed8)!important;border-left:4px solid #93c5fd!important;color:#fff!important;box-shadow:0 8px 18px rgba(37,99,235,.24)!important}
+.sidebar-footer{background:rgba(2,12,24,.28)!important;color:#a9c0d9!important}
+.main-wrapper{background:var(--anori-bg)!important}
+.topbar{background:linear-gradient(90deg,#0b2342 0%,#123c6d 72%,#0e3158 100%)!important;border-bottom:1px solid #173b5e!important;box-shadow:0 5px 18px rgba(8,33,59,.20)!important;color:#fff!important}
+.topbar-brand,.user-name,.user-role{color:#fff!important}
+.user-role{color:#c8d9ec!important;opacity:1!important}
+.search-container input{background:#fff!important;color:#14253d!important;border:1px solid #9fb5cf!important;box-shadow:inset 0 1px 2px rgba(15,35,60,.05)!important}
+.search-container input::placeholder{color:#6c819a!important}
+.search-container i{color:#4d6683!important}
+.topbar-actions .icon-btn{background:#1d4f83!important;border:1px solid rgba(255,255,255,.18)!important;color:#fff!important}
+.topbar-actions .icon-btn:hover{background:#2563eb!important}
+.content{background:var(--anori-bg)!important;padding:24px 28px 38px!important}
+.page-header{padding:4px 2px 12px!important;border-bottom:2px solid #d3deeb!important}
+.page-title{color:#0d2f59!important}
+.page-header p,.page-header .page-subtitle{color:#53677f!important}
+.card{background:linear-gradient(180deg,#fff 0%,#f9fbfe 100%)!important;border:1px solid #cdd9e8!important;box-shadow:0 5px 18px rgba(20,52,88,.08)!important}
+.card:hover{box-shadow:0 10px 24px rgba(20,52,88,.12)!important}
+.card-title{color:#123c6d!important}
+.card-title i{color:#2563eb!important}
+.anori-section-intro{background:linear-gradient(90deg,#dcecff 0%,#f7fbff 62%,#fff 100%)!important;border:1px solid #b8cde5!important;border-left:5px solid #2563eb!important;color:#173b62!important}
+.anori-action-toolbar,.anori-universal-toolbar,.anori-standard-toolbar{background:#f2f6fb!important;border:1px solid #c8d6e6!important}
+.anori-filter-bar{background:linear-gradient(90deg,#e5f5fb,#f2f8ff)!important;border:1px solid #b8d5e5!important;border-left:5px solid #0891b2!important}
+.anori-filter-bar label,.anori-manual-search-inline-title{color:#163d67!important}
+.form-control,select.form-control,input.form-control,textarea.form-control,
+#mainContent .view input:not([type="checkbox"]):not([type="radio"]),
+#mainContent .view select,#mainContent .view textarea{
+  background:#fff!important;color:#14253d!important;border:1px solid #b8c8db!important
+}
+.form-control:focus,#mainContent .view select:focus,#mainContent .view textarea:focus,#mainContent .view input:not([type="checkbox"]):not([type="radio"]):focus{background:#fafdff!important;border-color:#2563eb!important;box-shadow:0 0 0 3px rgba(37,99,235,.15)!important}
+label{color:#263f5e!important}
+#mainContent .view .anori-help,#mainContent .view .help-text,#mainContent .view .form-help{color:#53677f!important}
+.btn-primary{background:linear-gradient(135deg,#2563eb,#1d4ed8)!important;color:#fff!important}
+.btn-success{background:linear-gradient(135deg,#059669,#047857)!important;color:#fff!important}
+.btn-danger{background:linear-gradient(135deg,#dc2626,#b91c1c)!important;color:#fff!important}
+.btn-outline{background:#fff!important;color:#173b62!important;border:1px solid #b9c9db!important}
+.btn-outline:hover{background:#eaf2fb!important;color:#0b315b!important}
+.table-wrapper{background:#fff!important;border:1px solid #c6d4e4!important;box-shadow:0 4px 14px rgba(20,52,88,.06)!important}
+#mainContent .view table thead th{background:linear-gradient(90deg,#123f70,#1e5b91)!important;color:#fff!important;border-bottom:0!important}
+#mainContent .view table tbody td{background:#fff!important;color:#263d59!important;border-bottom:1px solid #e0e7ef!important}
+#mainContent .view table tbody tr:nth-child(even) td{background:#f1f5fa!important}
+#mainContent .view table tbody tr:hover td{background:#e2efff!important}
+.kpi-card{position:relative;overflow:hidden!important;border-top:4px solid #2563eb!important}
+.kpi-card:nth-child(2){border-top-color:#059669!important}.kpi-card:nth-child(3){border-top-color:#d97706!important}.kpi-card:nth-child(4){border-top-color:#6d28d9!important}.kpi-card:nth-child(5){border-top-color:#dc2626!important}
+.kpi-info h4{color:#53677f!important}.kpi-info p{color:#102f57!important}
+/* Distinct but restrained accents for every major tab */
+#view-dashboard>.content>div:first-child,#view-trips>.content>div:first-child,#view-invoices>.content>div:first-child,#view-reports>.content>div:first-child,#view-settlements>.content>div:first-child,#view-expenses>.content>div:first-child,#view-masters>.content>div:first-child,#view-settings>.content>div:first-child{border-top:4px solid #2563eb}
+#view-trips .card-title i{color:#0891b2!important}#view-invoices .card-title i{color:#4f46e5!important}#view-reports .card-title i{color:#7c3aed!important}#view-settlements .card-title i{color:#059669!important}#view-expenses .card-title i{color:#d97706!important}#view-masters .card-title i{color:#0f766e!important}#view-settings .card-title i{color:#475569!important}
+#view-trips .anori-section-intro{border-left-color:#0891b2!important;background:linear-gradient(90deg,#dff7fb,#fff)!important}
+#view-invoices .anori-section-intro{border-left-color:#4f46e5!important;background:linear-gradient(90deg,#eef2ff,#fff)!important}
+#view-reports .anori-section-intro{border-left-color:#7c3aed!important;background:linear-gradient(90deg,#f3e8ff,#fff)!important}
+#view-settlements .anori-section-intro{border-left-color:#059669!important;background:linear-gradient(90deg,#e8f8f1,#fff)!important}
+#view-expenses .anori-section-intro{border-left-color:#d97706!important;background:linear-gradient(90deg,#fff7e6,#fff)!important}
+#view-masters .anori-section-intro{border-left-color:#0f766e!important;background:linear-gradient(90deg,#e8f7f5,#fff)!important}
+#view-settings .anori-section-intro{border-left-color:#475569!important;background:linear-gradient(90deg,#eef2f6,#fff)!important}
+/* Modals / previews */
+.modal-backdrop{background:rgba(7,20,38,.76)!important;backdrop-filter:blur(5px)!important}
+.modal{background:#fff!important;border:1px solid #bfcfe1!important}
+.modal-header{background:linear-gradient(90deg,#edf5ff,#fff)!important;border-bottom:1px solid #cbd8e7!important}
+.modal-header h3{color:#0f3764!important}
+.modal-footer{background:#edf3f9!important;border-top:1px solid #cbd8e7!important}
+.preview-body,#previewContent{background:#cfdbea!important}
+#previewModal .modal-header{background:#fff!important}
+#previewModal .modal-footer{background:#e8eef5!important}
+#previewModal .anori-invoice-preview-stage>.invoice-page{background:#fff!important;color:#0f172a!important;box-shadow:0 14px 34px rgba(8,30,55,.25)!important}
+/* Native fallback dialog used when vendor SweetAlert is absent */
+.anori-native-swal-backdrop{position:fixed;inset:0;z-index:100000;background:rgba(7,20,38,.72);display:flex;align-items:center;justify-content:center;padding:20px}
+.anori-native-swal-popup{width:min(680px,96vw);max-height:90vh;overflow:auto;background:#fff;border:1px solid #c7d4e3;border-radius:16px;box-shadow:0 24px 70px rgba(4,18,35,.35);padding:24px;color:#14253d}
+.anori-native-swal-title{font-size:20px;font-weight:800;color:#103966;margin-bottom:10px}.anori-native-swal-text{color:#53677f;line-height:1.55}.anori-native-swal-body{color:#263f5e}.anori-native-swal-icon{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;font-weight:900;margin-bottom:12px;background:#eaf2ff;color:#2563eb}.anori-icon-success{background:#e8f8f1;color:#059669}.anori-icon-error{background:#feecec;color:#dc2626}.anori-icon-warning{background:#fff5df;color:#b45309}.anori-native-swal-input-wrap{margin-top:14px}.anori-native-swal-input-wrap label{display:block;margin-bottom:6px}.anori-native-swal-validation{display:none;margin-top:10px;padding:9px 11px;background:#fff0f0;border:1px solid #fecaca;border-radius:8px;color:#b91c1c;font-size:12px;font-weight:700}.anori-native-swal-validation.show{display:block}.anori-native-swal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:18px}.anori-native-toast{position:fixed;right:22px;top:88px;z-index:100001;display:flex;gap:10px;align-items:center;background:#0b2342;color:#fff;padding:12px 16px;border-radius:10px;box-shadow:0 10px 26px rgba(4,18,35,.25);opacity:0;transform:translateY(-8px);transition:.18s ease;font-size:13px;font-weight:700}.anori-native-toast.show{opacity:1;transform:none}.anori-native-toast-icon{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;background:#2563eb}.anori-native-toast-success .anori-native-toast-icon{background:#059669}.anori-native-toast-error .anori-native-toast-icon{background:#dc2626}.anori-native-toast-warning .anori-native-toast-icon{background:#d97706}
+@media(max-width:1050px){.main-wrapper{width:100%!important;max-width:100%!important;margin-left:0!important}.topbar{background:linear-gradient(90deg,#0b2342,#123c6d)!important}}
+@media(max-width:760px){.content{padding:14px!important}.card{border-radius:12px!important}.topbar{padding:10px 14px!important}.anori-native-swal-popup{padding:18px}.anori-native-swal-actions{flex-wrap:wrap}}
+
+.anori-chart-fallback{height:100%;min-height:180px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;background:linear-gradient(135deg,#eef5ff,#f8fbff);border:1px dashed #b9cce2;border-radius:12px;color:#173b62;text-align:center;padding:20px}.anori-chart-fallback strong{font-size:15px}.anori-chart-fallback span{font-size:12px;color:#53677f}.anori-chart-fallback em{font-size:11px;color:#2563eb;font-style:normal;font-weight:700}
+
+/* Master Data — explicit, readable row actions */
+.master-action-cell{white-space:nowrap!important;min-width:170px!important;width:170px!important}
+.master-row-actions{display:flex!important;align-items:center!important;justify-content:flex-start!important;gap:8px!important}
+.master-action-btn{min-width:72px!important;height:36px!important;padding:7px 10px!important;justify-content:center!important;gap:6px!important;font-size:12px!important;line-height:1!important}
+.master-action-btn i{font-size:12px!important}
+.master-edit-btn{background:#fff!important;color:#1d4ed8!important;border:1px solid #93b4e6!important}
+.master-edit-btn:hover{background:#eef5ff!important;color:#163f78!important;border-color:#4f83c7!important}
+.master-delete-btn{background:#dc2626!important;color:#fff!important;border:1px solid #dc2626!important}
+.master-delete-btn:hover{background:#b91c1c!important;border-color:#b91c1c!important}
+@media(max-width:720px){.master-action-cell{min-width:145px!important;width:auto!important}.master-row-actions{gap:6px!important}.master-action-btn{min-width:64px!important;padding:7px 8px!important}}
+
+/* ANORI TRANSPORT — editable/filterable trip inputs */
+.anori-combobox{position:relative;width:100%;}
+.anori-combobox .anori-combo-input{padding-right:42px!important;}
+.anori-combo-toggle{position:absolute;right:0;top:0;width:42px;height:100%;border:0;background:transparent;color:#0f2747;font-size:18px;cursor:pointer;z-index:2;}
+.anori-combo-menu{position:absolute;left:0;right:0;top:calc(100% + 4px);max-height:260px;overflow:auto;background:#fff;border:1px solid #b8c9dd;border-radius:10px;box-shadow:0 14px 30px rgba(15,39,71,.18);z-index:10050;padding:5px;}
+.anori-combo-option{padding:11px 13px;border-radius:7px;color:#122b4c;font-weight:600;cursor:pointer;line-height:1.25;}
+.anori-combo-option:hover,.anori-combo-option:focus{background:#e8f1ff;color:#0b5be7;outline:none;}
+.anori-combo-empty{padding:12px;color:#64748b;font-size:13px;}
+.anori-combobox.is-open .anori-combo-input{border-color:#2563eb!important;box-shadow:0 0 0 3px rgba(37,99,235,.12)!important;}
+.anori-vehicle-type-badge{display:inline-flex;align-items:center;min-height:38px;padding:8px 14px;border-radius:9px;font-weight:800;letter-spacing:.5px;border:1px solid transparent;}
+.anori-vehicle-type-badge.company{background:#e8f1ff;color:#164b8a;border-color:#9ec3f7;}
+.anori-vehicle-type-badge.market{background:#fff4df;color:#8a4b00;border-color:#f2c36b;}
+.trip-market-section{padding:15px;border:1px solid #e8c477;border-radius:12px;background:#fffaf0;}
+.trip-market-section[hidden]{display:none!important;}
+.trip-market-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+@media (max-width:800px){.trip-market-grid{grid-template-columns:1fr}.anori-combo-menu{max-height:220px;}}
+
+/* ===== END ui-modern.css ===== */
+
+
+/* ANORI TRANSPORT — Master Data bulk Excel toolbar */
+.anori-master-excel-toolbar{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:14px 16px;margin:0 0 16px;background:linear-gradient(135deg,#eef5ff,#f8fbff);border:1px solid #cfe0f7;border-radius:12px;box-shadow:0 4px 14px rgba(23,59,107,.06)}
+.anori-master-excel-copy{display:flex;flex-direction:column;gap:4px;min-width:0}.anori-master-excel-copy strong{font-size:15px;color:#173b6b}.anori-master-excel-copy span{font-size:12px;color:#64748b}.anori-master-excel-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}.anori-master-excel-actions .btn{white-space:nowrap}
+@media(max-width:760px){.anori-master-excel-toolbar{align-items:flex-start;flex-direction:column}.anori-master-excel-actions{justify-content:flex-start;width:100%}}
