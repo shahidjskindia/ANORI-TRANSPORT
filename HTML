@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ANORI TRANSPORT</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- Favicon (optional) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🚛</text></svg>">
+    <!-- Runtime libraries: bundled files only. Optional integrations use feature detection. -->
+    <script src="app.js"></script>
+
+<style id="anori-invoice-pdf-print-css">
+@page { size: A4 portrait; margin: 0; }
+@media print {
+  html, body { margin: 0 !important; padding: 0 !important; background: #fff !important; }
+  body.anori-invoice-pdf-printing > * { display: none !important; }
+  body.anori-invoice-pdf-printing > #anoriPdfPrintHost {
+    display: block !important; position: static !important; width: 210mm !important;
+    margin: 0 !important; padding: 0 !important; background: #fff !important;
+  }
+  body.anori-invoice-pdf-printing #anoriPdfPrintHost .invoice-page {
+    display: block !important; width: 210mm !important; min-height: 297mm !important;
+    margin: 0 !important; padding: 5mm !important; background: #fff !important;
+    box-shadow: none !important; overflow: visible !important;
+  }
+  body.anori-invoice-pdf-printing #anoriPdfPrintHost .no-print { display: none !important; }
+}
+</style>
+</head>
+<body>
+
+    <!-- LOGIN OVERLAY (Modal Dialog) -->
+    <div class="login-overlay" id="loginOverlay" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo-icon"><i class="fas fa-truck-fast"></i></div>
+                <h1 id="loginTitle">ANORI TRANSPORT</h1>
+                <p>Transport Management System</p>
+            </div>
+            <div class="login-body">
+                <div class="form-group">
+                    <label for="loginUsername">Username</label>
+                    <input type="text" class="form-control" id="loginUsername" value="Anori" placeholder="Enter username" autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label for="loginPassword">Password</label>
+                    <input type="password" class="form-control" id="loginPassword" value="Anori@1245" placeholder="Enter password" autocomplete="current-password">
+                </div>
+                <button type="button" class="btn btn-primary btn-block" id="loginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
+                <p class="login-error" id="loginError" role="alert"></p>
+            </div>
+            <div class="login-footer">
+                <span></span>
+            </div>
+        </div>
+    </div>
+
+    <aside class="sidebar" id="sidebar" aria-label="Main navigation">
+        <div class="sidebar-header">
+            <div class="logo-icon"><i class="fas fa-truck-fast"></i></div>
+            <div class="logo-text">
+                <h1>ANORI TRANSPORT</h1>
+            </div>
+        </div>
+        <nav class="nav-menu" id="navMenu" aria-label="Primary">
+            <a class="nav-item active" data-view="dashboard" role="button" tabindex="0"><i class="fas fa-chart-pie"></i> Dashboard</a>
+            <a class="nav-item" data-view="trips" role="button" tabindex="0"><i class="fas fa-route"></i> Trip Management</a>
+            <a class="nav-item" data-view="invoices" role="button" tabindex="0"><i class="fas fa-file-invoice-dollar"></i> Invoices &amp; Billing</a>
+            <a class="nav-item" data-view="reports" role="button" tabindex="0"><i class="fas fa-chart-bar"></i> Reports &amp; Analytics</a>
+            <a class="nav-item" data-view="settlements" role="button" tabindex="0"><i class="fas fa-hand-holding-usd"></i> Driver Settlement</a>
+            <a class="nav-item" data-view="expenses" role="button" tabindex="0"><i class="fas fa-receipt"></i> Expenses</a>
+            <a class="nav-item" data-view="masters" role="button" tabindex="0"><i class="fas fa-database"></i> Master Data</a>
+            <a class="nav-item" data-view="settings" role="button" tabindex="0"><i class="fas fa-cog"></i> Settings</a>
+        </nav>
+        <div class="sidebar-footer">
+            <p>v2.8.0 Data & Invoice Workflow</p>
+            <button type="button" class="btn btn-outline btn-sm" id="logoutBtn" style="color:#94a3b8; border-color:#334155; margin-top:8px;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </aside>
+
+    <div class="main-wrapper">
+        <header class="topbar">
+            <div class="topbar-left">
+                <button type="button" class="menu-toggle" id="menuToggle" aria-label="Toggle sidebar"><i class="fas fa-bars"></i></button>
+                <div class="topbar-brand" aria-label="ANORI TRANSPORT"><span class="topbar-brand-icon">🚛</span><span>ANORI TRANSPORT</span></div>
+                <div class="search-container">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="text" id="globalSearch" placeholder="Search trips, parties, vehicles..." aria-label="Global search">
+                </div>
+            </div>
+            <div class="topbar-actions">
+                <button type="button" class="icon-btn" id="themeToggle" title="Toggle Theme" aria-label="Toggle dark/light mode"><i class="fas fa-moon"></i></button>
+                <button type="button" class="icon-btn" id="backupBtn" title="Backup Data" aria-label="Backup data"><i class="fas fa-cloud-arrow-down"></i></button>
+                <div class="user-profile">
+                    <img src="assets/admin-avatar.svg" alt="Admin User">
+                    <div class="user-info">
+                        <span class="user-name">Administrator</span>
+                        <span class="user-role">Super Admin</span>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <main class="content" id="mainContent"></main>
+    </div>
+
+    <!-- Global Modal -->
+    <div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Modal</h3>
+                <button type="button" class="icon-btn" id="modalClose" aria-label="Close modal"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline" id="modalCancel">Cancel</button>
+                <button type="button" class="btn btn-primary" id="modalSave">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Invoice Preview Modal -->
+    <div class="modal-backdrop" id="previewModal" role="dialog" aria-modal="true" aria-labelledby="previewTitle">
+        <div class="modal modal-lg">
+            <div class="modal-header">
+                <h3 id="previewTitle"><i class="fas fa-file-invoice"></i> Invoice Preview</h3>
+                <button type="button" class="icon-btn" id="previewClose" aria-label="Close preview"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="modal-body preview-body" id="previewBody">
+                <div id="previewContent" style="width:100%; height:85vh; background:#e2e8f0; border-radius:8px; overflow:hidden;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" id="previewDownloadBtn"><i class="fas fa-download"></i> Download PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Global Loader -->
+    <div class="loader-backdrop" id="loader" role="status" aria-live="polite">
+        <div class="spinner"></div>
+        <p id="loaderText">Loading...</p>
+    </div>
+
+    <!-- ANORI TRANSPORT — tab-wise JavaScript modules -->
+
+<div id="offlineStatus" aria-hidden="true"
+     style="display:none;position:fixed;bottom:10px;right:10px;z-index:99999;
+     padding:6px 10px;border-radius:6px;background:#334155;color:#fff;font:12px Arial,sans-serif">
+  Offline Mode
+</div>
+
+</body>
+</html>
