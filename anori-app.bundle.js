@@ -1,251 +1,5 @@
-/* ===== BEGIN JSZip vendor ===== */
-/*!
 
-JSZip v3.10.1 - A JavaScript class for generating and reading zip files
-<http://stuartk.com/jszip>
-
-(c) 2009-2016 Stuart Knightley <stuart [at] stuartk.com>
-Dual licenced under the MIT license or GPLv3. See https://raw.github.com/Stuk/jszip/main/LICENSE.markdown.
-
-JSZip uses the library pako released under the MIT license :
-https://github.com/nodeca/pako/blob/main/LICENSE
-*/
-
-!function(e){if("object"==typeof exports&&"undefined"!=typeof module)module.exports=e();else if("function"==typeof define&&define.amd)define([],e);else{("undefined"!=typeof window?window:"undefined"!=typeof global?global:"undefined"!=typeof self?self:this).JSZip=e()}}(function(){return function s(a,o,h){function u(r,e){if(!o[r]){if(!a[r]){var t="function"==typeof require&&require;if(!e&&t)return t(r,!0);if(l)return l(r,!0);var n=new Error("Cannot find module '"+r+"'");throw n.code="MODULE_NOT_FOUND",n}var i=o[r]={exports:{}};a[r][0].call(i.exports,function(e){var t=a[r][1][e];return u(t||e)},i,i.exports,s,a,o,h)}return o[r].exports}for(var l="function"==typeof require&&require,e=0;e<h.length;e++)u(h[e]);return u}({1:[function(e,t,r){"use strict";var d=e("./utils"),c=e("./support"),p="ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";r.encode=function(e){for(var t,r,n,i,s,a,o,h=[],u=0,l=e.length,f=l,c="string"!==d.getTypeOf(e);u<e.length;)f=l-u,n=c?(t=e[u++],r=u<l?e[u++]:0,u<l?e[u++]:0):(t=e.charCodeAt(u++),r=u<l?e.charCodeAt(u++):0,u<l?e.charCodeAt(u++):0),i=t>>2,s=(3&t)<<4|r>>4,a=1<f?(15&r)<<2|n>>6:64,o=2<f?63&n:64,h.push(p.charAt(i)+p.charAt(s)+p.charAt(a)+p.charAt(o));return h.join("")},r.decode=function(e){var t,r,n,i,s,a,o=0,h=0,u="data:";if(e.substr(0,u.length)===u)throw new Error("Invalid base64 input, it looks like a data url.");var l,f=3*(e=e.replace(/[^A-Za-z0-9+/=]/g,"")).length/4;if(e.charAt(e.length-1)===p.charAt(64)&&f--,e.charAt(e.length-2)===p.charAt(64)&&f--,f%1!=0)throw new Error("Invalid base64 input, bad content length.");for(l=c.uint8array?new Uint8Array(0|f):new Array(0|f);o<e.length;)t=p.indexOf(e.charAt(o++))<<2|(i=p.indexOf(e.charAt(o++)))>>4,r=(15&i)<<4|(s=p.indexOf(e.charAt(o++)))>>2,n=(3&s)<<6|(a=p.indexOf(e.charAt(o++))),l[h++]=t,64!==s&&(l[h++]=r),64!==a&&(l[h++]=n);return l}},{"./support":30,"./utils":32}],2:[function(e,t,r){"use strict";var n=e("./external"),i=e("./stream/DataWorker"),s=e("./stream/Crc32Probe"),a=e("./stream/DataLengthProbe");function o(e,t,r,n,i){this.compressedSize=e,this.uncompressedSize=t,this.crc32=r,this.compression=n,this.compressedContent=i}o.prototype={getContentWorker:function(){var e=new i(n.Promise.resolve(this.compressedContent)).pipe(this.compression.uncompressWorker()).pipe(new a("data_length")),t=this;return e.on("end",function(){if(this.streamInfo.data_length!==t.uncompressedSize)throw new Error("Bug : uncompressed data size mismatch")}),e},getCompressedWorker:function(){return new i(n.Promise.resolve(this.compressedContent)).withStreamInfo("compressedSize",this.compressedSize).withStreamInfo("uncompressedSize",this.uncompressedSize).withStreamInfo("crc32",this.crc32).withStreamInfo("compression",this.compression)}},o.createWorkerFrom=function(e,t,r){return e.pipe(new s).pipe(new a("uncompressedSize")).pipe(t.compressWorker(r)).pipe(new a("compressedSize")).withStreamInfo("compression",t)},t.exports=o},{"./external":6,"./stream/Crc32Probe":25,"./stream/DataLengthProbe":26,"./stream/DataWorker":27}],3:[function(e,t,r){"use strict";var n=e("./stream/GenericWorker");r.STORE={magic:"\0\0",compressWorker:function(){return new n("STORE compression")},uncompressWorker:function(){return new n("STORE decompression")}},r.DEFLATE=e("./flate")},{"./flate":7,"./stream/GenericWorker":28}],4:[function(e,t,r){"use strict";var n=e("./utils");var o=function(){for(var e,t=[],r=0;r<256;r++){e=r;for(var n=0;n<8;n++)e=1&e?3988292384^e>>>1:e>>>1;t[r]=e}return t}();t.exports=function(e,t){return void 0!==e&&e.length?"string"!==n.getTypeOf(e)?function(e,t,r,n){var i=o,s=n+r;e^=-1;for(var a=n;a<s;a++)e=e>>>8^i[255&(e^t[a])];return-1^e}(0|t,e,e.length,0):function(e,t,r,n){var i=o,s=n+r;e^=-1;for(var a=n;a<s;a++)e=e>>>8^i[255&(e^t.charCodeAt(a))];return-1^e}(0|t,e,e.length,0):0}},{"./utils":32}],5:[function(e,t,r){"use strict";r.base64=!1,r.binary=!1,r.dir=!1,r.createFolders=!0,r.date=null,r.compression=null,r.compressionOptions=null,r.comment=null,r.unixPermissions=null,r.dosPermissions=null},{}],6:[function(e,t,r){"use strict";var n=null;n="undefined"!=typeof Promise?Promise:e("lie"),t.exports={Promise:n}},{lie:37}],7:[function(e,t,r){"use strict";var n="undefined"!=typeof Uint8Array&&"undefined"!=typeof Uint16Array&&"undefined"!=typeof Uint32Array,i=e("pako"),s=e("./utils"),a=e("./stream/GenericWorker"),o=n?"uint8array":"array";function h(e,t){a.call(this,"FlateWorker/"+e),this._pako=null,this._pakoAction=e,this._pakoOptions=t,this.meta={}}r.magic="\b\0",s.inherits(h,a),h.prototype.processChunk=function(e){this.meta=e.meta,null===this._pako&&this._createPako(),this._pako.push(s.transformTo(o,e.data),!1)},h.prototype.flush=function(){a.prototype.flush.call(this),null===this._pako&&this._createPako(),this._pako.push([],!0)},h.prototype.cleanUp=function(){a.prototype.cleanUp.call(this),this._pako=null},h.prototype._createPako=function(){this._pako=new i[this._pakoAction]({raw:!0,level:this._pakoOptions.level||-1});var t=this;this._pako.onData=function(e){t.push({data:e,meta:t.meta})}},r.compressWorker=function(e){return new h("Deflate",e)},r.uncompressWorker=function(){return new h("Inflate",{})}},{"./stream/GenericWorker":28,"./utils":32,pako:38}],8:[function(e,t,r){"use strict";function A(e,t){var r,n="";for(r=0;r<t;r++)n+=String.fromCharCode(255&e),e>>>=8;return n}function n(e,t,r,n,i,s){var a,o,h=e.file,u=e.compression,l=s!==O.utf8encode,f=I.transformTo("string",s(h.name)),c=I.transformTo("string",O.utf8encode(h.name)),d=h.comment,p=I.transformTo("string",s(d)),m=I.transformTo("string",O.utf8encode(d)),_=c.length!==h.name.length,g=m.length!==d.length,b="",v="",y="",w=h.dir,k=h.date,x={crc32:0,compressedSize:0,uncompressedSize:0};t&&!r||(x.crc32=e.crc32,x.compressedSize=e.compressedSize,x.uncompressedSize=e.uncompressedSize);var S=0;t&&(S|=8),l||!_&&!g||(S|=2048);var z=0,C=0;w&&(z|=16),"UNIX"===i?(C=798,z|=function(e,t){var r=e;return e||(r=t?16893:33204),(65535&r)<<16}(h.unixPermissions,w)):(C=20,z|=function(e){return 63&(e||0)}(h.dosPermissions)),a=k.getUTCHours(),a<<=6,a|=k.getUTCMinutes(),a<<=5,a|=k.getUTCSeconds()/2,o=k.getUTCFullYear()-1980,o<<=4,o|=k.getUTCMonth()+1,o<<=5,o|=k.getUTCDate(),_&&(v=A(1,1)+A(B(f),4)+c,b+="up"+A(v.length,2)+v),g&&(y=A(1,1)+A(B(p),4)+m,b+="uc"+A(y.length,2)+y);var E="";return E+="\n\0",E+=A(S,2),E+=u.magic,E+=A(a,2),E+=A(o,2),E+=A(x.crc32,4),E+=A(x.compressedSize,4),E+=A(x.uncompressedSize,4),E+=A(f.length,2),E+=A(b.length,2),{fileRecord:R.LOCAL_FILE_HEADER+E+f+b,dirRecord:R.CENTRAL_FILE_HEADER+A(C,2)+E+A(p.length,2)+"\0\0\0\0"+A(z,4)+A(n,4)+f+b+p}}var I=e("../utils"),i=e("../stream/GenericWorker"),O=e("../utf8"),B=e("../crc32"),R=e("../signature");function s(e,t,r,n){i.call(this,"ZipFileWorker"),this.bytesWritten=0,this.zipComment=t,this.zipPlatform=r,this.encodeFileName=n,this.streamFiles=e,this.accumulate=!1,this.contentBuffer=[],this.dirRecords=[],this.currentSourceOffset=0,this.entriesCount=0,this.currentFile=null,this._sources=[]}I.inherits(s,i),s.prototype.push=function(e){var t=e.meta.percent||0,r=this.entriesCount,n=this._sources.length;this.accumulate?this.contentBuffer.push(e):(this.bytesWritten+=e.data.length,i.prototype.push.call(this,{data:e.data,meta:{currentFile:this.currentFile,percent:r?(t+100*(r-n-1))/r:100}}))},s.prototype.openedSource=function(e){this.currentSourceOffset=this.bytesWritten,this.currentFile=e.file.name;var t=this.streamFiles&&!e.file.dir;if(t){var r=n(e,t,!1,this.currentSourceOffset,this.zipPlatform,this.encodeFileName);this.push({data:r.fileRecord,meta:{percent:0}})}else this.accumulate=!0},s.prototype.closedSource=function(e){this.accumulate=!1;var t=this.streamFiles&&!e.file.dir,r=n(e,t,!0,this.currentSourceOffset,this.zipPlatform,this.encodeFileName);if(this.dirRecords.push(r.dirRecord),t)this.push({data:function(e){return R.DATA_DESCRIPTOR+A(e.crc32,4)+A(e.compressedSize,4)+A(e.uncompressedSize,4)}(e),meta:{percent:100}});else for(this.push({data:r.fileRecord,meta:{percent:0}});this.contentBuffer.length;)this.push(this.contentBuffer.shift());this.currentFile=null},s.prototype.flush=function(){for(var e=this.bytesWritten,t=0;t<this.dirRecords.length;t++)this.push({data:this.dirRecords[t],meta:{percent:100}});var r=this.bytesWritten-e,n=function(e,t,r,n,i){var s=I.transformTo("string",i(n));return R.CENTRAL_DIRECTORY_END+"\0\0\0\0"+A(e,2)+A(e,2)+A(t,4)+A(r,4)+A(s.length,2)+s}(this.dirRecords.length,r,e,this.zipComment,this.encodeFileName);this.push({data:n,meta:{percent:100}})},s.prototype.prepareNextSource=function(){this.previous=this._sources.shift(),this.openedSource(this.previous.streamInfo),this.isPaused?this.previous.pause():this.previous.resume()},s.prototype.registerPrevious=function(e){this._sources.push(e);var t=this;return e.on("data",function(e){t.processChunk(e)}),e.on("end",function(){t.closedSource(t.previous.streamInfo),t._sources.length?t.prepareNextSource():t.end()}),e.on("error",function(e){t.error(e)}),this},s.prototype.resume=function(){return!!i.prototype.resume.call(this)&&(!this.previous&&this._sources.length?(this.prepareNextSource(),!0):this.previous||this._sources.length||this.generatedError?void 0:(this.end(),!0))},s.prototype.error=function(e){var t=this._sources;if(!i.prototype.error.call(this,e))return!1;for(var r=0;r<t.length;r++)try{t[r].error(e)}catch(e){}return!0},s.prototype.lock=function(){i.prototype.lock.call(this);for(var e=this._sources,t=0;t<e.length;t++)e[t].lock()},t.exports=s},{"../crc32":4,"../signature":23,"../stream/GenericWorker":28,"../utf8":31,"../utils":32}],9:[function(e,t,r){"use strict";var u=e("../compressions"),n=e("./ZipFileWorker");r.generateWorker=function(e,a,t){var o=new n(a.streamFiles,t,a.platform,a.encodeFileName),h=0;try{e.forEach(function(e,t){h++;var r=function(e,t){var r=e||t,n=u[r];if(!n)throw new Error(r+" is not a valid compression method !");return n}(t.options.compression,a.compression),n=t.options.compressionOptions||a.compressionOptions||{},i=t.dir,s=t.date;t._compressWorker(r,n).withStreamInfo("file",{name:e,dir:i,date:s,comment:t.comment||"",unixPermissions:t.unixPermissions,dosPermissions:t.dosPermissions}).pipe(o)}),o.entriesCount=h}catch(e){o.error(e)}return o}},{"../compressions":3,"./ZipFileWorker":8}],10:[function(e,t,r){"use strict";function n(){if(!(this instanceof n))return new n;if(arguments.length)throw new Error("The constructor with parameters has been removed in JSZip 3.0, please check the upgrade guide.");this.files=Object.create(null),this.comment=null,this.root="",this.clone=function(){var e=new n;for(var t in this)"function"!=typeof this[t]&&(e[t]=this[t]);return e}}(n.prototype=e("./object")).loadAsync=e("./load"),n.support=e("./support"),n.defaults=e("./defaults"),n.version="3.10.1",n.loadAsync=function(e,t){return(new n).loadAsync(e,t)},n.external=e("./external"),t.exports=n},{"./defaults":5,"./external":6,"./load":11,"./object":15,"./support":30}],11:[function(e,t,r){"use strict";var u=e("./utils"),i=e("./external"),n=e("./utf8"),s=e("./zipEntries"),a=e("./stream/Crc32Probe"),l=e("./nodejsUtils");function f(n){return new i.Promise(function(e,t){var r=n.decompressed.getContentWorker().pipe(new a);r.on("error",function(e){t(e)}).on("end",function(){r.streamInfo.crc32!==n.decompressed.crc32?t(new Error("Corrupted zip : CRC32 mismatch")):e()}).resume()})}t.exports=function(e,o){var h=this;return o=u.extend(o||{},{base64:!1,checkCRC32:!1,optimizedBinaryString:!1,createFolders:!1,decodeFileName:n.utf8decode}),l.isNode&&l.isStream(e)?i.Promise.reject(new Error("JSZip can't accept a stream when loading a zip file.")):u.prepareContent("the loaded zip file",e,!0,o.optimizedBinaryString,o.base64).then(function(e){var t=new s(o);return t.load(e),t}).then(function(e){var t=[i.Promise.resolve(e)],r=e.files;if(o.checkCRC32)for(var n=0;n<r.length;n++)t.push(f(r[n]));return i.Promise.all(t)}).then(function(e){for(var t=e.shift(),r=t.files,n=0;n<r.length;n++){var i=r[n],s=i.fileNameStr,a=u.resolve(i.fileNameStr);h.file(a,i.decompressed,{binary:!0,optimizedBinaryString:!0,date:i.date,dir:i.dir,comment:i.fileCommentStr.length?i.fileCommentStr:null,unixPermissions:i.unixPermissions,dosPermissions:i.dosPermissions,createFolders:o.createFolders}),i.dir||(h.file(a).unsafeOriginalName=s)}return t.zipComment.length&&(h.comment=t.zipComment),h})}},{"./external":6,"./nodejsUtils":14,"./stream/Crc32Probe":25,"./utf8":31,"./utils":32,"./zipEntries":33}],12:[function(e,t,r){"use strict";var n=e("../utils"),i=e("../stream/GenericWorker");function s(e,t){i.call(this,"Nodejs stream input adapter for "+e),this._upstreamEnded=!1,this._bindStream(t)}n.inherits(s,i),s.prototype._bindStream=function(e){var t=this;(this._stream=e).pause(),e.on("data",function(e){t.push({data:e,meta:{percent:0}})}).on("error",function(e){t.isPaused?this.generatedError=e:t.error(e)}).on("end",function(){t.isPaused?t._upstreamEnded=!0:t.end()})},s.prototype.pause=function(){return!!i.prototype.pause.call(this)&&(this._stream.pause(),!0)},s.prototype.resume=function(){return!!i.prototype.resume.call(this)&&(this._upstreamEnded?this.end():this._stream.resume(),!0)},t.exports=s},{"../stream/GenericWorker":28,"../utils":32}],13:[function(e,t,r){"use strict";var i=e("readable-stream").Readable;function n(e,t,r){i.call(this,t),this._helper=e;var n=this;e.on("data",function(e,t){n.push(e)||n._helper.pause(),r&&r(t)}).on("error",function(e){n.emit("error",e)}).on("end",function(){n.push(null)})}e("../utils").inherits(n,i),n.prototype._read=function(){this._helper.resume()},t.exports=n},{"../utils":32,"readable-stream":16}],14:[function(e,t,r){"use strict";t.exports={isNode:"undefined"!=typeof Buffer,newBufferFrom:function(e,t){if(Buffer.from&&Buffer.from!==Uint8Array.from)return Buffer.from(e,t);if("number"==typeof e)throw new Error('The "data" argument must not be a number');return new Buffer(e,t)},allocBuffer:function(e){if(Buffer.alloc)return Buffer.alloc(e);var t=new Buffer(e);return t.fill(0),t},isBuffer:function(e){return Buffer.isBuffer(e)},isStream:function(e){return e&&"function"==typeof e.on&&"function"==typeof e.pause&&"function"==typeof e.resume}}},{}],15:[function(e,t,r){"use strict";function s(e,t,r){var n,i=u.getTypeOf(t),s=u.extend(r||{},f);s.date=s.date||new Date,null!==s.compression&&(s.compression=s.compression.toUpperCase()),"string"==typeof s.unixPermissions&&(s.unixPermissions=parseInt(s.unixPermissions,8)),s.unixPermissions&&16384&s.unixPermissions&&(s.dir=!0),s.dosPermissions&&16&s.dosPermissions&&(s.dir=!0),s.dir&&(e=g(e)),s.createFolders&&(n=_(e))&&b.call(this,n,!0);var a="string"===i&&!1===s.binary&&!1===s.base64;r&&void 0!==r.binary||(s.binary=!a),(t instanceof c&&0===t.uncompressedSize||s.dir||!t||0===t.length)&&(s.base64=!1,s.binary=!0,t="",s.compression="STORE",i="string");var o=null;o=t instanceof c||t instanceof l?t:p.isNode&&p.isStream(t)?new m(e,t):u.prepareContent(e,t,s.binary,s.optimizedBinaryString,s.base64);var h=new d(e,o,s);this.files[e]=h}var i=e("./utf8"),u=e("./utils"),l=e("./stream/GenericWorker"),a=e("./stream/StreamHelper"),f=e("./defaults"),c=e("./compressedObject"),d=e("./zipObject"),o=e("./generate"),p=e("./nodejsUtils"),m=e("./nodejs/NodejsStreamInputAdapter"),_=function(e){"/"===e.slice(-1)&&(e=e.substring(0,e.length-1));var t=e.lastIndexOf("/");return 0<t?e.substring(0,t):""},g=function(e){return"/"!==e.slice(-1)&&(e+="/"),e},b=function(e,t){return t=void 0!==t?t:f.createFolders,e=g(e),this.files[e]||s.call(this,e,null,{dir:!0,createFolders:t}),this.files[e]};function h(e){return"[object RegExp]"===Object.prototype.toString.call(e)}var n={load:function(){throw new Error("This method has been removed in JSZip 3.0, please check the upgrade guide.")},forEach:function(e){var t,r,n;for(t in this.files)n=this.files[t],(r=t.slice(this.root.length,t.length))&&t.slice(0,this.root.length)===this.root&&e(r,n)},filter:function(r){var n=[];return this.forEach(function(e,t){r(e,t)&&n.push(t)}),n},file:function(e,t,r){if(1!==arguments.length)return e=this.root+e,s.call(this,e,t,r),this;if(h(e)){var n=e;return this.filter(function(e,t){return!t.dir&&n.test(e)})}var i=this.files[this.root+e];return i&&!i.dir?i:null},folder:function(r){if(!r)return this;if(h(r))return this.filter(function(e,t){return t.dir&&r.test(e)});var e=this.root+r,t=b.call(this,e),n=this.clone();return n.root=t.name,n},remove:function(r){r=this.root+r;var e=this.files[r];if(e||("/"!==r.slice(-1)&&(r+="/"),e=this.files[r]),e&&!e.dir)delete this.files[r];else for(var t=this.filter(function(e,t){return t.name.slice(0,r.length)===r}),n=0;n<t.length;n++)delete this.files[t[n].name];return this},generate:function(){throw new Error("This method has been removed in JSZip 3.0, please check the upgrade guide.")},generateInternalStream:function(e){var t,r={};try{if((r=u.extend(e||{},{streamFiles:!1,compression:"STORE",compressionOptions:null,type:"",platform:"DOS",comment:null,mimeType:"application/zip",encodeFileName:i.utf8encode})).type=r.type.toLowerCase(),r.compression=r.compression.toUpperCase(),"binarystring"===r.type&&(r.type="string"),!r.type)throw new Error("No output type specified.");u.checkSupport(r.type),"darwin"!==r.platform&&"freebsd"!==r.platform&&"linux"!==r.platform&&"sunos"!==r.platform||(r.platform="UNIX"),"win32"===r.platform&&(r.platform="DOS");var n=r.comment||this.comment||"";t=o.generateWorker(this,r,n)}catch(e){(t=new l("error")).error(e)}return new a(t,r.type||"string",r.mimeType)},generateAsync:function(e,t){return this.generateInternalStream(e).accumulate(t)},generateNodeStream:function(e,t){return(e=e||{}).type||(e.type="nodebuffer"),this.generateInternalStream(e).toNodejsStream(t)}};t.exports=n},{"./compressedObject":2,"./defaults":5,"./generate":9,"./nodejs/NodejsStreamInputAdapter":12,"./nodejsUtils":14,"./stream/GenericWorker":28,"./stream/StreamHelper":29,"./utf8":31,"./utils":32,"./zipObject":35}],16:[function(e,t,r){"use strict";t.exports=e("stream")},{stream:void 0}],17:[function(e,t,r){"use strict";var n=e("./DataReader");function i(e){n.call(this,e);for(var t=0;t<this.data.length;t++)e[t]=255&e[t]}e("../utils").inherits(i,n),i.prototype.byteAt=function(e){return this.data[this.zero+e]},i.prototype.lastIndexOfSignature=function(e){for(var t=e.charCodeAt(0),r=e.charCodeAt(1),n=e.charCodeAt(2),i=e.charCodeAt(3),s=this.length-4;0<=s;--s)if(this.data[s]===t&&this.data[s+1]===r&&this.data[s+2]===n&&this.data[s+3]===i)return s-this.zero;return-1},i.prototype.readAndCheckSignature=function(e){var t=e.charCodeAt(0),r=e.charCodeAt(1),n=e.charCodeAt(2),i=e.charCodeAt(3),s=this.readData(4);return t===s[0]&&r===s[1]&&n===s[2]&&i===s[3]},i.prototype.readData=function(e){if(this.checkOffset(e),0===e)return[];var t=this.data.slice(this.zero+this.index,this.zero+this.index+e);return this.index+=e,t},t.exports=i},{"../utils":32,"./DataReader":18}],18:[function(e,t,r){"use strict";var n=e("../utils");function i(e){this.data=e,this.length=e.length,this.index=0,this.zero=0}i.prototype={checkOffset:function(e){this.checkIndex(this.index+e)},checkIndex:function(e){if(this.length<this.zero+e||e<0)throw new Error("End of data reached (data length = "+this.length+", asked index = "+e+"). Corrupted zip ?")},setIndex:function(e){this.checkIndex(e),this.index=e},skip:function(e){this.setIndex(this.index+e)},byteAt:function(){},readInt:function(e){var t,r=0;for(this.checkOffset(e),t=this.index+e-1;t>=this.index;t--)r=(r<<8)+this.byteAt(t);return this.index+=e,r},readString:function(e){return n.transformTo("string",this.readData(e))},readData:function(){},lastIndexOfSignature:function(){},readAndCheckSignature:function(){},readDate:function(){var e=this.readInt(4);return new Date(Date.UTC(1980+(e>>25&127),(e>>21&15)-1,e>>16&31,e>>11&31,e>>5&63,(31&e)<<1))}},t.exports=i},{"../utils":32}],19:[function(e,t,r){"use strict";var n=e("./Uint8ArrayReader");function i(e){n.call(this,e)}e("../utils").inherits(i,n),i.prototype.readData=function(e){this.checkOffset(e);var t=this.data.slice(this.zero+this.index,this.zero+this.index+e);return this.index+=e,t},t.exports=i},{"../utils":32,"./Uint8ArrayReader":21}],20:[function(e,t,r){"use strict";var n=e("./DataReader");function i(e){n.call(this,e)}e("../utils").inherits(i,n),i.prototype.byteAt=function(e){return this.data.charCodeAt(this.zero+e)},i.prototype.lastIndexOfSignature=function(e){return this.data.lastIndexOf(e)-this.zero},i.prototype.readAndCheckSignature=function(e){return e===this.readData(4)},i.prototype.readData=function(e){this.checkOffset(e);var t=this.data.slice(this.zero+this.index,this.zero+this.index+e);return this.index+=e,t},t.exports=i},{"../utils":32,"./DataReader":18}],21:[function(e,t,r){"use strict";var n=e("./ArrayReader");function i(e){n.call(this,e)}e("../utils").inherits(i,n),i.prototype.readData=function(e){if(this.checkOffset(e),0===e)return new Uint8Array(0);var t=this.data.subarray(this.zero+this.index,this.zero+this.index+e);return this.index+=e,t},t.exports=i},{"../utils":32,"./ArrayReader":17}],22:[function(e,t,r){"use strict";var n=e("../utils"),i=e("../support"),s=e("./ArrayReader"),a=e("./StringReader"),o=e("./NodeBufferReader"),h=e("./Uint8ArrayReader");t.exports=function(e){var t=n.getTypeOf(e);return n.checkSupport(t),"string"!==t||i.uint8array?"nodebuffer"===t?new o(e):i.uint8array?new h(n.transformTo("uint8array",e)):new s(n.transformTo("array",e)):new a(e)}},{"../support":30,"../utils":32,"./ArrayReader":17,"./NodeBufferReader":19,"./StringReader":20,"./Uint8ArrayReader":21}],23:[function(e,t,r){"use strict";r.LOCAL_FILE_HEADER="PK",r.CENTRAL_FILE_HEADER="PK",r.CENTRAL_DIRECTORY_END="PK",r.ZIP64_CENTRAL_DIRECTORY_LOCATOR="PK",r.ZIP64_CENTRAL_DIRECTORY_END="PK",r.DATA_DESCRIPTOR="PK\b"},{}],24:[function(e,t,r){"use strict";var n=e("./GenericWorker"),i=e("../utils");function s(e){n.call(this,"ConvertWorker to "+e),this.destType=e}i.inherits(s,n),s.prototype.processChunk=function(e){this.push({data:i.transformTo(this.destType,e.data),meta:e.meta})},t.exports=s},{"../utils":32,"./GenericWorker":28}],25:[function(e,t,r){"use strict";var n=e("./GenericWorker"),i=e("../crc32");function s(){n.call(this,"Crc32Probe"),this.withStreamInfo("crc32",0)}e("../utils").inherits(s,n),s.prototype.processChunk=function(e){this.streamInfo.crc32=i(e.data,this.streamInfo.crc32||0),this.push(e)},t.exports=s},{"../crc32":4,"../utils":32,"./GenericWorker":28}],26:[function(e,t,r){"use strict";var n=e("../utils"),i=e("./GenericWorker");function s(e){i.call(this,"DataLengthProbe for "+e),this.propName=e,this.withStreamInfo(e,0)}n.inherits(s,i),s.prototype.processChunk=function(e){if(e){var t=this.streamInfo[this.propName]||0;this.streamInfo[this.propName]=t+e.data.length}i.prototype.processChunk.call(this,e)},t.exports=s},{"../utils":32,"./GenericWorker":28}],27:[function(e,t,r){"use strict";var n=e("../utils"),i=e("./GenericWorker");function s(e){i.call(this,"DataWorker");var t=this;this.dataIsReady=!1,this.index=0,this.max=0,this.data=null,this.type="",this._tickScheduled=!1,e.then(function(e){t.dataIsReady=!0,t.data=e,t.max=e&&e.length||0,t.type=n.getTypeOf(e),t.isPaused||t._tickAndRepeat()},function(e){t.error(e)})}n.inherits(s,i),s.prototype.cleanUp=function(){i.prototype.cleanUp.call(this),this.data=null},s.prototype.resume=function(){return!!i.prototype.resume.call(this)&&(!this._tickScheduled&&this.dataIsReady&&(this._tickScheduled=!0,n.delay(this._tickAndRepeat,[],this)),!0)},s.prototype._tickAndRepeat=function(){this._tickScheduled=!1,this.isPaused||this.isFinished||(this._tick(),this.isFinished||(n.delay(this._tickAndRepeat,[],this),this._tickScheduled=!0))},s.prototype._tick=function(){if(this.isPaused||this.isFinished)return!1;var e=null,t=Math.min(this.max,this.index+16384);if(this.index>=this.max)return this.end();switch(this.type){case"string":e=this.data.substring(this.index,t);break;case"uint8array":e=this.data.subarray(this.index,t);break;case"array":case"nodebuffer":e=this.data.slice(this.index,t)}return this.index=t,this.push({data:e,meta:{percent:this.max?this.index/this.max*100:0}})},t.exports=s},{"../utils":32,"./GenericWorker":28}],28:[function(e,t,r){"use strict";function n(e){this.name=e||"default",this.streamInfo={},this.generatedError=null,this.extraStreamInfo={},this.isPaused=!0,this.isFinished=!1,this.isLocked=!1,this._listeners={data:[],end:[],error:[]},this.previous=null}n.prototype={push:function(e){this.emit("data",e)},end:function(){if(this.isFinished)return!1;this.flush();try{this.emit("end"),this.cleanUp(),this.isFinished=!0}catch(e){this.emit("error",e)}return!0},error:function(e){return!this.isFinished&&(this.isPaused?this.generatedError=e:(this.isFinished=!0,this.emit("error",e),this.previous&&this.previous.error(e),this.cleanUp()),!0)},on:function(e,t){return this._listeners[e].push(t),this},cleanUp:function(){this.streamInfo=this.generatedError=this.extraStreamInfo=null,this._listeners=[]},emit:function(e,t){if(this._listeners[e])for(var r=0;r<this._listeners[e].length;r++)this._listeners[e][r].call(this,t)},pipe:function(e){return e.registerPrevious(this)},registerPrevious:function(e){if(this.isLocked)throw new Error("The stream '"+this+"' has already been used.");this.streamInfo=e.streamInfo,this.mergeStreamInfo(),this.previous=e;var t=this;return e.on("data",function(e){t.processChunk(e)}),e.on("end",function(){t.end()}),e.on("error",function(e){t.error(e)}),this},pause:function(){return!this.isPaused&&!this.isFinished&&(this.isPaused=!0,this.previous&&this.previous.pause(),!0)},resume:function(){if(!this.isPaused||this.isFinished)return!1;var e=this.isPaused=!1;return this.generatedError&&(this.error(this.generatedError),e=!0),this.previous&&this.previous.resume(),!e},flush:function(){},processChunk:function(e){this.push(e)},withStreamInfo:function(e,t){return this.extraStreamInfo[e]=t,this.mergeStreamInfo(),this},mergeStreamInfo:function(){for(var e in this.extraStreamInfo)Object.prototype.hasOwnProperty.call(this.extraStreamInfo,e)&&(this.streamInfo[e]=this.extraStreamInfo[e])},lock:function(){if(this.isLocked)throw new Error("The stream '"+this+"' has already been used.");this.isLocked=!0,this.previous&&this.previous.lock()},toString:function(){var e="Worker "+this.name;return this.previous?this.previous+" -> "+e:e}},t.exports=n},{}],29:[function(e,t,r){"use strict";var h=e("../utils"),i=e("./ConvertWorker"),s=e("./GenericWorker"),u=e("../base64"),n=e("../support"),a=e("../external"),o=null;if(n.nodestream)try{o=e("../nodejs/NodejsStreamOutputAdapter")}catch(e){}function l(e,o){return new a.Promise(function(t,r){var n=[],i=e._internalType,s=e._outputType,a=e._mimeType;e.on("data",function(e,t){n.push(e),o&&o(t)}).on("error",function(e){n=[],r(e)}).on("end",function(){try{var e=function(e,t,r){switch(e){case"blob":return h.newBlob(h.transformTo("arraybuffer",t),r);case"base64":return u.encode(t);default:return h.transformTo(e,t)}}(s,function(e,t){var r,n=0,i=null,s=0;for(r=0;r<t.length;r++)s+=t[r].length;switch(e){case"string":return t.join("");case"array":return Array.prototype.concat.apply([],t);case"uint8array":for(i=new Uint8Array(s),r=0;r<t.length;r++)i.set(t[r],n),n+=t[r].length;return i;case"nodebuffer":return Buffer.concat(t);default:throw new Error("concat : unsupported type '"+e+"'")}}(i,n),a);t(e)}catch(e){r(e)}n=[]}).resume()})}function f(e,t,r){var n=t;switch(t){case"blob":case"arraybuffer":n="uint8array";break;case"base64":n="string"}try{this._internalType=n,this._outputType=t,this._mimeType=r,h.checkSupport(n),this._worker=e.pipe(new i(n)),e.lock()}catch(e){this._worker=new s("error"),this._worker.error(e)}}f.prototype={accumulate:function(e){return l(this,e)},on:function(e,t){var r=this;return"data"===e?this._worker.on(e,function(e){t.call(r,e.data,e.meta)}):this._worker.on(e,function(){h.delay(t,arguments,r)}),this},resume:function(){return h.delay(this._worker.resume,[],this._worker),this},pause:function(){return this._worker.pause(),this},toNodejsStream:function(e){if(h.checkSupport("nodestream"),"nodebuffer"!==this._outputType)throw new Error(this._outputType+" is not supported by this method");return new o(this,{objectMode:"nodebuffer"!==this._outputType},e)}},t.exports=f},{"../base64":1,"../external":6,"../nodejs/NodejsStreamOutputAdapter":13,"../support":30,"../utils":32,"./ConvertWorker":24,"./GenericWorker":28}],30:[function(e,t,r){"use strict";if(r.base64=!0,r.array=!0,r.string=!0,r.arraybuffer="undefined"!=typeof ArrayBuffer&&"undefined"!=typeof Uint8Array,r.nodebuffer="undefined"!=typeof Buffer,r.uint8array="undefined"!=typeof Uint8Array,"undefined"==typeof ArrayBuffer)r.blob=!1;else{var n=new ArrayBuffer(0);try{r.blob=0===new Blob([n],{type:"application/zip"}).size}catch(e){try{var i=new(self.BlobBuilder||self.WebKitBlobBuilder||self.MozBlobBuilder||self.MSBlobBuilder);i.append(n),r.blob=0===i.getBlob("application/zip").size}catch(e){r.blob=!1}}}try{r.nodestream=!!e("readable-stream").Readable}catch(e){r.nodestream=!1}},{"readable-stream":16}],31:[function(e,t,s){"use strict";for(var o=e("./utils"),h=e("./support"),r=e("./nodejsUtils"),n=e("./stream/GenericWorker"),u=new Array(256),i=0;i<256;i++)u[i]=252<=i?6:248<=i?5:240<=i?4:224<=i?3:192<=i?2:1;u[254]=u[254]=1;function a(){n.call(this,"utf-8 decode"),this.leftOver=null}function l(){n.call(this,"utf-8 encode")}s.utf8encode=function(e){return h.nodebuffer?r.newBufferFrom(e,"utf-8"):function(e){var t,r,n,i,s,a=e.length,o=0;for(i=0;i<a;i++)55296==(64512&(r=e.charCodeAt(i)))&&i+1<a&&56320==(64512&(n=e.charCodeAt(i+1)))&&(r=65536+(r-55296<<10)+(n-56320),i++),o+=r<128?1:r<2048?2:r<65536?3:4;for(t=h.uint8array?new Uint8Array(o):new Array(o),i=s=0;s<o;i++)55296==(64512&(r=e.charCodeAt(i)))&&i+1<a&&56320==(64512&(n=e.charCodeAt(i+1)))&&(r=65536+(r-55296<<10)+(n-56320),i++),r<128?t[s++]=r:(r<2048?t[s++]=192|r>>>6:(r<65536?t[s++]=224|r>>>12:(t[s++]=240|r>>>18,t[s++]=128|r>>>12&63),t[s++]=128|r>>>6&63),t[s++]=128|63&r);return t}(e)},s.utf8decode=function(e){return h.nodebuffer?o.transformTo("nodebuffer",e).toString("utf-8"):function(e){var t,r,n,i,s=e.length,a=new Array(2*s);for(t=r=0;t<s;)if((n=e[t++])<128)a[r++]=n;else if(4<(i=u[n]))a[r++]=65533,t+=i-1;else{for(n&=2===i?31:3===i?15:7;1<i&&t<s;)n=n<<6|63&e[t++],i--;1<i?a[r++]=65533:n<65536?a[r++]=n:(n-=65536,a[r++]=55296|n>>10&1023,a[r++]=56320|1023&n)}return a.length!==r&&(a.subarray?a=a.subarray(0,r):a.length=r),o.applyFromCharCode(a)}(e=o.transformTo(h.uint8array?"uint8array":"array",e))},o.inherits(a,n),a.prototype.processChunk=function(e){var t=o.transformTo(h.uint8array?"uint8array":"array",e.data);if(this.leftOver&&this.leftOver.length){if(h.uint8array){var r=t;(t=new Uint8Array(r.length+this.leftOver.length)).set(this.leftOver,0),t.set(r,this.leftOver.length)}else t=this.leftOver.concat(t);this.leftOver=null}var n=function(e,t){var r;for((t=t||e.length)>e.length&&(t=e.length),r=t-1;0<=r&&128==(192&e[r]);)r--;return r<0?t:0===r?t:r+u[e[r]]>t?r:t}(t),i=t;n!==t.length&&(h.uint8array?(i=t.subarray(0,n),this.leftOver=t.subarray(n,t.length)):(i=t.slice(0,n),this.leftOver=t.slice(n,t.length))),this.push({data:s.utf8decode(i),meta:e.meta})},a.prototype.flush=function(){this.leftOver&&this.leftOver.length&&(this.push({data:s.utf8decode(this.leftOver),meta:{}}),this.leftOver=null)},s.Utf8DecodeWorker=a,o.inherits(l,n),l.prototype.processChunk=function(e){this.push({data:s.utf8encode(e.data),meta:e.meta})},s.Utf8EncodeWorker=l},{"./nodejsUtils":14,"./stream/GenericWorker":28,"./support":30,"./utils":32}],32:[function(e,t,a){"use strict";var o=e("./support"),h=e("./base64"),r=e("./nodejsUtils"),u=e("./external");function n(e){return e}function l(e,t){for(var r=0;r<e.length;++r)t[r]=255&e.charCodeAt(r);return t}e("setimmediate"),a.newBlob=function(t,r){a.checkSupport("blob");try{return new Blob([t],{type:r})}catch(e){try{var n=new(self.BlobBuilder||self.WebKitBlobBuilder||self.MozBlobBuilder||self.MSBlobBuilder);return n.append(t),n.getBlob(r)}catch(e){throw new Error("Bug : can't construct the Blob.")}}};var i={stringifyByChunk:function(e,t,r){var n=[],i=0,s=e.length;if(s<=r)return String.fromCharCode.apply(null,e);for(;i<s;)"array"===t||"nodebuffer"===t?n.push(String.fromCharCode.apply(null,e.slice(i,Math.min(i+r,s)))):n.push(String.fromCharCode.apply(null,e.subarray(i,Math.min(i+r,s)))),i+=r;return n.join("")},stringifyByChar:function(e){for(var t="",r=0;r<e.length;r++)t+=String.fromCharCode(e[r]);return t},applyCanBeUsed:{uint8array:function(){try{return o.uint8array&&1===String.fromCharCode.apply(null,new Uint8Array(1)).length}catch(e){return!1}}(),nodebuffer:function(){try{return o.nodebuffer&&1===String.fromCharCode.apply(null,r.allocBuffer(1)).length}catch(e){return!1}}()}};function s(e){var t=65536,r=a.getTypeOf(e),n=!0;if("uint8array"===r?n=i.applyCanBeUsed.uint8array:"nodebuffer"===r&&(n=i.applyCanBeUsed.nodebuffer),n)for(;1<t;)try{return i.stringifyByChunk(e,r,t)}catch(e){t=Math.floor(t/2)}return i.stringifyByChar(e)}function f(e,t){for(var r=0;r<e.length;r++)t[r]=e[r];return t}a.applyFromCharCode=s;var c={};c.string={string:n,array:function(e){return l(e,new Array(e.length))},arraybuffer:function(e){return c.string.uint8array(e).buffer},uint8array:function(e){return l(e,new Uint8Array(e.length))},nodebuffer:function(e){return l(e,r.allocBuffer(e.length))}},c.array={string:s,array:n,arraybuffer:function(e){return new Uint8Array(e).buffer},uint8array:function(e){return new Uint8Array(e)},nodebuffer:function(e){return r.newBufferFrom(e)}},c.arraybuffer={string:function(e){return s(new Uint8Array(e))},array:function(e){return f(new Uint8Array(e),new Array(e.byteLength))},arraybuffer:n,uint8array:function(e){return new Uint8Array(e)},nodebuffer:function(e){return r.newBufferFrom(new Uint8Array(e))}},c.uint8array={string:s,array:function(e){return f(e,new Array(e.length))},arraybuffer:function(e){return e.buffer},uint8array:n,nodebuffer:function(e){return r.newBufferFrom(e)}},c.nodebuffer={string:s,array:function(e){return f(e,new Array(e.length))},arraybuffer:function(e){return c.nodebuffer.uint8array(e).buffer},uint8array:function(e){return f(e,new Uint8Array(e.length))},nodebuffer:n},a.transformTo=function(e,t){if(t=t||"",!e)return t;a.checkSupport(e);var r=a.getTypeOf(t);return c[r][e](t)},a.resolve=function(e){for(var t=e.split("/"),r=[],n=0;n<t.length;n++){var i=t[n];"."===i||""===i&&0!==n&&n!==t.length-1||(".."===i?r.pop():r.push(i))}return r.join("/")},a.getTypeOf=function(e){return"string"==typeof e?"string":"[object Array]"===Object.prototype.toString.call(e)?"array":o.nodebuffer&&r.isBuffer(e)?"nodebuffer":o.uint8array&&e instanceof Uint8Array?"uint8array":o.arraybuffer&&e instanceof ArrayBuffer?"arraybuffer":void 0},a.checkSupport=function(e){if(!o[e.toLowerCase()])throw new Error(e+" is not supported by this platform")},a.MAX_VALUE_16BITS=65535,a.MAX_VALUE_32BITS=-1,a.pretty=function(e){var t,r,n="";for(r=0;r<(e||"").length;r++)n+="\\x"+((t=e.charCodeAt(r))<16?"0":"")+t.toString(16).toUpperCase();return n},a.delay=function(e,t,r){setImmediate(function(){e.apply(r||null,t||[])})},a.inherits=function(e,t){function r(){}r.prototype=t.prototype,e.prototype=new r},a.extend=function(){var e,t,r={};for(e=0;e<arguments.length;e++)for(t in arguments[e])Object.prototype.hasOwnProperty.call(arguments[e],t)&&void 0===r[t]&&(r[t]=arguments[e][t]);return r},a.prepareContent=function(r,e,n,i,s){return u.Promise.resolve(e).then(function(n){return o.blob&&(n instanceof Blob||-1!==["[object File]","[object Blob]"].indexOf(Object.prototype.toString.call(n)))&&"undefined"!=typeof FileReader?new u.Promise(function(t,r){var e=new FileReader;e.onload=function(e){t(e.target.result)},e.onerror=function(e){r(e.target.error)},e.readAsArrayBuffer(n)}):n}).then(function(e){var t=a.getTypeOf(e);return t?("arraybuffer"===t?e=a.transformTo("uint8array",e):"string"===t&&(s?e=h.decode(e):n&&!0!==i&&(e=function(e){return l(e,o.uint8array?new Uint8Array(e.length):new Array(e.length))}(e))),e):u.Promise.reject(new Error("Can't read the data of '"+r+"'. Is it in a supported JavaScript type (String, Blob, ArrayBuffer, etc) ?"))})}},{"./base64":1,"./external":6,"./nodejsUtils":14,"./support":30,setimmediate:54}],33:[function(e,t,r){"use strict";var n=e("./reader/readerFor"),i=e("./utils"),s=e("./signature"),a=e("./zipEntry"),o=e("./support");function h(e){this.files=[],this.loadOptions=e}h.prototype={checkSignature:function(e){if(!this.reader.readAndCheckSignature(e)){this.reader.index-=4;var t=this.reader.readString(4);throw new Error("Corrupted zip or bug: unexpected signature ("+i.pretty(t)+", expected "+i.pretty(e)+")")}},isSignature:function(e,t){var r=this.reader.index;this.reader.setIndex(e);var n=this.reader.readString(4)===t;return this.reader.setIndex(r),n},readBlockEndOfCentral:function(){this.diskNumber=this.reader.readInt(2),this.diskWithCentralDirStart=this.reader.readInt(2),this.centralDirRecordsOnThisDisk=this.reader.readInt(2),this.centralDirRecords=this.reader.readInt(2),this.centralDirSize=this.reader.readInt(4),this.centralDirOffset=this.reader.readInt(4),this.zipCommentLength=this.reader.readInt(2);var e=this.reader.readData(this.zipCommentLength),t=o.uint8array?"uint8array":"array",r=i.transformTo(t,e);this.zipComment=this.loadOptions.decodeFileName(r)},readBlockZip64EndOfCentral:function(){this.zip64EndOfCentralSize=this.reader.readInt(8),this.reader.skip(4),this.diskNumber=this.reader.readInt(4),this.diskWithCentralDirStart=this.reader.readInt(4),this.centralDirRecordsOnThisDisk=this.reader.readInt(8),this.centralDirRecords=this.reader.readInt(8),this.centralDirSize=this.reader.readInt(8),this.centralDirOffset=this.reader.readInt(8),this.zip64ExtensibleData={};for(var e,t,r,n=this.zip64EndOfCentralSize-44;0<n;)e=this.reader.readInt(2),t=this.reader.readInt(4),r=this.reader.readData(t),this.zip64ExtensibleData[e]={id:e,length:t,value:r}},readBlockZip64EndOfCentralLocator:function(){if(this.diskWithZip64CentralDirStart=this.reader.readInt(4),this.relativeOffsetEndOfZip64CentralDir=this.reader.readInt(8),this.disksCount=this.reader.readInt(4),1<this.disksCount)throw new Error("Multi-volumes zip are not supported")},readLocalFiles:function(){var e,t;for(e=0;e<this.files.length;e++)t=this.files[e],this.reader.setIndex(t.localHeaderOffset),this.checkSignature(s.LOCAL_FILE_HEADER),t.readLocalPart(this.reader),t.handleUTF8(),t.processAttributes()},readCentralDir:function(){var e;for(this.reader.setIndex(this.centralDirOffset);this.reader.readAndCheckSignature(s.CENTRAL_FILE_HEADER);)(e=new a({zip64:this.zip64},this.loadOptions)).readCentralPart(this.reader),this.files.push(e);if(this.centralDirRecords!==this.files.length&&0!==this.centralDirRecords&&0===this.files.length)throw new Error("Corrupted zip or bug: expected "+this.centralDirRecords+" records in central dir, got "+this.files.length)},readEndOfCentral:function(){var e=this.reader.lastIndexOfSignature(s.CENTRAL_DIRECTORY_END);if(e<0)throw!this.isSignature(0,s.LOCAL_FILE_HEADER)?new Error("Can't find end of central directory : is this a zip file ? If it is, see https://stuk.github.io/jszip/documentation/howto/read_zip.html"):new Error("Corrupted zip: can't find end of central directory");this.reader.setIndex(e);var t=e;if(this.checkSignature(s.CENTRAL_DIRECTORY_END),this.readBlockEndOfCentral(),this.diskNumber===i.MAX_VALUE_16BITS||this.diskWithCentralDirStart===i.MAX_VALUE_16BITS||this.centralDirRecordsOnThisDisk===i.MAX_VALUE_16BITS||this.centralDirRecords===i.MAX_VALUE_16BITS||this.centralDirSize===i.MAX_VALUE_32BITS||this.centralDirOffset===i.MAX_VALUE_32BITS){if(this.zip64=!0,(e=this.reader.lastIndexOfSignature(s.ZIP64_CENTRAL_DIRECTORY_LOCATOR))<0)throw new Error("Corrupted zip: can't find the ZIP64 end of central directory locator");if(this.reader.setIndex(e),this.checkSignature(s.ZIP64_CENTRAL_DIRECTORY_LOCATOR),this.readBlockZip64EndOfCentralLocator(),!this.isSignature(this.relativeOffsetEndOfZip64CentralDir,s.ZIP64_CENTRAL_DIRECTORY_END)&&(this.relativeOffsetEndOfZip64CentralDir=this.reader.lastIndexOfSignature(s.ZIP64_CENTRAL_DIRECTORY_END),this.relativeOffsetEndOfZip64CentralDir<0))throw new Error("Corrupted zip: can't find the ZIP64 end of central directory");this.reader.setIndex(this.relativeOffsetEndOfZip64CentralDir),this.checkSignature(s.ZIP64_CENTRAL_DIRECTORY_END),this.readBlockZip64EndOfCentral()}var r=this.centralDirOffset+this.centralDirSize;this.zip64&&(r+=20,r+=12+this.zip64EndOfCentralSize);var n=t-r;if(0<n)this.isSignature(t,s.CENTRAL_FILE_HEADER)||(this.reader.zero=n);else if(n<0)throw new Error("Corrupted zip: missing "+Math.abs(n)+" bytes.")},prepareReader:function(e){this.reader=n(e)},load:function(e){this.prepareReader(e),this.readEndOfCentral(),this.readCentralDir(),this.readLocalFiles()}},t.exports=h},{"./reader/readerFor":22,"./signature":23,"./support":30,"./utils":32,"./zipEntry":34}],34:[function(e,t,r){"use strict";var n=e("./reader/readerFor"),s=e("./utils"),i=e("./compressedObject"),a=e("./crc32"),o=e("./utf8"),h=e("./compressions"),u=e("./support");function l(e,t){this.options=e,this.loadOptions=t}l.prototype={isEncrypted:function(){return 1==(1&this.bitFlag)},useUTF8:function(){return 2048==(2048&this.bitFlag)},readLocalPart:function(e){var t,r;if(e.skip(22),this.fileNameLength=e.readInt(2),r=e.readInt(2),this.fileName=e.readData(this.fileNameLength),e.skip(r),-1===this.compressedSize||-1===this.uncompressedSize)throw new Error("Bug or corrupted zip : didn't get enough information from the central directory (compressedSize === -1 || uncompressedSize === -1)");if(null===(t=function(e){for(var t in h)if(Object.prototype.hasOwnProperty.call(h,t)&&h[t].magic===e)return h[t];return null}(this.compressionMethod)))throw new Error("Corrupted zip : compression "+s.pretty(this.compressionMethod)+" unknown (inner file : "+s.transformTo("string",this.fileName)+")");this.decompressed=new i(this.compressedSize,this.uncompressedSize,this.crc32,t,e.readData(this.compressedSize))},readCentralPart:function(e){this.versionMadeBy=e.readInt(2),e.skip(2),this.bitFlag=e.readInt(2),this.compressionMethod=e.readString(2),this.date=e.readDate(),this.crc32=e.readInt(4),this.compressedSize=e.readInt(4),this.uncompressedSize=e.readInt(4);var t=e.readInt(2);if(this.extraFieldsLength=e.readInt(2),this.fileCommentLength=e.readInt(2),this.diskNumberStart=e.readInt(2),this.internalFileAttributes=e.readInt(2),this.externalFileAttributes=e.readInt(4),this.localHeaderOffset=e.readInt(4),this.isEncrypted())throw new Error("Encrypted zip are not supported");e.skip(t),this.readExtraFields(e),this.parseZIP64ExtraField(e),this.fileComment=e.readData(this.fileCommentLength)},processAttributes:function(){this.unixPermissions=null,this.dosPermissions=null;var e=this.versionMadeBy>>8;this.dir=!!(16&this.externalFileAttributes),0==e&&(this.dosPermissions=63&this.externalFileAttributes),3==e&&(this.unixPermissions=this.externalFileAttributes>>16&65535),this.dir||"/"!==this.fileNameStr.slice(-1)||(this.dir=!0)},parseZIP64ExtraField:function(){if(this.extraFields[1]){var e=n(this.extraFields[1].value);this.uncompressedSize===s.MAX_VALUE_32BITS&&(this.uncompressedSize=e.readInt(8)),this.compressedSize===s.MAX_VALUE_32BITS&&(this.compressedSize=e.readInt(8)),this.localHeaderOffset===s.MAX_VALUE_32BITS&&(this.localHeaderOffset=e.readInt(8)),this.diskNumberStart===s.MAX_VALUE_32BITS&&(this.diskNumberStart=e.readInt(4))}},readExtraFields:function(e){var t,r,n,i=e.index+this.extraFieldsLength;for(this.extraFields||(this.extraFields={});e.index+4<i;)t=e.readInt(2),r=e.readInt(2),n=e.readData(r),this.extraFields[t]={id:t,length:r,value:n};e.setIndex(i)},handleUTF8:function(){var e=u.uint8array?"uint8array":"array";if(this.useUTF8())this.fileNameStr=o.utf8decode(this.fileName),this.fileCommentStr=o.utf8decode(this.fileComment);else{var t=this.findExtraFieldUnicodePath();if(null!==t)this.fileNameStr=t;else{var r=s.transformTo(e,this.fileName);this.fileNameStr=this.loadOptions.decodeFileName(r)}var n=this.findExtraFieldUnicodeComment();if(null!==n)this.fileCommentStr=n;else{var i=s.transformTo(e,this.fileComment);this.fileCommentStr=this.loadOptions.decodeFileName(i)}}},findExtraFieldUnicodePath:function(){var e=this.extraFields[28789];if(e){var t=n(e.value);return 1!==t.readInt(1)?null:a(this.fileName)!==t.readInt(4)?null:o.utf8decode(t.readData(e.length-5))}return null},findExtraFieldUnicodeComment:function(){var e=this.extraFields[25461];if(e){var t=n(e.value);return 1!==t.readInt(1)?null:a(this.fileComment)!==t.readInt(4)?null:o.utf8decode(t.readData(e.length-5))}return null}},t.exports=l},{"./compressedObject":2,"./compressions":3,"./crc32":4,"./reader/readerFor":22,"./support":30,"./utf8":31,"./utils":32}],35:[function(e,t,r){"use strict";function n(e,t,r){this.name=e,this.dir=r.dir,this.date=r.date,this.comment=r.comment,this.unixPermissions=r.unixPermissions,this.dosPermissions=r.dosPermissions,this._data=t,this._dataBinary=r.binary,this.options={compression:r.compression,compressionOptions:r.compressionOptions}}var s=e("./stream/StreamHelper"),i=e("./stream/DataWorker"),a=e("./utf8"),o=e("./compressedObject"),h=e("./stream/GenericWorker");n.prototype={internalStream:function(e){var t=null,r="string";try{if(!e)throw new Error("No output type specified.");var n="string"===(r=e.toLowerCase())||"text"===r;"binarystring"!==r&&"text"!==r||(r="string"),t=this._decompressWorker();var i=!this._dataBinary;i&&!n&&(t=t.pipe(new a.Utf8EncodeWorker)),!i&&n&&(t=t.pipe(new a.Utf8DecodeWorker))}catch(e){(t=new h("error")).error(e)}return new s(t,r,"")},async:function(e,t){return this.internalStream(e).accumulate(t)},nodeStream:function(e,t){return this.internalStream(e||"nodebuffer").toNodejsStream(t)},_compressWorker:function(e,t){if(this._data instanceof o&&this._data.compression.magic===e.magic)return this._data.getCompressedWorker();var r=this._decompressWorker();return this._dataBinary||(r=r.pipe(new a.Utf8EncodeWorker)),o.createWorkerFrom(r,e,t)},_decompressWorker:function(){return this._data instanceof o?this._data.getContentWorker():this._data instanceof h?this._data:new i(this._data)}};for(var u=["asText","asBinary","asNodeBuffer","asUint8Array","asArrayBuffer"],l=function(){throw new Error("This method has been removed in JSZip 3.0, please check the upgrade guide.")},f=0;f<u.length;f++)n.prototype[u[f]]=l;t.exports=n},{"./compressedObject":2,"./stream/DataWorker":27,"./stream/GenericWorker":28,"./stream/StreamHelper":29,"./utf8":31}],36:[function(e,l,t){(function(t){"use strict";var r,n,e=t.MutationObserver||t.WebKitMutationObserver;if(e){var i=0,s=new e(u),a=t.document.createTextNode("");s.observe(a,{characterData:!0}),r=function(){a.data=i=++i%2}}else if(t.setImmediate||void 0===t.MessageChannel)r="document"in t&&"onreadystatechange"in t.document.createElement("script")?function(){var e=t.document.createElement("script");e.onreadystatechange=function(){u(),e.onreadystatechange=null,e.parentNode.removeChild(e),e=null},t.document.documentElement.appendChild(e)}:function(){setTimeout(u,0)};else{var o=new t.MessageChannel;o.port1.onmessage=u,r=function(){o.port2.postMessage(0)}}var h=[];function u(){var e,t;n=!0;for(var r=h.length;r;){for(t=h,h=[],e=-1;++e<r;)t[e]();r=h.length}n=!1}l.exports=function(e){1!==h.push(e)||n||r()}}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}],37:[function(e,t,r){"use strict";var i=e("immediate");function u(){}var l={},s=["REJECTED"],a=["FULFILLED"],n=["PENDING"];function o(e){if("function"!=typeof e)throw new TypeError("resolver must be a function");this.state=n,this.queue=[],this.outcome=void 0,e!==u&&d(this,e)}function h(e,t,r){this.promise=e,"function"==typeof t&&(this.onFulfilled=t,this.callFulfilled=this.otherCallFulfilled),"function"==typeof r&&(this.onRejected=r,this.callRejected=this.otherCallRejected)}function f(t,r,n){i(function(){var e;try{e=r(n)}catch(e){return l.reject(t,e)}e===t?l.reject(t,new TypeError("Cannot resolve promise with itself")):l.resolve(t,e)})}function c(e){var t=e&&e.then;if(e&&("object"==typeof e||"function"==typeof e)&&"function"==typeof t)return function(){t.apply(e,arguments)}}function d(t,e){var r=!1;function n(e){r||(r=!0,l.reject(t,e))}function i(e){r||(r=!0,l.resolve(t,e))}var s=p(function(){e(i,n)});"error"===s.status&&n(s.value)}function p(e,t){var r={};try{r.value=e(t),r.status="success"}catch(e){r.status="error",r.value=e}return r}(t.exports=o).prototype.finally=function(t){if("function"!=typeof t)return this;var r=this.constructor;return this.then(function(e){return r.resolve(t()).then(function(){return e})},function(e){return r.resolve(t()).then(function(){throw e})})},o.prototype.catch=function(e){return this.then(null,e)},o.prototype.then=function(e,t){if("function"!=typeof e&&this.state===a||"function"!=typeof t&&this.state===s)return this;var r=new this.constructor(u);this.state!==n?f(r,this.state===a?e:t,this.outcome):this.queue.push(new h(r,e,t));return r},h.prototype.callFulfilled=function(e){l.resolve(this.promise,e)},h.prototype.otherCallFulfilled=function(e){f(this.promise,this.onFulfilled,e)},h.prototype.callRejected=function(e){l.reject(this.promise,e)},h.prototype.otherCallRejected=function(e){f(this.promise,this.onRejected,e)},l.resolve=function(e,t){var r=p(c,t);if("error"===r.status)return l.reject(e,r.value);var n=r.value;if(n)d(e,n);else{e.state=a,e.outcome=t;for(var i=-1,s=e.queue.length;++i<s;)e.queue[i].callFulfilled(t)}return e},l.reject=function(e,t){e.state=s,e.outcome=t;for(var r=-1,n=e.queue.length;++r<n;)e.queue[r].callRejected(t);return e},o.resolve=function(e){if(e instanceof this)return e;return l.resolve(new this(u),e)},o.reject=function(e){var t=new this(u);return l.reject(t,e)},o.all=function(e){var r=this;if("[object Array]"!==Object.prototype.toString.call(e))return this.reject(new TypeError("must be an array"));var n=e.length,i=!1;if(!n)return this.resolve([]);var s=new Array(n),a=0,t=-1,o=new this(u);for(;++t<n;)h(e[t],t);return o;function h(e,t){r.resolve(e).then(function(e){s[t]=e,++a!==n||i||(i=!0,l.resolve(o,s))},function(e){i||(i=!0,l.reject(o,e))})}},o.race=function(e){var t=this;if("[object Array]"!==Object.prototype.toString.call(e))return this.reject(new TypeError("must be an array"));var r=e.length,n=!1;if(!r)return this.resolve([]);var i=-1,s=new this(u);for(;++i<r;)a=e[i],t.resolve(a).then(function(e){n||(n=!0,l.resolve(s,e))},function(e){n||(n=!0,l.reject(s,e))});var a;return s}},{immediate:36}],38:[function(e,t,r){"use strict";var n={};(0,e("./lib/utils/common").assign)(n,e("./lib/deflate"),e("./lib/inflate"),e("./lib/zlib/constants")),t.exports=n},{"./lib/deflate":39,"./lib/inflate":40,"./lib/utils/common":41,"./lib/zlib/constants":44}],39:[function(e,t,r){"use strict";var a=e("./zlib/deflate"),o=e("./utils/common"),h=e("./utils/strings"),i=e("./zlib/messages"),s=e("./zlib/zstream"),u=Object.prototype.toString,l=0,f=-1,c=0,d=8;function p(e){if(!(this instanceof p))return new p(e);this.options=o.assign({level:f,method:d,chunkSize:16384,windowBits:15,memLevel:8,strategy:c,to:""},e||{});var t=this.options;t.raw&&0<t.windowBits?t.windowBits=-t.windowBits:t.gzip&&0<t.windowBits&&t.windowBits<16&&(t.windowBits+=16),this.err=0,this.msg="",this.ended=!1,this.chunks=[],this.strm=new s,this.strm.avail_out=0;var r=a.deflateInit2(this.strm,t.level,t.method,t.windowBits,t.memLevel,t.strategy);if(r!==l)throw new Error(i[r]);if(t.header&&a.deflateSetHeader(this.strm,t.header),t.dictionary){var n;if(n="string"==typeof t.dictionary?h.string2buf(t.dictionary):"[object ArrayBuffer]"===u.call(t.dictionary)?new Uint8Array(t.dictionary):t.dictionary,(r=a.deflateSetDictionary(this.strm,n))!==l)throw new Error(i[r]);this._dict_set=!0}}function n(e,t){var r=new p(t);if(r.push(e,!0),r.err)throw r.msg||i[r.err];return r.result}p.prototype.push=function(e,t){var r,n,i=this.strm,s=this.options.chunkSize;if(this.ended)return!1;n=t===~~t?t:!0===t?4:0,"string"==typeof e?i.input=h.string2buf(e):"[object ArrayBuffer]"===u.call(e)?i.input=new Uint8Array(e):i.input=e,i.next_in=0,i.avail_in=i.input.length;do{if(0===i.avail_out&&(i.output=new o.Buf8(s),i.next_out=0,i.avail_out=s),1!==(r=a.deflate(i,n))&&r!==l)return this.onEnd(r),!(this.ended=!0);0!==i.avail_out&&(0!==i.avail_in||4!==n&&2!==n)||("string"===this.options.to?this.onData(h.buf2binstring(o.shrinkBuf(i.output,i.next_out))):this.onData(o.shrinkBuf(i.output,i.next_out)))}while((0<i.avail_in||0===i.avail_out)&&1!==r);return 4===n?(r=a.deflateEnd(this.strm),this.onEnd(r),this.ended=!0,r===l):2!==n||(this.onEnd(l),!(i.avail_out=0))},p.prototype.onData=function(e){this.chunks.push(e)},p.prototype.onEnd=function(e){e===l&&("string"===this.options.to?this.result=this.chunks.join(""):this.result=o.flattenChunks(this.chunks)),this.chunks=[],this.err=e,this.msg=this.strm.msg},r.Deflate=p,r.deflate=n,r.deflateRaw=function(e,t){return(t=t||{}).raw=!0,n(e,t)},r.gzip=function(e,t){return(t=t||{}).gzip=!0,n(e,t)}},{"./utils/common":41,"./utils/strings":42,"./zlib/deflate":46,"./zlib/messages":51,"./zlib/zstream":53}],40:[function(e,t,r){"use strict";var c=e("./zlib/inflate"),d=e("./utils/common"),p=e("./utils/strings"),m=e("./zlib/constants"),n=e("./zlib/messages"),i=e("./zlib/zstream"),s=e("./zlib/gzheader"),_=Object.prototype.toString;function a(e){if(!(this instanceof a))return new a(e);this.options=d.assign({chunkSize:16384,windowBits:0,to:""},e||{});var t=this.options;t.raw&&0<=t.windowBits&&t.windowBits<16&&(t.windowBits=-t.windowBits,0===t.windowBits&&(t.windowBits=-15)),!(0<=t.windowBits&&t.windowBits<16)||e&&e.windowBits||(t.windowBits+=32),15<t.windowBits&&t.windowBits<48&&0==(15&t.windowBits)&&(t.windowBits|=15),this.err=0,this.msg="",this.ended=!1,this.chunks=[],this.strm=new i,this.strm.avail_out=0;var r=c.inflateInit2(this.strm,t.windowBits);if(r!==m.Z_OK)throw new Error(n[r]);this.header=new s,c.inflateGetHeader(this.strm,this.header)}function o(e,t){var r=new a(t);if(r.push(e,!0),r.err)throw r.msg||n[r.err];return r.result}a.prototype.push=function(e,t){var r,n,i,s,a,o,h=this.strm,u=this.options.chunkSize,l=this.options.dictionary,f=!1;if(this.ended)return!1;n=t===~~t?t:!0===t?m.Z_FINISH:m.Z_NO_FLUSH,"string"==typeof e?h.input=p.binstring2buf(e):"[object ArrayBuffer]"===_.call(e)?h.input=new Uint8Array(e):h.input=e,h.next_in=0,h.avail_in=h.input.length;do{if(0===h.avail_out&&(h.output=new d.Buf8(u),h.next_out=0,h.avail_out=u),(r=c.inflate(h,m.Z_NO_FLUSH))===m.Z_NEED_DICT&&l&&(o="string"==typeof l?p.string2buf(l):"[object ArrayBuffer]"===_.call(l)?new Uint8Array(l):l,r=c.inflateSetDictionary(this.strm,o)),r===m.Z_BUF_ERROR&&!0===f&&(r=m.Z_OK,f=!1),r!==m.Z_STREAM_END&&r!==m.Z_OK)return this.onEnd(r),!(this.ended=!0);h.next_out&&(0!==h.avail_out&&r!==m.Z_STREAM_END&&(0!==h.avail_in||n!==m.Z_FINISH&&n!==m.Z_SYNC_FLUSH)||("string"===this.options.to?(i=p.utf8border(h.output,h.next_out),s=h.next_out-i,a=p.buf2string(h.output,i),h.next_out=s,h.avail_out=u-s,s&&d.arraySet(h.output,h.output,i,s,0),this.onData(a)):this.onData(d.shrinkBuf(h.output,h.next_out)))),0===h.avail_in&&0===h.avail_out&&(f=!0)}while((0<h.avail_in||0===h.avail_out)&&r!==m.Z_STREAM_END);return r===m.Z_STREAM_END&&(n=m.Z_FINISH),n===m.Z_FINISH?(r=c.inflateEnd(this.strm),this.onEnd(r),this.ended=!0,r===m.Z_OK):n!==m.Z_SYNC_FLUSH||(this.onEnd(m.Z_OK),!(h.avail_out=0))},a.prototype.onData=function(e){this.chunks.push(e)},a.prototype.onEnd=function(e){e===m.Z_OK&&("string"===this.options.to?this.result=this.chunks.join(""):this.result=d.flattenChunks(this.chunks)),this.chunks=[],this.err=e,this.msg=this.strm.msg},r.Inflate=a,r.inflate=o,r.inflateRaw=function(e,t){return(t=t||{}).raw=!0,o(e,t)},r.ungzip=o},{"./utils/common":41,"./utils/strings":42,"./zlib/constants":44,"./zlib/gzheader":47,"./zlib/inflate":49,"./zlib/messages":51,"./zlib/zstream":53}],41:[function(e,t,r){"use strict";var n="undefined"!=typeof Uint8Array&&"undefined"!=typeof Uint16Array&&"undefined"!=typeof Int32Array;r.assign=function(e){for(var t=Array.prototype.slice.call(arguments,1);t.length;){var r=t.shift();if(r){if("object"!=typeof r)throw new TypeError(r+"must be non-object");for(var n in r)r.hasOwnProperty(n)&&(e[n]=r[n])}}return e},r.shrinkBuf=function(e,t){return e.length===t?e:e.subarray?e.subarray(0,t):(e.length=t,e)};var i={arraySet:function(e,t,r,n,i){if(t.subarray&&e.subarray)e.set(t.subarray(r,r+n),i);else for(var s=0;s<n;s++)e[i+s]=t[r+s]},flattenChunks:function(e){var t,r,n,i,s,a;for(t=n=0,r=e.length;t<r;t++)n+=e[t].length;for(a=new Uint8Array(n),t=i=0,r=e.length;t<r;t++)s=e[t],a.set(s,i),i+=s.length;return a}},s={arraySet:function(e,t,r,n,i){for(var s=0;s<n;s++)e[i+s]=t[r+s]},flattenChunks:function(e){return[].concat.apply([],e)}};r.setTyped=function(e){e?(r.Buf8=Uint8Array,r.Buf16=Uint16Array,r.Buf32=Int32Array,r.assign(r,i)):(r.Buf8=Array,r.Buf16=Array,r.Buf32=Array,r.assign(r,s))},r.setTyped(n)},{}],42:[function(e,t,r){"use strict";var h=e("./common"),i=!0,s=!0;try{String.fromCharCode.apply(null,[0])}catch(e){i=!1}try{String.fromCharCode.apply(null,new Uint8Array(1))}catch(e){s=!1}for(var u=new h.Buf8(256),n=0;n<256;n++)u[n]=252<=n?6:248<=n?5:240<=n?4:224<=n?3:192<=n?2:1;function l(e,t){if(t<65537&&(e.subarray&&s||!e.subarray&&i))return String.fromCharCode.apply(null,h.shrinkBuf(e,t));for(var r="",n=0;n<t;n++)r+=String.fromCharCode(e[n]);return r}u[254]=u[254]=1,r.string2buf=function(e){var t,r,n,i,s,a=e.length,o=0;for(i=0;i<a;i++)55296==(64512&(r=e.charCodeAt(i)))&&i+1<a&&56320==(64512&(n=e.charCodeAt(i+1)))&&(r=65536+(r-55296<<10)+(n-56320),i++),o+=r<128?1:r<2048?2:r<65536?3:4;for(t=new h.Buf8(o),i=s=0;s<o;i++)55296==(64512&(r=e.charCodeAt(i)))&&i+1<a&&56320==(64512&(n=e.charCodeAt(i+1)))&&(r=65536+(r-55296<<10)+(n-56320),i++),r<128?t[s++]=r:(r<2048?t[s++]=192|r>>>6:(r<65536?t[s++]=224|r>>>12:(t[s++]=240|r>>>18,t[s++]=128|r>>>12&63),t[s++]=128|r>>>6&63),t[s++]=128|63&r);return t},r.buf2binstring=function(e){return l(e,e.length)},r.binstring2buf=function(e){for(var t=new h.Buf8(e.length),r=0,n=t.length;r<n;r++)t[r]=e.charCodeAt(r);return t},r.buf2string=function(e,t){var r,n,i,s,a=t||e.length,o=new Array(2*a);for(r=n=0;r<a;)if((i=e[r++])<128)o[n++]=i;else if(4<(s=u[i]))o[n++]=65533,r+=s-1;else{for(i&=2===s?31:3===s?15:7;1<s&&r<a;)i=i<<6|63&e[r++],s--;1<s?o[n++]=65533:i<65536?o[n++]=i:(i-=65536,o[n++]=55296|i>>10&1023,o[n++]=56320|1023&i)}return l(o,n)},r.utf8border=function(e,t){var r;for((t=t||e.length)>e.length&&(t=e.length),r=t-1;0<=r&&128==(192&e[r]);)r--;return r<0?t:0===r?t:r+u[e[r]]>t?r:t}},{"./common":41}],43:[function(e,t,r){"use strict";t.exports=function(e,t,r,n){for(var i=65535&e|0,s=e>>>16&65535|0,a=0;0!==r;){for(r-=a=2e3<r?2e3:r;s=s+(i=i+t[n++]|0)|0,--a;);i%=65521,s%=65521}return i|s<<16|0}},{}],44:[function(e,t,r){"use strict";t.exports={Z_NO_FLUSH:0,Z_PARTIAL_FLUSH:1,Z_SYNC_FLUSH:2,Z_FULL_FLUSH:3,Z_FINISH:4,Z_BLOCK:5,Z_TREES:6,Z_OK:0,Z_STREAM_END:1,Z_NEED_DICT:2,Z_ERRNO:-1,Z_STREAM_ERROR:-2,Z_DATA_ERROR:-3,Z_BUF_ERROR:-5,Z_NO_COMPRESSION:0,Z_BEST_SPEED:1,Z_BEST_COMPRESSION:9,Z_DEFAULT_COMPRESSION:-1,Z_FILTERED:1,Z_HUFFMAN_ONLY:2,Z_RLE:3,Z_FIXED:4,Z_DEFAULT_STRATEGY:0,Z_BINARY:0,Z_TEXT:1,Z_UNKNOWN:2,Z_DEFLATED:8}},{}],45:[function(e,t,r){"use strict";var o=function(){for(var e,t=[],r=0;r<256;r++){e=r;for(var n=0;n<8;n++)e=1&e?3988292384^e>>>1:e>>>1;t[r]=e}return t}();t.exports=function(e,t,r,n){var i=o,s=n+r;e^=-1;for(var a=n;a<s;a++)e=e>>>8^i[255&(e^t[a])];return-1^e}},{}],46:[function(e,t,r){"use strict";var h,c=e("../utils/common"),u=e("./trees"),d=e("./adler32"),p=e("./crc32"),n=e("./messages"),l=0,f=4,m=0,_=-2,g=-1,b=4,i=2,v=8,y=9,s=286,a=30,o=19,w=2*s+1,k=15,x=3,S=258,z=S+x+1,C=42,E=113,A=1,I=2,O=3,B=4;function R(e,t){return e.msg=n[t],t}function T(e){return(e<<1)-(4<e?9:0)}function D(e){for(var t=e.length;0<=--t;)e[t]=0}function F(e){var t=e.state,r=t.pending;r>e.avail_out&&(r=e.avail_out),0!==r&&(c.arraySet(e.output,t.pending_buf,t.pending_out,r,e.next_out),e.next_out+=r,t.pending_out+=r,e.total_out+=r,e.avail_out-=r,t.pending-=r,0===t.pending&&(t.pending_out=0))}function N(e,t){u._tr_flush_block(e,0<=e.block_start?e.block_start:-1,e.strstart-e.block_start,t),e.block_start=e.strstart,F(e.strm)}function U(e,t){e.pending_buf[e.pending++]=t}function P(e,t){e.pending_buf[e.pending++]=t>>>8&255,e.pending_buf[e.pending++]=255&t}function L(e,t){var r,n,i=e.max_chain_length,s=e.strstart,a=e.prev_length,o=e.nice_match,h=e.strstart>e.w_size-z?e.strstart-(e.w_size-z):0,u=e.window,l=e.w_mask,f=e.prev,c=e.strstart+S,d=u[s+a-1],p=u[s+a];e.prev_length>=e.good_match&&(i>>=2),o>e.lookahead&&(o=e.lookahead);do{if(u[(r=t)+a]===p&&u[r+a-1]===d&&u[r]===u[s]&&u[++r]===u[s+1]){s+=2,r++;do{}while(u[++s]===u[++r]&&u[++s]===u[++r]&&u[++s]===u[++r]&&u[++s]===u[++r]&&u[++s]===u[++r]&&u[++s]===u[++r]&&u[++s]===u[++r]&&u[++s]===u[++r]&&s<c);if(n=S-(c-s),s=c-S,a<n){if(e.match_start=t,o<=(a=n))break;d=u[s+a-1],p=u[s+a]}}}while((t=f[t&l])>h&&0!=--i);return a<=e.lookahead?a:e.lookahead}function j(e){var t,r,n,i,s,a,o,h,u,l,f=e.w_size;do{if(i=e.window_size-e.lookahead-e.strstart,e.strstart>=f+(f-z)){for(c.arraySet(e.window,e.window,f,f,0),e.match_start-=f,e.strstart-=f,e.block_start-=f,t=r=e.hash_size;n=e.head[--t],e.head[t]=f<=n?n-f:0,--r;);for(t=r=f;n=e.prev[--t],e.prev[t]=f<=n?n-f:0,--r;);i+=f}if(0===e.strm.avail_in)break;if(a=e.strm,o=e.window,h=e.strstart+e.lookahead,u=i,l=void 0,l=a.avail_in,u<l&&(l=u),r=0===l?0:(a.avail_in-=l,c.arraySet(o,a.input,a.next_in,l,h),1===a.state.wrap?a.adler=d(a.adler,o,l,h):2===a.state.wrap&&(a.adler=p(a.adler,o,l,h)),a.next_in+=l,a.total_in+=l,l),e.lookahead+=r,e.lookahead+e.insert>=x)for(s=e.strstart-e.insert,e.ins_h=e.window[s],e.ins_h=(e.ins_h<<e.hash_shift^e.window[s+1])&e.hash_mask;e.insert&&(e.ins_h=(e.ins_h<<e.hash_shift^e.window[s+x-1])&e.hash_mask,e.prev[s&e.w_mask]=e.head[e.ins_h],e.head[e.ins_h]=s,s++,e.insert--,!(e.lookahead+e.insert<x)););}while(e.lookahead<z&&0!==e.strm.avail_in)}function Z(e,t){for(var r,n;;){if(e.lookahead<z){if(j(e),e.lookahead<z&&t===l)return A;if(0===e.lookahead)break}if(r=0,e.lookahead>=x&&(e.ins_h=(e.ins_h<<e.hash_shift^e.window[e.strstart+x-1])&e.hash_mask,r=e.prev[e.strstart&e.w_mask]=e.head[e.ins_h],e.head[e.ins_h]=e.strstart),0!==r&&e.strstart-r<=e.w_size-z&&(e.match_length=L(e,r)),e.match_length>=x)if(n=u._tr_tally(e,e.strstart-e.match_start,e.match_length-x),e.lookahead-=e.match_length,e.match_length<=e.max_lazy_match&&e.lookahead>=x){for(e.match_length--;e.strstart++,e.ins_h=(e.ins_h<<e.hash_shift^e.window[e.strstart+x-1])&e.hash_mask,r=e.prev[e.strstart&e.w_mask]=e.head[e.ins_h],e.head[e.ins_h]=e.strstart,0!=--e.match_length;);e.strstart++}else e.strstart+=e.match_length,e.match_length=0,e.ins_h=e.window[e.strstart],e.ins_h=(e.ins_h<<e.hash_shift^e.window[e.strstart+1])&e.hash_mask;else n=u._tr_tally(e,0,e.window[e.strstart]),e.lookahead--,e.strstart++;if(n&&(N(e,!1),0===e.strm.avail_out))return A}return e.insert=e.strstart<x-1?e.strstart:x-1,t===f?(N(e,!0),0===e.strm.avail_out?O:B):e.last_lit&&(N(e,!1),0===e.strm.avail_out)?A:I}function W(e,t){for(var r,n,i;;){if(e.lookahead<z){if(j(e),e.lookahead<z&&t===l)return A;if(0===e.lookahead)break}if(r=0,e.lookahead>=x&&(e.ins_h=(e.ins_h<<e.hash_shift^e.window[e.strstart+x-1])&e.hash_mask,r=e.prev[e.strstart&e.w_mask]=e.head[e.ins_h],e.head[e.ins_h]=e.strstart),e.prev_length=e.match_length,e.prev_match=e.match_start,e.match_length=x-1,0!==r&&e.prev_length<e.max_lazy_match&&e.strstart-r<=e.w_size-z&&(e.match_length=L(e,r),e.match_length<=5&&(1===e.strategy||e.match_length===x&&4096<e.strstart-e.match_start)&&(e.match_length=x-1)),e.prev_length>=x&&e.match_length<=e.prev_length){for(i=e.strstart+e.lookahead-x,n=u._tr_tally(e,e.strstart-1-e.prev_match,e.prev_length-x),e.lookahead-=e.prev_length-1,e.prev_length-=2;++e.strstart<=i&&(e.ins_h=(e.ins_h<<e.hash_shift^e.window[e.strstart+x-1])&e.hash_mask,r=e.prev[e.strstart&e.w_mask]=e.head[e.ins_h],e.head[e.ins_h]=e.strstart),0!=--e.prev_length;);if(e.match_available=0,e.match_length=x-1,e.strstart++,n&&(N(e,!1),0===e.strm.avail_out))return A}else if(e.match_available){if((n=u._tr_tally(e,0,e.window[e.strstart-1]))&&N(e,!1),e.strstart++,e.lookahead--,0===e.strm.avail_out)return A}else e.match_available=1,e.strstart++,e.lookahead--}return e.match_available&&(n=u._tr_tally(e,0,e.window[e.strstart-1]),e.match_available=0),e.insert=e.strstart<x-1?e.strstart:x-1,t===f?(N(e,!0),0===e.strm.avail_out?O:B):e.last_lit&&(N(e,!1),0===e.strm.avail_out)?A:I}function M(e,t,r,n,i){this.good_length=e,this.max_lazy=t,this.nice_length=r,this.max_chain=n,this.func=i}function H(){this.strm=null,this.status=0,this.pending_buf=null,this.pending_buf_size=0,this.pending_out=0,this.pending=0,this.wrap=0,this.gzhead=null,this.gzindex=0,this.method=v,this.last_flush=-1,this.w_size=0,this.w_bits=0,this.w_mask=0,this.window=null,this.window_size=0,this.prev=null,this.head=null,this.ins_h=0,this.hash_size=0,this.hash_bits=0,this.hash_mask=0,this.hash_shift=0,this.block_start=0,this.match_length=0,this.prev_match=0,this.match_available=0,this.strstart=0,this.match_start=0,this.lookahead=0,this.prev_length=0,this.max_chain_length=0,this.max_lazy_match=0,this.level=0,this.strategy=0,this.good_match=0,this.nice_match=0,this.dyn_ltree=new c.Buf16(2*w),this.dyn_dtree=new c.Buf16(2*(2*a+1)),this.bl_tree=new c.Buf16(2*(2*o+1)),D(this.dyn_ltree),D(this.dyn_dtree),D(this.bl_tree),this.l_desc=null,this.d_desc=null,this.bl_desc=null,this.bl_count=new c.Buf16(k+1),this.heap=new c.Buf16(2*s+1),D(this.heap),this.heap_len=0,this.heap_max=0,this.depth=new c.Buf16(2*s+1),D(this.depth),this.l_buf=0,this.lit_bufsize=0,this.last_lit=0,this.d_buf=0,this.opt_len=0,this.static_len=0,this.matches=0,this.insert=0,this.bi_buf=0,this.bi_valid=0}function G(e){var t;return e&&e.state?(e.total_in=e.total_out=0,e.data_type=i,(t=e.state).pending=0,t.pending_out=0,t.wrap<0&&(t.wrap=-t.wrap),t.status=t.wrap?C:E,e.adler=2===t.wrap?0:1,t.last_flush=l,u._tr_init(t),m):R(e,_)}function K(e){var t=G(e);return t===m&&function(e){e.window_size=2*e.w_size,D(e.head),e.max_lazy_match=h[e.level].max_lazy,e.good_match=h[e.level].good_length,e.nice_match=h[e.level].nice_length,e.max_chain_length=h[e.level].max_chain,e.strstart=0,e.block_start=0,e.lookahead=0,e.insert=0,e.match_length=e.prev_length=x-1,e.match_available=0,e.ins_h=0}(e.state),t}function Y(e,t,r,n,i,s){if(!e)return _;var a=1;if(t===g&&(t=6),n<0?(a=0,n=-n):15<n&&(a=2,n-=16),i<1||y<i||r!==v||n<8||15<n||t<0||9<t||s<0||b<s)return R(e,_);8===n&&(n=9);var o=new H;return(e.state=o).strm=e,o.wrap=a,o.gzhead=null,o.w_bits=n,o.w_size=1<<o.w_bits,o.w_mask=o.w_size-1,o.hash_bits=i+7,o.hash_size=1<<o.hash_bits,o.hash_mask=o.hash_size-1,o.hash_shift=~~((o.hash_bits+x-1)/x),o.window=new c.Buf8(2*o.w_size),o.head=new c.Buf16(o.hash_size),o.prev=new c.Buf16(o.w_size),o.lit_bufsize=1<<i+6,o.pending_buf_size=4*o.lit_bufsize,o.pending_buf=new c.Buf8(o.pending_buf_size),o.d_buf=1*o.lit_bufsize,o.l_buf=3*o.lit_bufsize,o.level=t,o.strategy=s,o.method=r,K(e)}h=[new M(0,0,0,0,function(e,t){var r=65535;for(r>e.pending_buf_size-5&&(r=e.pending_buf_size-5);;){if(e.lookahead<=1){if(j(e),0===e.lookahead&&t===l)return A;if(0===e.lookahead)break}e.strstart+=e.lookahead,e.lookahead=0;var n=e.block_start+r;if((0===e.strstart||e.strstart>=n)&&(e.lookahead=e.strstart-n,e.strstart=n,N(e,!1),0===e.strm.avail_out))return A;if(e.strstart-e.block_start>=e.w_size-z&&(N(e,!1),0===e.strm.avail_out))return A}return e.insert=0,t===f?(N(e,!0),0===e.strm.avail_out?O:B):(e.strstart>e.block_start&&(N(e,!1),e.strm.avail_out),A)}),new M(4,4,8,4,Z),new M(4,5,16,8,Z),new M(4,6,32,32,Z),new M(4,4,16,16,W),new M(8,16,32,32,W),new M(8,16,128,128,W),new M(8,32,128,256,W),new M(32,128,258,1024,W),new M(32,258,258,4096,W)],r.deflateInit=function(e,t){return Y(e,t,v,15,8,0)},r.deflateInit2=Y,r.deflateReset=K,r.deflateResetKeep=G,r.deflateSetHeader=function(e,t){return e&&e.state?2!==e.state.wrap?_:(e.state.gzhead=t,m):_},r.deflate=function(e,t){var r,n,i,s;if(!e||!e.state||5<t||t<0)return e?R(e,_):_;if(n=e.state,!e.output||!e.input&&0!==e.avail_in||666===n.status&&t!==f)return R(e,0===e.avail_out?-5:_);if(n.strm=e,r=n.last_flush,n.last_flush=t,n.status===C)if(2===n.wrap)e.adler=0,U(n,31),U(n,139),U(n,8),n.gzhead?(U(n,(n.gzhead.text?1:0)+(n.gzhead.hcrc?2:0)+(n.gzhead.extra?4:0)+(n.gzhead.name?8:0)+(n.gzhead.comment?16:0)),U(n,255&n.gzhead.time),U(n,n.gzhead.time>>8&255),U(n,n.gzhead.time>>16&255),U(n,n.gzhead.time>>24&255),U(n,9===n.level?2:2<=n.strategy||n.level<2?4:0),U(n,255&n.gzhead.os),n.gzhead.extra&&n.gzhead.extra.length&&(U(n,255&n.gzhead.extra.length),U(n,n.gzhead.extra.length>>8&255)),n.gzhead.hcrc&&(e.adler=p(e.adler,n.pending_buf,n.pending,0)),n.gzindex=0,n.status=69):(U(n,0),U(n,0),U(n,0),U(n,0),U(n,0),U(n,9===n.level?2:2<=n.strategy||n.level<2?4:0),U(n,3),n.status=E);else{var a=v+(n.w_bits-8<<4)<<8;a|=(2<=n.strategy||n.level<2?0:n.level<6?1:6===n.level?2:3)<<6,0!==n.strstart&&(a|=32),a+=31-a%31,n.status=E,P(n,a),0!==n.strstart&&(P(n,e.adler>>>16),P(n,65535&e.adler)),e.adler=1}if(69===n.status)if(n.gzhead.extra){for(i=n.pending;n.gzindex<(65535&n.gzhead.extra.length)&&(n.pending!==n.pending_buf_size||(n.gzhead.hcrc&&n.pending>i&&(e.adler=p(e.adler,n.pending_buf,n.pending-i,i)),F(e),i=n.pending,n.pending!==n.pending_buf_size));)U(n,255&n.gzhead.extra[n.gzindex]),n.gzindex++;n.gzhead.hcrc&&n.pending>i&&(e.adler=p(e.adler,n.pending_buf,n.pending-i,i)),n.gzindex===n.gzhead.extra.length&&(n.gzindex=0,n.status=73)}else n.status=73;if(73===n.status)if(n.gzhead.name){i=n.pending;do{if(n.pending===n.pending_buf_size&&(n.gzhead.hcrc&&n.pending>i&&(e.adler=p(e.adler,n.pending_buf,n.pending-i,i)),F(e),i=n.pending,n.pending===n.pending_buf_size)){s=1;break}s=n.gzindex<n.gzhead.name.length?255&n.gzhead.name.charCodeAt(n.gzindex++):0,U(n,s)}while(0!==s);n.gzhead.hcrc&&n.pending>i&&(e.adler=p(e.adler,n.pending_buf,n.pending-i,i)),0===s&&(n.gzindex=0,n.status=91)}else n.status=91;if(91===n.status)if(n.gzhead.comment){i=n.pending;do{if(n.pending===n.pending_buf_size&&(n.gzhead.hcrc&&n.pending>i&&(e.adler=p(e.adler,n.pending_buf,n.pending-i,i)),F(e),i=n.pending,n.pending===n.pending_buf_size)){s=1;break}s=n.gzindex<n.gzhead.comment.length?255&n.gzhead.comment.charCodeAt(n.gzindex++):0,U(n,s)}while(0!==s);n.gzhead.hcrc&&n.pending>i&&(e.adler=p(e.adler,n.pending_buf,n.pending-i,i)),0===s&&(n.status=103)}else n.status=103;if(103===n.status&&(n.gzhead.hcrc?(n.pending+2>n.pending_buf_size&&F(e),n.pending+2<=n.pending_buf_size&&(U(n,255&e.adler),U(n,e.adler>>8&255),e.adler=0,n.status=E)):n.status=E),0!==n.pending){if(F(e),0===e.avail_out)return n.last_flush=-1,m}else if(0===e.avail_in&&T(t)<=T(r)&&t!==f)return R(e,-5);if(666===n.status&&0!==e.avail_in)return R(e,-5);if(0!==e.avail_in||0!==n.lookahead||t!==l&&666!==n.status){var o=2===n.strategy?function(e,t){for(var r;;){if(0===e.lookahead&&(j(e),0===e.lookahead)){if(t===l)return A;break}if(e.match_length=0,r=u._tr_tally(e,0,e.window[e.strstart]),e.lookahead--,e.strstart++,r&&(N(e,!1),0===e.strm.avail_out))return A}return e.insert=0,t===f?(N(e,!0),0===e.strm.avail_out?O:B):e.last_lit&&(N(e,!1),0===e.strm.avail_out)?A:I}(n,t):3===n.strategy?function(e,t){for(var r,n,i,s,a=e.window;;){if(e.lookahead<=S){if(j(e),e.lookahead<=S&&t===l)return A;if(0===e.lookahead)break}if(e.match_length=0,e.lookahead>=x&&0<e.strstart&&(n=a[i=e.strstart-1])===a[++i]&&n===a[++i]&&n===a[++i]){s=e.strstart+S;do{}while(n===a[++i]&&n===a[++i]&&n===a[++i]&&n===a[++i]&&n===a[++i]&&n===a[++i]&&n===a[++i]&&n===a[++i]&&i<s);e.match_length=S-(s-i),e.match_length>e.lookahead&&(e.match_length=e.lookahead)}if(e.match_length>=x?(r=u._tr_tally(e,1,e.match_length-x),e.lookahead-=e.match_length,e.strstart+=e.match_length,e.match_length=0):(r=u._tr_tally(e,0,e.window[e.strstart]),e.lookahead--,e.strstart++),r&&(N(e,!1),0===e.strm.avail_out))return A}return e.insert=0,t===f?(N(e,!0),0===e.strm.avail_out?O:B):e.last_lit&&(N(e,!1),0===e.strm.avail_out)?A:I}(n,t):h[n.level].func(n,t);if(o!==O&&o!==B||(n.status=666),o===A||o===O)return 0===e.avail_out&&(n.last_flush=-1),m;if(o===I&&(1===t?u._tr_align(n):5!==t&&(u._tr_stored_block(n,0,0,!1),3===t&&(D(n.head),0===n.lookahead&&(n.strstart=0,n.block_start=0,n.insert=0))),F(e),0===e.avail_out))return n.last_flush=-1,m}return t!==f?m:n.wrap<=0?1:(2===n.wrap?(U(n,255&e.adler),U(n,e.adler>>8&255),U(n,e.adler>>16&255),U(n,e.adler>>24&255),U(n,255&e.total_in),U(n,e.total_in>>8&255),U(n,e.total_in>>16&255),U(n,e.total_in>>24&255)):(P(n,e.adler>>>16),P(n,65535&e.adler)),F(e),0<n.wrap&&(n.wrap=-n.wrap),0!==n.pending?m:1)},r.deflateEnd=function(e){var t;return e&&e.state?(t=e.state.status)!==C&&69!==t&&73!==t&&91!==t&&103!==t&&t!==E&&666!==t?R(e,_):(e.state=null,t===E?R(e,-3):m):_},r.deflateSetDictionary=function(e,t){var r,n,i,s,a,o,h,u,l=t.length;if(!e||!e.state)return _;if(2===(s=(r=e.state).wrap)||1===s&&r.status!==C||r.lookahead)return _;for(1===s&&(e.adler=d(e.adler,t,l,0)),r.wrap=0,l>=r.w_size&&(0===s&&(D(r.head),r.strstart=0,r.block_start=0,r.insert=0),u=new c.Buf8(r.w_size),c.arraySet(u,t,l-r.w_size,r.w_size,0),t=u,l=r.w_size),a=e.avail_in,o=e.next_in,h=e.input,e.avail_in=l,e.next_in=0,e.input=t,j(r);r.lookahead>=x;){for(n=r.strstart,i=r.lookahead-(x-1);r.ins_h=(r.ins_h<<r.hash_shift^r.window[n+x-1])&r.hash_mask,r.prev[n&r.w_mask]=r.head[r.ins_h],r.head[r.ins_h]=n,n++,--i;);r.strstart=n,r.lookahead=x-1,j(r)}return r.strstart+=r.lookahead,r.block_start=r.strstart,r.insert=r.lookahead,r.lookahead=0,r.match_length=r.prev_length=x-1,r.match_available=0,e.next_in=o,e.input=h,e.avail_in=a,r.wrap=s,m},r.deflateInfo="pako deflate (from Nodeca project)"},{"../utils/common":41,"./adler32":43,"./crc32":45,"./messages":51,"./trees":52}],47:[function(e,t,r){"use strict";t.exports=function(){this.text=0,this.time=0,this.xflags=0,this.os=0,this.extra=null,this.extra_len=0,this.name="",this.comment="",this.hcrc=0,this.done=!1}},{}],48:[function(e,t,r){"use strict";t.exports=function(e,t){var r,n,i,s,a,o,h,u,l,f,c,d,p,m,_,g,b,v,y,w,k,x,S,z,C;r=e.state,n=e.next_in,z=e.input,i=n+(e.avail_in-5),s=e.next_out,C=e.output,a=s-(t-e.avail_out),o=s+(e.avail_out-257),h=r.dmax,u=r.wsize,l=r.whave,f=r.wnext,c=r.window,d=r.hold,p=r.bits,m=r.lencode,_=r.distcode,g=(1<<r.lenbits)-1,b=(1<<r.distbits)-1;e:do{p<15&&(d+=z[n++]<<p,p+=8,d+=z[n++]<<p,p+=8),v=m[d&g];t:for(;;){if(d>>>=y=v>>>24,p-=y,0===(y=v>>>16&255))C[s++]=65535&v;else{if(!(16&y)){if(0==(64&y)){v=m[(65535&v)+(d&(1<<y)-1)];continue t}if(32&y){r.mode=12;break e}e.msg="invalid literal/length code",r.mode=30;break e}w=65535&v,(y&=15)&&(p<y&&(d+=z[n++]<<p,p+=8),w+=d&(1<<y)-1,d>>>=y,p-=y),p<15&&(d+=z[n++]<<p,p+=8,d+=z[n++]<<p,p+=8),v=_[d&b];r:for(;;){if(d>>>=y=v>>>24,p-=y,!(16&(y=v>>>16&255))){if(0==(64&y)){v=_[(65535&v)+(d&(1<<y)-1)];continue r}e.msg="invalid distance code",r.mode=30;break e}if(k=65535&v,p<(y&=15)&&(d+=z[n++]<<p,(p+=8)<y&&(d+=z[n++]<<p,p+=8)),h<(k+=d&(1<<y)-1)){e.msg="invalid distance too far back",r.mode=30;break e}if(d>>>=y,p-=y,(y=s-a)<k){if(l<(y=k-y)&&r.sane){e.msg="invalid distance too far back",r.mode=30;break e}if(S=c,(x=0)===f){if(x+=u-y,y<w){for(w-=y;C[s++]=c[x++],--y;);x=s-k,S=C}}else if(f<y){if(x+=u+f-y,(y-=f)<w){for(w-=y;C[s++]=c[x++],--y;);if(x=0,f<w){for(w-=y=f;C[s++]=c[x++],--y;);x=s-k,S=C}}}else if(x+=f-y,y<w){for(w-=y;C[s++]=c[x++],--y;);x=s-k,S=C}for(;2<w;)C[s++]=S[x++],C[s++]=S[x++],C[s++]=S[x++],w-=3;w&&(C[s++]=S[x++],1<w&&(C[s++]=S[x++]))}else{for(x=s-k;C[s++]=C[x++],C[s++]=C[x++],C[s++]=C[x++],2<(w-=3););w&&(C[s++]=C[x++],1<w&&(C[s++]=C[x++]))}break}}break}}while(n<i&&s<o);n-=w=p>>3,d&=(1<<(p-=w<<3))-1,e.next_in=n,e.next_out=s,e.avail_in=n<i?i-n+5:5-(n-i),e.avail_out=s<o?o-s+257:257-(s-o),r.hold=d,r.bits=p}},{}],49:[function(e,t,r){"use strict";var I=e("../utils/common"),O=e("./adler32"),B=e("./crc32"),R=e("./inffast"),T=e("./inftrees"),D=1,F=2,N=0,U=-2,P=1,n=852,i=592;function L(e){return(e>>>24&255)+(e>>>8&65280)+((65280&e)<<8)+((255&e)<<24)}function s(){this.mode=0,this.last=!1,this.wrap=0,this.havedict=!1,this.flags=0,this.dmax=0,this.check=0,this.total=0,this.head=null,this.wbits=0,this.wsize=0,this.whave=0,this.wnext=0,this.window=null,this.hold=0,this.bits=0,this.length=0,this.offset=0,this.extra=0,this.lencode=null,this.distcode=null,this.lenbits=0,this.distbits=0,this.ncode=0,this.nlen=0,this.ndist=0,this.have=0,this.next=null,this.lens=new I.Buf16(320),this.work=new I.Buf16(288),this.lendyn=null,this.distdyn=null,this.sane=0,this.back=0,this.was=0}function a(e){var t;return e&&e.state?(t=e.state,e.total_in=e.total_out=t.total=0,e.msg="",t.wrap&&(e.adler=1&t.wrap),t.mode=P,t.last=0,t.havedict=0,t.dmax=32768,t.head=null,t.hold=0,t.bits=0,t.lencode=t.lendyn=new I.Buf32(n),t.distcode=t.distdyn=new I.Buf32(i),t.sane=1,t.back=-1,N):U}function o(e){var t;return e&&e.state?((t=e.state).wsize=0,t.whave=0,t.wnext=0,a(e)):U}function h(e,t){var r,n;return e&&e.state?(n=e.state,t<0?(r=0,t=-t):(r=1+(t>>4),t<48&&(t&=15)),t&&(t<8||15<t)?U:(null!==n.window&&n.wbits!==t&&(n.window=null),n.wrap=r,n.wbits=t,o(e))):U}function u(e,t){var r,n;return e?(n=new s,(e.state=n).window=null,(r=h(e,t))!==N&&(e.state=null),r):U}var l,f,c=!0;function j(e){if(c){var t;for(l=new I.Buf32(512),f=new I.Buf32(32),t=0;t<144;)e.lens[t++]=8;for(;t<256;)e.lens[t++]=9;for(;t<280;)e.lens[t++]=7;for(;t<288;)e.lens[t++]=8;for(T(D,e.lens,0,288,l,0,e.work,{bits:9}),t=0;t<32;)e.lens[t++]=5;T(F,e.lens,0,32,f,0,e.work,{bits:5}),c=!1}e.lencode=l,e.lenbits=9,e.distcode=f,e.distbits=5}function Z(e,t,r,n){var i,s=e.state;return null===s.window&&(s.wsize=1<<s.wbits,s.wnext=0,s.whave=0,s.window=new I.Buf8(s.wsize)),n>=s.wsize?(I.arraySet(s.window,t,r-s.wsize,s.wsize,0),s.wnext=0,s.whave=s.wsize):(n<(i=s.wsize-s.wnext)&&(i=n),I.arraySet(s.window,t,r-n,i,s.wnext),(n-=i)?(I.arraySet(s.window,t,r-n,n,0),s.wnext=n,s.whave=s.wsize):(s.wnext+=i,s.wnext===s.wsize&&(s.wnext=0),s.whave<s.wsize&&(s.whave+=i))),0}r.inflateReset=o,r.inflateReset2=h,r.inflateResetKeep=a,r.inflateInit=function(e){return u(e,15)},r.inflateInit2=u,r.inflate=function(e,t){var r,n,i,s,a,o,h,u,l,f,c,d,p,m,_,g,b,v,y,w,k,x,S,z,C=0,E=new I.Buf8(4),A=[16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15];if(!e||!e.state||!e.output||!e.input&&0!==e.avail_in)return U;12===(r=e.state).mode&&(r.mode=13),a=e.next_out,i=e.output,h=e.avail_out,s=e.next_in,n=e.input,o=e.avail_in,u=r.hold,l=r.bits,f=o,c=h,x=N;e:for(;;)switch(r.mode){case P:if(0===r.wrap){r.mode=13;break}for(;l<16;){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}if(2&r.wrap&&35615===u){E[r.check=0]=255&u,E[1]=u>>>8&255,r.check=B(r.check,E,2,0),l=u=0,r.mode=2;break}if(r.flags=0,r.head&&(r.head.done=!1),!(1&r.wrap)||(((255&u)<<8)+(u>>8))%31){e.msg="incorrect header check",r.mode=30;break}if(8!=(15&u)){e.msg="unknown compression method",r.mode=30;break}if(l-=4,k=8+(15&(u>>>=4)),0===r.wbits)r.wbits=k;else if(k>r.wbits){e.msg="invalid window size",r.mode=30;break}r.dmax=1<<k,e.adler=r.check=1,r.mode=512&u?10:12,l=u=0;break;case 2:for(;l<16;){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}if(r.flags=u,8!=(255&r.flags)){e.msg="unknown compression method",r.mode=30;break}if(57344&r.flags){e.msg="unknown header flags set",r.mode=30;break}r.head&&(r.head.text=u>>8&1),512&r.flags&&(E[0]=255&u,E[1]=u>>>8&255,r.check=B(r.check,E,2,0)),l=u=0,r.mode=3;case 3:for(;l<32;){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}r.head&&(r.head.time=u),512&r.flags&&(E[0]=255&u,E[1]=u>>>8&255,E[2]=u>>>16&255,E[3]=u>>>24&255,r.check=B(r.check,E,4,0)),l=u=0,r.mode=4;case 4:for(;l<16;){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}r.head&&(r.head.xflags=255&u,r.head.os=u>>8),512&r.flags&&(E[0]=255&u,E[1]=u>>>8&255,r.check=B(r.check,E,2,0)),l=u=0,r.mode=5;case 5:if(1024&r.flags){for(;l<16;){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}r.length=u,r.head&&(r.head.extra_len=u),512&r.flags&&(E[0]=255&u,E[1]=u>>>8&255,r.check=B(r.check,E,2,0)),l=u=0}else r.head&&(r.head.extra=null);r.mode=6;case 6:if(1024&r.flags&&(o<(d=r.length)&&(d=o),d&&(r.head&&(k=r.head.extra_len-r.length,r.head.extra||(r.head.extra=new Array(r.head.extra_len)),I.arraySet(r.head.extra,n,s,d,k)),512&r.flags&&(r.check=B(r.check,n,d,s)),o-=d,s+=d,r.length-=d),r.length))break e;r.length=0,r.mode=7;case 7:if(2048&r.flags){if(0===o)break e;for(d=0;k=n[s+d++],r.head&&k&&r.length<65536&&(r.head.name+=String.fromCharCode(k)),k&&d<o;);if(512&r.flags&&(r.check=B(r.check,n,d,s)),o-=d,s+=d,k)break e}else r.head&&(r.head.name=null);r.length=0,r.mode=8;case 8:if(4096&r.flags){if(0===o)break e;for(d=0;k=n[s+d++],r.head&&k&&r.length<65536&&(r.head.comment+=String.fromCharCode(k)),k&&d<o;);if(512&r.flags&&(r.check=B(r.check,n,d,s)),o-=d,s+=d,k)break e}else r.head&&(r.head.comment=null);r.mode=9;case 9:if(512&r.flags){for(;l<16;){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}if(u!==(65535&r.check)){e.msg="header crc mismatch",r.mode=30;break}l=u=0}r.head&&(r.head.hcrc=r.flags>>9&1,r.head.done=!0),e.adler=r.check=0,r.mode=12;break;case 10:for(;l<32;){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}e.adler=r.check=L(u),l=u=0,r.mode=11;case 11:if(0===r.havedict)return e.next_out=a,e.avail_out=h,e.next_in=s,e.avail_in=o,r.hold=u,r.bits=l,2;e.adler=r.check=1,r.mode=12;case 12:if(5===t||6===t)break e;case 13:if(r.last){u>>>=7&l,l-=7&l,r.mode=27;break}for(;l<3;){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}switch(r.last=1&u,l-=1,3&(u>>>=1)){case 0:r.mode=14;break;case 1:if(j(r),r.mode=20,6!==t)break;u>>>=2,l-=2;break e;case 2:r.mode=17;break;case 3:e.msg="invalid block type",r.mode=30}u>>>=2,l-=2;break;case 14:for(u>>>=7&l,l-=7&l;l<32;){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}if((65535&u)!=(u>>>16^65535)){e.msg="invalid stored block lengths",r.mode=30;break}if(r.length=65535&u,l=u=0,r.mode=15,6===t)break e;case 15:r.mode=16;case 16:if(d=r.length){if(o<d&&(d=o),h<d&&(d=h),0===d)break e;I.arraySet(i,n,s,d,a),o-=d,s+=d,h-=d,a+=d,r.length-=d;break}r.mode=12;break;case 17:for(;l<14;){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}if(r.nlen=257+(31&u),u>>>=5,l-=5,r.ndist=1+(31&u),u>>>=5,l-=5,r.ncode=4+(15&u),u>>>=4,l-=4,286<r.nlen||30<r.ndist){e.msg="too many length or distance symbols",r.mode=30;break}r.have=0,r.mode=18;case 18:for(;r.have<r.ncode;){for(;l<3;){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}r.lens[A[r.have++]]=7&u,u>>>=3,l-=3}for(;r.have<19;)r.lens[A[r.have++]]=0;if(r.lencode=r.lendyn,r.lenbits=7,S={bits:r.lenbits},x=T(0,r.lens,0,19,r.lencode,0,r.work,S),r.lenbits=S.bits,x){e.msg="invalid code lengths set",r.mode=30;break}r.have=0,r.mode=19;case 19:for(;r.have<r.nlen+r.ndist;){for(;g=(C=r.lencode[u&(1<<r.lenbits)-1])>>>16&255,b=65535&C,!((_=C>>>24)<=l);){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}if(b<16)u>>>=_,l-=_,r.lens[r.have++]=b;else{if(16===b){for(z=_+2;l<z;){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}if(u>>>=_,l-=_,0===r.have){e.msg="invalid bit length repeat",r.mode=30;break}k=r.lens[r.have-1],d=3+(3&u),u>>>=2,l-=2}else if(17===b){for(z=_+3;l<z;){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}l-=_,k=0,d=3+(7&(u>>>=_)),u>>>=3,l-=3}else{for(z=_+7;l<z;){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}l-=_,k=0,d=11+(127&(u>>>=_)),u>>>=7,l-=7}if(r.have+d>r.nlen+r.ndist){e.msg="invalid bit length repeat",r.mode=30;break}for(;d--;)r.lens[r.have++]=k}}if(30===r.mode)break;if(0===r.lens[256]){e.msg="invalid code -- missing end-of-block",r.mode=30;break}if(r.lenbits=9,S={bits:r.lenbits},x=T(D,r.lens,0,r.nlen,r.lencode,0,r.work,S),r.lenbits=S.bits,x){e.msg="invalid literal/lengths set",r.mode=30;break}if(r.distbits=6,r.distcode=r.distdyn,S={bits:r.distbits},x=T(F,r.lens,r.nlen,r.ndist,r.distcode,0,r.work,S),r.distbits=S.bits,x){e.msg="invalid distances set",r.mode=30;break}if(r.mode=20,6===t)break e;case 20:r.mode=21;case 21:if(6<=o&&258<=h){e.next_out=a,e.avail_out=h,e.next_in=s,e.avail_in=o,r.hold=u,r.bits=l,R(e,c),a=e.next_out,i=e.output,h=e.avail_out,s=e.next_in,n=e.input,o=e.avail_in,u=r.hold,l=r.bits,12===r.mode&&(r.back=-1);break}for(r.back=0;g=(C=r.lencode[u&(1<<r.lenbits)-1])>>>16&255,b=65535&C,!((_=C>>>24)<=l);){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}if(g&&0==(240&g)){for(v=_,y=g,w=b;g=(C=r.lencode[w+((u&(1<<v+y)-1)>>v)])>>>16&255,b=65535&C,!(v+(_=C>>>24)<=l);){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}u>>>=v,l-=v,r.back+=v}if(u>>>=_,l-=_,r.back+=_,r.length=b,0===g){r.mode=26;break}if(32&g){r.back=-1,r.mode=12;break}if(64&g){e.msg="invalid literal/length code",r.mode=30;break}r.extra=15&g,r.mode=22;case 22:if(r.extra){for(z=r.extra;l<z;){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}r.length+=u&(1<<r.extra)-1,u>>>=r.extra,l-=r.extra,r.back+=r.extra}r.was=r.length,r.mode=23;case 23:for(;g=(C=r.distcode[u&(1<<r.distbits)-1])>>>16&255,b=65535&C,!((_=C>>>24)<=l);){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}if(0==(240&g)){for(v=_,y=g,w=b;g=(C=r.distcode[w+((u&(1<<v+y)-1)>>v)])>>>16&255,b=65535&C,!(v+(_=C>>>24)<=l);){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}u>>>=v,l-=v,r.back+=v}if(u>>>=_,l-=_,r.back+=_,64&g){e.msg="invalid distance code",r.mode=30;break}r.offset=b,r.extra=15&g,r.mode=24;case 24:if(r.extra){for(z=r.extra;l<z;){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}r.offset+=u&(1<<r.extra)-1,u>>>=r.extra,l-=r.extra,r.back+=r.extra}if(r.offset>r.dmax){e.msg="invalid distance too far back",r.mode=30;break}r.mode=25;case 25:if(0===h)break e;if(d=c-h,r.offset>d){if((d=r.offset-d)>r.whave&&r.sane){e.msg="invalid distance too far back",r.mode=30;break}p=d>r.wnext?(d-=r.wnext,r.wsize-d):r.wnext-d,d>r.length&&(d=r.length),m=r.window}else m=i,p=a-r.offset,d=r.length;for(h<d&&(d=h),h-=d,r.length-=d;i[a++]=m[p++],--d;);0===r.length&&(r.mode=21);break;case 26:if(0===h)break e;i[a++]=r.length,h--,r.mode=21;break;case 27:if(r.wrap){for(;l<32;){if(0===o)break e;o--,u|=n[s++]<<l,l+=8}if(c-=h,e.total_out+=c,r.total+=c,c&&(e.adler=r.check=r.flags?B(r.check,i,c,a-c):O(r.check,i,c,a-c)),c=h,(r.flags?u:L(u))!==r.check){e.msg="incorrect data check",r.mode=30;break}l=u=0}r.mode=28;case 28:if(r.wrap&&r.flags){for(;l<32;){if(0===o)break e;o--,u+=n[s++]<<l,l+=8}if(u!==(4294967295&r.total)){e.msg="incorrect length check",r.mode=30;break}l=u=0}r.mode=29;case 29:x=1;break e;case 30:x=-3;break e;case 31:return-4;case 32:default:return U}return e.next_out=a,e.avail_out=h,e.next_in=s,e.avail_in=o,r.hold=u,r.bits=l,(r.wsize||c!==e.avail_out&&r.mode<30&&(r.mode<27||4!==t))&&Z(e,e.output,e.next_out,c-e.avail_out)?(r.mode=31,-4):(f-=e.avail_in,c-=e.avail_out,e.total_in+=f,e.total_out+=c,r.total+=c,r.wrap&&c&&(e.adler=r.check=r.flags?B(r.check,i,c,e.next_out-c):O(r.check,i,c,e.next_out-c)),e.data_type=r.bits+(r.last?64:0)+(12===r.mode?128:0)+(20===r.mode||15===r.mode?256:0),(0==f&&0===c||4===t)&&x===N&&(x=-5),x)},r.inflateEnd=function(e){if(!e||!e.state)return U;var t=e.state;return t.window&&(t.window=null),e.state=null,N},r.inflateGetHeader=function(e,t){var r;return e&&e.state?0==(2&(r=e.state).wrap)?U:((r.head=t).done=!1,N):U},r.inflateSetDictionary=function(e,t){var r,n=t.length;return e&&e.state?0!==(r=e.state).wrap&&11!==r.mode?U:11===r.mode&&O(1,t,n,0)!==r.check?-3:Z(e,t,n,n)?(r.mode=31,-4):(r.havedict=1,N):U},r.inflateInfo="pako inflate (from Nodeca project)"},{"../utils/common":41,"./adler32":43,"./crc32":45,"./inffast":48,"./inftrees":50}],50:[function(e,t,r){"use strict";var D=e("../utils/common"),F=[3,4,5,6,7,8,9,10,11,13,15,17,19,23,27,31,35,43,51,59,67,83,99,115,131,163,195,227,258,0,0],N=[16,16,16,16,16,16,16,16,17,17,17,17,18,18,18,18,19,19,19,19,20,20,20,20,21,21,21,21,16,72,78],U=[1,2,3,4,5,7,9,13,17,25,33,49,65,97,129,193,257,385,513,769,1025,1537,2049,3073,4097,6145,8193,12289,16385,24577,0,0],P=[16,16,16,16,17,17,18,18,19,19,20,20,21,21,22,22,23,23,24,24,25,25,26,26,27,27,28,28,29,29,64,64];t.exports=function(e,t,r,n,i,s,a,o){var h,u,l,f,c,d,p,m,_,g=o.bits,b=0,v=0,y=0,w=0,k=0,x=0,S=0,z=0,C=0,E=0,A=null,I=0,O=new D.Buf16(16),B=new D.Buf16(16),R=null,T=0;for(b=0;b<=15;b++)O[b]=0;for(v=0;v<n;v++)O[t[r+v]]++;for(k=g,w=15;1<=w&&0===O[w];w--);if(w<k&&(k=w),0===w)return i[s++]=20971520,i[s++]=20971520,o.bits=1,0;for(y=1;y<w&&0===O[y];y++);for(k<y&&(k=y),b=z=1;b<=15;b++)if(z<<=1,(z-=O[b])<0)return-1;if(0<z&&(0===e||1!==w))return-1;for(B[1]=0,b=1;b<15;b++)B[b+1]=B[b]+O[b];for(v=0;v<n;v++)0!==t[r+v]&&(a[B[t[r+v]]++]=v);if(d=0===e?(A=R=a,19):1===e?(A=F,I-=257,R=N,T-=257,256):(A=U,R=P,-1),b=y,c=s,S=v=E=0,l=-1,f=(C=1<<(x=k))-1,1===e&&852<C||2===e&&592<C)return 1;for(;;){for(p=b-S,_=a[v]<d?(m=0,a[v]):a[v]>d?(m=R[T+a[v]],A[I+a[v]]):(m=96,0),h=1<<b-S,y=u=1<<x;i[c+(E>>S)+(u-=h)]=p<<24|m<<16|_|0,0!==u;);for(h=1<<b-1;E&h;)h>>=1;if(0!==h?(E&=h-1,E+=h):E=0,v++,0==--O[b]){if(b===w)break;b=t[r+a[v]]}if(k<b&&(E&f)!==l){for(0===S&&(S=k),c+=y,z=1<<(x=b-S);x+S<w&&!((z-=O[x+S])<=0);)x++,z<<=1;if(C+=1<<x,1===e&&852<C||2===e&&592<C)return 1;i[l=E&f]=k<<24|x<<16|c-s|0}}return 0!==E&&(i[c+E]=b-S<<24|64<<16|0),o.bits=k,0}},{"../utils/common":41}],51:[function(e,t,r){"use strict";t.exports={2:"need dictionary",1:"stream end",0:"","-1":"file error","-2":"stream error","-3":"data error","-4":"insufficient memory","-5":"buffer error","-6":"incompatible version"}},{}],52:[function(e,t,r){"use strict";var i=e("../utils/common"),o=0,h=1;function n(e){for(var t=e.length;0<=--t;)e[t]=0}var s=0,a=29,u=256,l=u+1+a,f=30,c=19,_=2*l+1,g=15,d=16,p=7,m=256,b=16,v=17,y=18,w=[0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0],k=[0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13],x=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,3,7],S=[16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15],z=new Array(2*(l+2));n(z);var C=new Array(2*f);n(C);var E=new Array(512);n(E);var A=new Array(256);n(A);var I=new Array(a);n(I);var O,B,R,T=new Array(f);function D(e,t,r,n,i){this.static_tree=e,this.extra_bits=t,this.extra_base=r,this.elems=n,this.max_length=i,this.has_stree=e&&e.length}function F(e,t){this.dyn_tree=e,this.max_code=0,this.stat_desc=t}function N(e){return e<256?E[e]:E[256+(e>>>7)]}function U(e,t){e.pending_buf[e.pending++]=255&t,e.pending_buf[e.pending++]=t>>>8&255}function P(e,t,r){e.bi_valid>d-r?(e.bi_buf|=t<<e.bi_valid&65535,U(e,e.bi_buf),e.bi_buf=t>>d-e.bi_valid,e.bi_valid+=r-d):(e.bi_buf|=t<<e.bi_valid&65535,e.bi_valid+=r)}function L(e,t,r){P(e,r[2*t],r[2*t+1])}function j(e,t){for(var r=0;r|=1&e,e>>>=1,r<<=1,0<--t;);return r>>>1}function Z(e,t,r){var n,i,s=new Array(g+1),a=0;for(n=1;n<=g;n++)s[n]=a=a+r[n-1]<<1;for(i=0;i<=t;i++){var o=e[2*i+1];0!==o&&(e[2*i]=j(s[o]++,o))}}function W(e){var t;for(t=0;t<l;t++)e.dyn_ltree[2*t]=0;for(t=0;t<f;t++)e.dyn_dtree[2*t]=0;for(t=0;t<c;t++)e.bl_tree[2*t]=0;e.dyn_ltree[2*m]=1,e.opt_len=e.static_len=0,e.last_lit=e.matches=0}function M(e){8<e.bi_valid?U(e,e.bi_buf):0<e.bi_valid&&(e.pending_buf[e.pending++]=e.bi_buf),e.bi_buf=0,e.bi_valid=0}function H(e,t,r,n){var i=2*t,s=2*r;return e[i]<e[s]||e[i]===e[s]&&n[t]<=n[r]}function G(e,t,r){for(var n=e.heap[r],i=r<<1;i<=e.heap_len&&(i<e.heap_len&&H(t,e.heap[i+1],e.heap[i],e.depth)&&i++,!H(t,n,e.heap[i],e.depth));)e.heap[r]=e.heap[i],r=i,i<<=1;e.heap[r]=n}function K(e,t,r){var n,i,s,a,o=0;if(0!==e.last_lit)for(;n=e.pending_buf[e.d_buf+2*o]<<8|e.pending_buf[e.d_buf+2*o+1],i=e.pending_buf[e.l_buf+o],o++,0===n?L(e,i,t):(L(e,(s=A[i])+u+1,t),0!==(a=w[s])&&P(e,i-=I[s],a),L(e,s=N(--n),r),0!==(a=k[s])&&P(e,n-=T[s],a)),o<e.last_lit;);L(e,m,t)}function Y(e,t){var r,n,i,s=t.dyn_tree,a=t.stat_desc.static_tree,o=t.stat_desc.has_stree,h=t.stat_desc.elems,u=-1;for(e.heap_len=0,e.heap_max=_,r=0;r<h;r++)0!==s[2*r]?(e.heap[++e.heap_len]=u=r,e.depth[r]=0):s[2*r+1]=0;for(;e.heap_len<2;)s[2*(i=e.heap[++e.heap_len]=u<2?++u:0)]=1,e.depth[i]=0,e.opt_len--,o&&(e.static_len-=a[2*i+1]);for(t.max_code=u,r=e.heap_len>>1;1<=r;r--)G(e,s,r);for(i=h;r=e.heap[1],e.heap[1]=e.heap[e.heap_len--],G(e,s,1),n=e.heap[1],e.heap[--e.heap_max]=r,e.heap[--e.heap_max]=n,s[2*i]=s[2*r]+s[2*n],e.depth[i]=(e.depth[r]>=e.depth[n]?e.depth[r]:e.depth[n])+1,s[2*r+1]=s[2*n+1]=i,e.heap[1]=i++,G(e,s,1),2<=e.heap_len;);e.heap[--e.heap_max]=e.heap[1],function(e,t){var r,n,i,s,a,o,h=t.dyn_tree,u=t.max_code,l=t.stat_desc.static_tree,f=t.stat_desc.has_stree,c=t.stat_desc.extra_bits,d=t.stat_desc.extra_base,p=t.stat_desc.max_length,m=0;for(s=0;s<=g;s++)e.bl_count[s]=0;for(h[2*e.heap[e.heap_max]+1]=0,r=e.heap_max+1;r<_;r++)p<(s=h[2*h[2*(n=e.heap[r])+1]+1]+1)&&(s=p,m++),h[2*n+1]=s,u<n||(e.bl_count[s]++,a=0,d<=n&&(a=c[n-d]),o=h[2*n],e.opt_len+=o*(s+a),f&&(e.static_len+=o*(l[2*n+1]+a)));if(0!==m){do{for(s=p-1;0===e.bl_count[s];)s--;e.bl_count[s]--,e.bl_count[s+1]+=2,e.bl_count[p]--,m-=2}while(0<m);for(s=p;0!==s;s--)for(n=e.bl_count[s];0!==n;)u<(i=e.heap[--r])||(h[2*i+1]!==s&&(e.opt_len+=(s-h[2*i+1])*h[2*i],h[2*i+1]=s),n--)}}(e,t),Z(s,u,e.bl_count)}function X(e,t,r){var n,i,s=-1,a=t[1],o=0,h=7,u=4;for(0===a&&(h=138,u=3),t[2*(r+1)+1]=65535,n=0;n<=r;n++)i=a,a=t[2*(n+1)+1],++o<h&&i===a||(o<u?e.bl_tree[2*i]+=o:0!==i?(i!==s&&e.bl_tree[2*i]++,e.bl_tree[2*b]++):o<=10?e.bl_tree[2*v]++:e.bl_tree[2*y]++,s=i,u=(o=0)===a?(h=138,3):i===a?(h=6,3):(h=7,4))}function V(e,t,r){var n,i,s=-1,a=t[1],o=0,h=7,u=4;for(0===a&&(h=138,u=3),n=0;n<=r;n++)if(i=a,a=t[2*(n+1)+1],!(++o<h&&i===a)){if(o<u)for(;L(e,i,e.bl_tree),0!=--o;);else 0!==i?(i!==s&&(L(e,i,e.bl_tree),o--),L(e,b,e.bl_tree),P(e,o-3,2)):o<=10?(L(e,v,e.bl_tree),P(e,o-3,3)):(L(e,y,e.bl_tree),P(e,o-11,7));s=i,u=(o=0)===a?(h=138,3):i===a?(h=6,3):(h=7,4)}}n(T);var q=!1;function J(e,t,r,n){P(e,(s<<1)+(n?1:0),3),function(e,t,r,n){M(e),n&&(U(e,r),U(e,~r)),i.arraySet(e.pending_buf,e.window,t,r,e.pending),e.pending+=r}(e,t,r,!0)}r._tr_init=function(e){q||(function(){var e,t,r,n,i,s=new Array(g+1);for(n=r=0;n<a-1;n++)for(I[n]=r,e=0;e<1<<w[n];e++)A[r++]=n;for(A[r-1]=n,n=i=0;n<16;n++)for(T[n]=i,e=0;e<1<<k[n];e++)E[i++]=n;for(i>>=7;n<f;n++)for(T[n]=i<<7,e=0;e<1<<k[n]-7;e++)E[256+i++]=n;for(t=0;t<=g;t++)s[t]=0;for(e=0;e<=143;)z[2*e+1]=8,e++,s[8]++;for(;e<=255;)z[2*e+1]=9,e++,s[9]++;for(;e<=279;)z[2*e+1]=7,e++,s[7]++;for(;e<=287;)z[2*e+1]=8,e++,s[8]++;for(Z(z,l+1,s),e=0;e<f;e++)C[2*e+1]=5,C[2*e]=j(e,5);O=new D(z,w,u+1,l,g),B=new D(C,k,0,f,g),R=new D(new Array(0),x,0,c,p)}(),q=!0),e.l_desc=new F(e.dyn_ltree,O),e.d_desc=new F(e.dyn_dtree,B),e.bl_desc=new F(e.bl_tree,R),e.bi_buf=0,e.bi_valid=0,W(e)},r._tr_stored_block=J,r._tr_flush_block=function(e,t,r,n){var i,s,a=0;0<e.level?(2===e.strm.data_type&&(e.strm.data_type=function(e){var t,r=4093624447;for(t=0;t<=31;t++,r>>>=1)if(1&r&&0!==e.dyn_ltree[2*t])return o;if(0!==e.dyn_ltree[18]||0!==e.dyn_ltree[20]||0!==e.dyn_ltree[26])return h;for(t=32;t<u;t++)if(0!==e.dyn_ltree[2*t])return h;return o}(e)),Y(e,e.l_desc),Y(e,e.d_desc),a=function(e){var t;for(X(e,e.dyn_ltree,e.l_desc.max_code),X(e,e.dyn_dtree,e.d_desc.max_code),Y(e,e.bl_desc),t=c-1;3<=t&&0===e.bl_tree[2*S[t]+1];t--);return e.opt_len+=3*(t+1)+5+5+4,t}(e),i=e.opt_len+3+7>>>3,(s=e.static_len+3+7>>>3)<=i&&(i=s)):i=s=r+5,r+4<=i&&-1!==t?J(e,t,r,n):4===e.strategy||s===i?(P(e,2+(n?1:0),3),K(e,z,C)):(P(e,4+(n?1:0),3),function(e,t,r,n){var i;for(P(e,t-257,5),P(e,r-1,5),P(e,n-4,4),i=0;i<n;i++)P(e,e.bl_tree[2*S[i]+1],3);V(e,e.dyn_ltree,t-1),V(e,e.dyn_dtree,r-1)}(e,e.l_desc.max_code+1,e.d_desc.max_code+1,a+1),K(e,e.dyn_ltree,e.dyn_dtree)),W(e),n&&M(e)},r._tr_tally=function(e,t,r){return e.pending_buf[e.d_buf+2*e.last_lit]=t>>>8&255,e.pending_buf[e.d_buf+2*e.last_lit+1]=255&t,e.pending_buf[e.l_buf+e.last_lit]=255&r,e.last_lit++,0===t?e.dyn_ltree[2*r]++:(e.matches++,t--,e.dyn_ltree[2*(A[r]+u+1)]++,e.dyn_dtree[2*N(t)]++),e.last_lit===e.lit_bufsize-1},r._tr_align=function(e){P(e,2,3),L(e,m,z),function(e){16===e.bi_valid?(U(e,e.bi_buf),e.bi_buf=0,e.bi_valid=0):8<=e.bi_valid&&(e.pending_buf[e.pending++]=255&e.bi_buf,e.bi_buf>>=8,e.bi_valid-=8)}(e)}},{"../utils/common":41}],53:[function(e,t,r){"use strict";t.exports=function(){this.input=null,this.next_in=0,this.avail_in=0,this.total_in=0,this.output=null,this.next_out=0,this.avail_out=0,this.total_out=0,this.msg="",this.state=null,this.data_type=2,this.adler=0}},{}],54:[function(e,t,r){(function(e){!function(r,n){"use strict";if(!r.setImmediate){var i,s,t,a,o=1,h={},u=!1,l=r.document,e=Object.getPrototypeOf&&Object.getPrototypeOf(r);e=e&&e.setTimeout?e:r,i="[object process]"==={}.toString.call(r.process)?function(e){process.nextTick(function(){c(e)})}:function(){if(r.postMessage&&!r.importScripts){var e=!0,t=r.onmessage;return r.onmessage=function(){e=!1},r.postMessage("","*"),r.onmessage=t,e}}()?(a="setImmediate$"+Math.random()+"$",r.addEventListener?r.addEventListener("message",d,!1):r.attachEvent("onmessage",d),function(e){r.postMessage(a+e,"*")}):r.MessageChannel?((t=new MessageChannel).port1.onmessage=function(e){c(e.data)},function(e){t.port2.postMessage(e)}):l&&"onreadystatechange"in l.createElement("script")?(s=l.documentElement,function(e){var t=l.createElement("script");t.onreadystatechange=function(){c(e),t.onreadystatechange=null,s.removeChild(t),t=null},s.appendChild(t)}):function(e){setTimeout(c,0,e)},e.setImmediate=function(e){"function"!=typeof e&&(e=new Function(""+e));for(var t=new Array(arguments.length-1),r=0;r<t.length;r++)t[r]=arguments[r+1];var n={callback:e,args:t};return h[o]=n,i(o),o++},e.clearImmediate=f}function f(e){delete h[e]}function c(e){if(u)setTimeout(c,0,e);else{var t=h[e];if(t){u=!0;try{!function(e){var t=e.callback,r=e.args;switch(r.length){case 0:t();break;case 1:t(r[0]);break;case 2:t(r[0],r[1]);break;case 3:t(r[0],r[1],r[2]);break;default:t.apply(n,r)}}(t)}finally{f(e),u=!1}}}}function d(e){e.source===r&&"string"==typeof e.data&&0===e.data.indexOf(a)&&c(+e.data.slice(a.length))}}("undefined"==typeof self?void 0===e?this:e:self)}).call(this,"undefined"!=typeof global?global:"undefined"!=typeof self?self:"undefined"!=typeof window?window:{})},{}]},{},[10])(10)});
-/* ===== END JSZip vendor ===== */
-
-
-/* ===== BEGIN runtime-fallbacks.js ===== */
-/* ANORI TRANSPORT - runtime compatibility fallbacks.
-   These fallbacks prevent hard JS failures when optional vendor binaries are not bundled.
-   They are deliberately small and are replaced automatically by real libraries when present. */
-(function () {
-  'use strict';
-  if (!window.Swal) {
-    let active = null;
-    let timer = null;
-    const esc = (s) => String(s == null ? '' : s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
-    const close = (result) => {
-      if (!active) return;
-      const a = active;
-      active = null;
-      if (timer) { clearTimeout(timer); timer = null; }
-      a.overlay?.remove();
-      a.resolve(result || { isDismissed: true, isConfirmed: false, isDenied: false });
-    };
-    const fire = async (opts = {}) => {
-      if (active) close({ isDismissed: true, isConfirmed: false, isDenied: false });
-      if (opts.toast) {
-        const toast = document.createElement('div');
-        toast.className = 'anori-native-toast anori-native-toast-' + (opts.icon || 'info');
-        toast.innerHTML = '<span class="anori-native-toast-icon">' + (opts.icon === 'success' ? '✓' : opts.icon === 'error' ? '!' : opts.icon === 'warning' ? '⚠' : 'i') + '</span><span>' + esc(opts.title || opts.text || '') + '</span>';
-        document.body.appendChild(toast);
-        requestAnimationFrame(() => toast.classList.add('show'));
-        const ms = Number(opts.timer) || 2500;
-        setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 180); }, ms);
-        return { isConfirmed: false, isDismissed: true, isDenied: false };
-      }
-      return new Promise((resolve) => {
-        const overlay = document.createElement('div');
-        overlay.className = 'anori-native-swal-backdrop';
-        const popup = document.createElement('div');
-        popup.className = 'anori-native-swal-popup';
-        if (opts.width) popup.style.width = typeof opts.width === 'number' ? opts.width + 'px' : String(opts.width);
-        const iconMap = {success:'✓', error:'!', warning:'⚠', info:'i', question:'?'};
-        const icon = opts.icon && iconMap[opts.icon] ? '<div class="anori-native-swal-icon anori-icon-'+esc(opts.icon)+'">'+iconMap[opts.icon]+'</div>' : '';
-        const title = opts.title ? '<div class="anori-native-swal-title">'+esc(opts.title)+'</div>' : '';
-        const body = opts.html != null ? String(opts.html) : (opts.text ? '<div class="anori-native-swal-text">'+esc(opts.text)+'</div>' : '');
-        const input = opts.input === 'text' ? '<div class="anori-native-swal-input-wrap">' + (opts.inputLabel ? '<label>'+esc(opts.inputLabel)+'</label>' : '') + '<input id="anori-native-swal-input" class="form-control" type="text" placeholder="'+esc(opts.inputPlaceholder || '')+'"></div>' : '';
-        popup.innerHTML = icon + title + '<div class="anori-native-swal-body">' + body + input + '<div class="anori-native-swal-validation" aria-live="polite"></div></div>';
-        const actions = document.createElement('div');
-        actions.className = 'anori-native-swal-actions';
-        const showConfirm = opts.showConfirmButton !== false;
-        const showCancel = !!opts.showCancelButton;
-        if (showCancel) {
-          const cancel = document.createElement('button'); cancel.type='button'; cancel.className='btn btn-outline'; cancel.textContent=opts.cancelButtonText || 'Cancel';
-          cancel.onclick=()=>close({isDismissed:true,isConfirmed:false,isDenied:false}); actions.appendChild(cancel);
-        }
-        if (showConfirm) {
-          const confirm = document.createElement('button'); confirm.type='button'; confirm.className='btn btn-primary'; confirm.textContent=opts.confirmButtonText || 'OK';
-          if (opts.confirmButtonColor) confirm.style.background=opts.confirmButtonColor;
-          confirm.onclick=async()=>{
-            try {
-              let value;
-              if (opts.input === 'text') value = document.getElementById('anori-native-swal-input')?.value || '';
-              if (typeof opts.preConfirm === 'function') {
-                confirm.disabled=true;
-                value = await opts.preConfirm(value);
-                confirm.disabled=false;
-                if (value === false) return;
-              }
-              close({isConfirmed:true,isDismissed:false,isDenied:false,value});
-            } catch (e) {
-              confirm.disabled=false;
-              fire.showValidationMessage(e?.message || 'Please check the entered information.');
-            }
-          }; actions.appendChild(confirm);
-        }
-        popup.appendChild(actions);
-        overlay.appendChild(popup); document.body.appendChild(overlay);
-        active={overlay,resolve};
-        if (typeof opts.didOpen === 'function') { try { opts.didOpen(popup); } catch(e) { console.error(e); } }
-        const inp=popup.querySelector('#anori-native-swal-input'); if(inp) setTimeout(()=>inp.focus(),0);
-        overlay.addEventListener('click',e=>{ if(e.target===overlay && opts.allowOutsideClick!==false) close({isDismissed:true,isConfirmed:false,isDenied:false}); });
-        if (opts.timer && !opts.showCancelButton && opts.showConfirmButton === false) timer=setTimeout(()=>close({isDismissed:true,isConfirmed:false,isDenied:false}),Number(opts.timer));
-      });
-    };
-    fire.showValidationMessage = (message) => {
-      const el = active?.overlay?.querySelector('.anori-native-swal-validation');
-      if (el) { el.textContent=String(message||''); el.classList.toggle('show',!!message); }
-    };
-    fire.resetValidationMessage = () => {
-      const el = active?.overlay?.querySelector('.anori-native-swal-validation'); if(el){el.textContent='';el.classList.remove('show');}
-    };
-    fire.close = () => close({isDismissed:true,isConfirmed:false,isDenied:false});
-    window.Swal = { fire, close: fire.close, showValidationMessage: fire.showValidationMessage, resetValidationMessage: fire.resetValidationMessage };
-  }
-  // Browser/Electron-safe print fallback for optional PDF libraries.
-  window.anoriPrintElement = window.anoriPrintElement || function (element, title) {
-    if (!element) return false;
-    const printWindow = window.open('', '_blank', 'noopener,noreferrer,width=1200,height=900');
-    if (!printWindow) { window.print(); return true; }
-    const styles = [...document.querySelectorAll('style,link[rel="stylesheet"]')].map(n => n.outerHTML).join('\n');
-    printWindow.document.open();
-    printWindow.document.write('<!doctype html><html><head><meta charset="utf-8"><title>' + esc(title || 'ANORI TRANSPORT') + '</title>' + styles + '<style>@page{size:A4;margin:8mm}body{background:#fff!important;color:#0f172a!important}.no-print{display:none!important}.invoice-page{margin:0!important;box-shadow:none!important}</style></head><body>' + element.outerHTML + '</body></html>');
-    printWindow.document.close();
-    setTimeout(() => { try { printWindow.focus(); printWindow.print(); } finally { setTimeout(() => printWindow.close(), 1200); } }, 250);
-    return true;
-  };
-  window.anoriPrintHtml = window.anoriPrintHtml || function (html, title) {
-    const host = document.createElement('div'); host.innerHTML = String(html || '');
-    document.body.appendChild(host);
-    const ok = window.anoriPrintElement(host, title || 'ANORI TRANSPORT');
-    host.remove();
-    return ok;
-  };
-  if (!window.html2pdf) {
-    window.html2pdf = function () {
-      const state = { html: '' };
-      return {
-        set() { return this; },
-        from(html) { state.html = html; return this; },
-        save() { window.anoriPrintHtml(state.html, 'ANORI TRANSPORT PDF'); return Promise.resolve(); }
-      };
-    };
-  }
-
-})();
-
-/* ===== END runtime-fallbacks.js ===== */
-
-/* ===== BEGIN sqlite-lite.js ===== */
-/* ANORI TRANSPORT - self-contained SQLite backup codec.
- * This is intentionally limited to the ANORI backup format it creates.
- * It writes a standards-compliant SQLite database with an anori_backup table,
- * so the resulting .sqlite file can be opened by normal SQLite tools.
- */
-(function(){
-  'use strict';
-  if(window.AnoriSQLite) return;
-  const PAGE=4096;
-  const TE=new TextEncoder();
-  const TD=new TextDecoder('utf-8',{fatal:false});
-  const DATA_KEYS=['company_profile','vehicles','drivers','parties','trips','invoices','driver_settlements','payments','expense_master','followups','audit_log'];
-  const META={application:'ANORI TRANSPORT',format:'ANORI_TRANSPORT_SQLITE_BACKUP',schema_version:1};
-  const concat=(...xs)=>{let n=0;xs.forEach(x=>n+=x.length);const out=new Uint8Array(n);let p=0;xs.forEach(x=>{out.set(x,p);p+=x.length;});return out;};
-  const be16=n=>Uint8Array.from([(n>>>8)&255,n&255]);
-  const be32=n=>Uint8Array.from([(n>>>24)&255,(n>>>16)&255,(n>>>8)&255,n&255]);
-  function varint(n){
-    n=Math.max(0,Math.floor(Number(n)||0));const a=[];do{a.push(n%128);n=Math.floor(n/128);}while(n>0);
-    const out=[];for(let i=a.length-1;i>=0;i--)out.push(a[i]|(i>0?128:0));return Uint8Array.from(out);
-  }
-  function readVarint(b,o){
-    let v=0;for(let i=0;i<9;i++){const x=b[o+i];if(x===undefined)throw Error('Invalid SQLite varint.');if(i===8)return {value:v*256+x,next:o+9};v=v*128+(x&127);if(!(x&128))return {value:v,next:o+i+1};}throw Error('Invalid SQLite varint.');
-  }
-  function textSerial(s){const b=TE.encode(String(s??''));return {serial:13+2*b.length,bytes:b};}
-  function intSerial(n){n=Number(n)||0;if(n===0)return {serial:8,bytes:new Uint8Array()};if(n===1)return {serial:9,bytes:new Uint8Array()};if(n>=-128&&n<=127)return {serial:1,bytes:Uint8Array.from([n<0?n+256:n])};if(n>=-32768&&n<=32767)return {serial:2,bytes:Uint8Array.from([(n>>8)&255,n&255])};return {serial:4,bytes:be32(n>>>0)};}
-  function makeRecord(fields){
-    const parts=fields.map(f=>f.type==='int'?intSerial(f.value):textSerial(f.value));
-    const headerLen=1+parts.reduce((n,p)=>n+varint(p.serial).length,0);
-    const header=concat(varint(headerLen),...parts.map(p=>varint(p.serial)));
-    return concat(header,...parts.map(p=>p.bytes));
-  }
-  function makeCell(rowid,record){return concat(varint(record.length),varint(rowid),record);}
-  function makeLeafPage(cells){
-    const p=new Uint8Array(PAGE);p[0]=0x0d;let content=PAGE,ptrs=[];
-    for(const cell of cells){content-=cell.length;if(content<8+(ptrs.length+1)*2)throw Error('SQLite page overflow.');p.set(cell,content);ptrs.push(content);}
-    p.set(be16(0),1);p.set(be16(cells.length),3);p.set(be16(content),5);p[7]=0;let q=8;for(const ptr of ptrs)p.set(be16(ptr),q),q+=2;
-    return {page:p,maxRowid:cells.length?cells[cells.length-1].rowid:0};
-  }
-  function packLeafRows(rows,startPage){
-    const pages=[];let cells=[],used=8;
-    const flush=()=>{if(!cells.length)return;const made=makeLeafPage(cells.map(x=>x.cell));pages.push({page:made.page,maxRowid:cells[cells.length-1].rowid});cells=[];used=8;};
-    for(const row of rows){
-      const cell=makeCell(row.rowid,row.record);const next=used+2+cell.length;
-      if(cells.length&&next>PAGE){flush();}
-      cells.push({cell,rowid:row.rowid});used+=2+cell.length;
-    }
-    flush();return pages;
-  }
-  function makeInteriorPage(children){
-    const p=new Uint8Array(PAGE);p[0]=0x05;let cells=[];for(let i=0;i<children.length-1;i++)cells.push(concat(be32(children[i].pageNo),varint(children[i].maxRowid)));
-    let content=PAGE;const ptrs=[];for(const cell of cells){content-=cell.length;if(content<12+ptrs.length*2+2)throw Error('SQLite interior page overflow.');p.set(cell,content);ptrs.push(content);}
-    p.set(be16(0),1);p.set(be16(cells.length),3);p.set(be16(content),5);p[7]=0;p.set(be32(children[children.length-1].pageNo),8);let q=12;for(const ptr of ptrs)p.set(be16(ptr),q),q+=2;
-    return p;
-  }
-  function schemaPage(rootPage){
-    const sql='CREATE TABLE anori_backup(chunk_no INTEGER PRIMARY KEY, payload TEXT NOT NULL)';
-    const rec=makeRecord([{type:'text',value:'table'},{type:'text',value:'anori_backup'},{type:'text',value:'anori_backup'},{type:'int',value:rootPage},{type:'text',value:sql}]);
-    const cell=makeCell(1,rec);const p=new Uint8Array(PAGE);const base=100;p[base]=0x0d;p.set(be16(0),base+1);p.set(be16(1),base+3);const at=PAGE-cell.length;p.set(be16(at),base+5);p[base+7]=0;p.set(be16(at),base+8);p.set(cell,at);return p;
-  }
-  function header(pageCount,rootPage){
-    const h=new Uint8Array(PAGE);h.set(TE.encode('SQLite format 3\0'),0);h.set(be16(PAGE),16);h[18]=1;h[19]=1;h[20]=0;h[21]=64;h[22]=32;h[23]=32;h.set(be32(1),24);h.set(be32(pageCount),28);h.set(be32(0),32);h.set(be32(0),36);h.set(be32(1),40);h.set(be32(4),44);h.set(be32(0),48);h.set(be32(0),52);h.set(be32(1),56);h.set(be32(0),60);h.set(be32(0),64);h.set(be32(0),68);h.set(be32(1),92);h.set(be32(3046000),96);return h;
-  }
-  function exportSnapshot(snapshot){
-    const full=Object.assign({},META,{exported_at:new Date().toISOString(),data:snapshot});
-    const json=JSON.stringify(full);
-    const bytes=TE.encode(json);
-    const chunkSize=2500;const rows=[];let rowid=1;
-    for(let off=0;off<bytes.length;){let end=Math.min(bytes.length,off+chunkSize);while(end<bytes.length&&(bytes[end]&0xc0)===0x80)end--;if(end<=off)end=Math.min(bytes.length,off+chunkSize);const chunk=TD.decode(bytes.slice(off,end));const rec=makeRecord([{type:'int',value:rowid},{type:'text',value:chunk}]);rows.push({rowid,record:rec});rowid++;off=end;}
-    if(!rows.length){const rec=makeRecord([{type:'int',value:1},{type:'text',value:''}]);rows.push({rowid:1,record:rec});}
-    const leafCountEstimate=1;let leafPages=packLeafRows(rows,3);let rootPage=2;let nextPage=3;
-    if(leafPages.length===1){rootPage=2;nextPage=3;}
-    else {rootPage=2;nextPage=3+leafPages.length;}
-    const totalPages=leafPages.length===1?2:2+leafPages.length;
-    const out=new Uint8Array(PAGE*totalPages);out.set(header(totalPages,rootPage),0);let pageNo=3;
-    if(leafPages.length===1){{const sp=schemaPage(rootPage);out.set(sp.subarray(100),100);}out.set(leafPages[0].page,PAGE);}
-    else {{const sp=schemaPage(rootPage);out.set(sp.subarray(100),100);}const children=[];leafPages.forEach((lp,i)=>{children.push({pageNo:3+i,maxRowid:lp.maxRowid});});out.set(makeInteriorPage(children),PAGE);leafPages.forEach((lp,i)=>out.set(lp.page,PAGE*(2+i)));}
-    return out;
-  }
-  function serialValue(b,serial,offset){
-    if(serial===0)return {value:null,next:offset};if(serial===8)return {value:0,next:offset};if(serial===9)return {value:1,next:offset};
-    if(serial>=13&&serial%2===1){const len=(serial-13)/2;return {value:TD.decode(b.slice(offset,offset+len)),next:offset+len};}
-    const sizes={1:1,2:2,3:3,4:4,5:6,6:8,7:8};const len=sizes[serial];if(!len)throw Error('Unsupported SQLite serial type.');let n=0;for(let i=0;i<len;i++)n=n*256+b[offset+i];return {value:n,next:offset+len};
-  }
-  function parseRecord(b,start,end){const h=readVarint(b,start),headerEnd=start+h.value;let o=start+h.next-start,types=[];while(o<headerEnd){const v=readVarint(b,o);types.push(v.value);o=v.next;}let data=headerEnd,vals=[];types.forEach(t=>{const v=serialValue(b,t,data);vals.push(v.value);data=v.next;});return vals;}
-  function pageInfo(bytes,pageNo){const base=(pageNo-1)*PAGE+(pageNo===1?100:0);const flags=bytes[base];if(flags===0x0d)return {base,pageStart:(pageNo-1)*PAGE,flags,leaf:true,count:(bytes[base+3]<<8)|bytes[base+4],right:null};if(flags===0x05)return {base,pageStart:(pageNo-1)*PAGE,flags,leaf:false,count:(bytes[base+3]<<8)|bytes[base+4],right:((bytes[base+8]<<24)>>>0)|(bytes[base+9]<<16)|(bytes[base+10]<<8)|bytes[base+11]};throw Error('Unsupported SQLite b-tree page type.');}
-  function cellPtr(bytes,info,i){const p=info.base+(info.leaf?8:12)+i*2;return info.pageStart+((bytes[p]<<8)|bytes[p+1]);}
-  function collectLeafRows(bytes,pageNo,out){const info=pageInfo(bytes,pageNo);if(info.leaf){for(let i=0;i<info.count;i++){const ptr=cellPtr(bytes,info,i);const pl=readVarint(bytes,ptr);const rid=readVarint(bytes,pl.next);const recStart=rid.next;const recEnd=recStart+pl.value;out.push({rowid:rid.value,vals:parseRecord(bytes,recStart,recEnd)});}return;}for(let i=0;i<info.count;i++){const ptr=cellPtr(bytes,info,i);const child=((bytes[ptr]<<24)>>>0)|(bytes[ptr+1]<<16)|(bytes[ptr+2]<<8)|bytes[ptr+3];collectLeafRows(bytes,child,out);}collectLeafRows(bytes,info.right,out);}
-  function importBytes(arrayBuffer){
-    const bytes=new Uint8Array(arrayBuffer);if(bytes.length<PAGE*2)throw Error('Invalid ANORI SQLite backup.');const magic=TD.decode(bytes.slice(0,16));if(magic!=='SQLite format 3\0')throw Error('Invalid SQLite file.');const pageSize=(bytes[16]<<8)|bytes[17];if(pageSize!==PAGE)throw Error('Unsupported SQLite page size.');
-    const schema=[];collectLeafRows(bytes,1,schema);const entry=schema.find(r=>r.vals[1]==='anori_backup');if(!entry)throw Error('This is not an ANORI TRANSPORT SQLite backup.');const root=Number(entry.vals[3]);const rows=[];collectLeafRows(bytes,root,rows);rows.sort((a,b)=>a.rowid-b.rowid);const json=rows.map(r=>String(r.vals[1]??'')).join('');const full=JSON.parse(json);if(full.format!==META.format)throw Error('Unsupported ANORI SQLite backup format.');return full.data||{};
-  }
-  window.AnoriSQLite={exportSnapshot,importBytes,isAvailable:()=>true,DATA_KEYS:DATA_KEYS.slice()};
-})();
-
-/* ===== END sqlite-lite.js ===== */
-
-/* ===== BEGIN sqlite-capability.js ===== */
-/* ANORI TRANSPORT - SQLite capability. */
-(function(){
-  'use strict';
-  window.__ANORI_SQLITE_DISABLED__ = !(window.AnoriSQLite && typeof window.AnoriSQLite.exportSnapshot==='function');
-  window.__ANORI_SQL_LOCAL__ = true;
-})();
-
-/* ===== END sqlite-capability.js ===== */
-
-/* ===== BEGIN core.js ===== */
+/* ===== BEGIN js/core.js ===== */
 
 /* Local-file safety: ANORI must never create or navigate an iframe to index.html. */
 (function(){
@@ -271,7 +25,7 @@ window.toast = window.toast || function(message, type='info'){
 const Auth = {
     login(username, password) {
         // In production, replace with secure backend validation
-        const valid = username === 'Anori' && password === 'Anori@1245';
+        const valid = username === 'admin' && password === 'admin123';
         if (valid) {
             sessionStorage.setItem('anori_auth', JSON.stringify({
                 user: 'admin',
@@ -411,7 +165,7 @@ const Utils = {
     fmt: (n) => new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(n || 0),
     fmtDec: (n) => '' + (parseFloat(n) || 0).toFixed(2),
     today: () => new Date().toISOString().split('T')[0],
-    toast: (msg, type = 'success') => { if (window.Swal?.fire) return window.Swal.fire({ icon: type, title: msg, toast: true, position: 'top-end', timer: 2500, showConfirmButton: false }); console[type === 'error' ? 'error' : 'log'](msg); },
+    toast: (msg, type = 'success') => Swal.fire({ icon: type, title: msg, toast: true, position: 'top-end', timer: 2500, showConfirmButton: false }),
     
     numberToWords: function(num) {
         if (num === 0) return 'Zero Only';
@@ -521,17 +275,99 @@ const UI = {
     },
     
     bindSidebar() {
-        document.getElementById('menuToggle').onclick = () => document.getElementById('sidebar').classList.toggle('open');
-        document.getElementById('navMenu').onclick = (e) => {
-            const item = e.target.closest('.nav-item');
-            if (item) {
-                document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-                item.classList.add('active');
-                Router.go(item.dataset.view);
-                document.getElementById('sidebar').classList.remove('open');
-                document.getElementById('globalSearch').value = '';
-            }
+        const sidebar = document.getElementById('sidebar');
+        const topTabs = document.getElementById('topTabs');
+        const nav = document.getElementById('navMenu');
+        const toggle = document.getElementById('menuToggle');
+        const isMobile = () => window.matchMedia && window.matchMedia('(max-width: 1050px)').matches;
+
+        const syncGroupForView = (view) => {
+            topTabs?.querySelectorAll('.top-tab').forEach(tab => {
+                const sectionMatch = view === 'masters' && Router._topTabSection && tab.dataset.section === Router._topTabSection;
+                const target = sectionMatch || (!Router._topTabSection && (tab.dataset.view === view || (view === 'trips' && tab.dataset.view === 'trips-list'))) || (Router._topTabSection === '' && tab.dataset.view === view);
+                tab.classList.toggle('active', target);
+            });
+            const item = nav?.querySelector(`.nav-item[data-view="${CSS.escape(view || '')}"]`);
+            if (!item) return;
+            const group = item.closest('.nav-group');
+            if (!group) return;
+            nav.querySelectorAll('.nav-group').forEach(g => {
+                const open = g === group;
+                g.classList.toggle('is-open', open);
+                const button = g.querySelector('.nav-section-toggle');
+                if (button) {
+                    button.setAttribute('aria-expanded', String(open));
+                    const icon = button.querySelector('i');
+                    if (icon) icon.className = open ? 'fas fa-chevron-down' : 'fas fa-chevron-right';
+                }
+            });
         };
+
+        if (toggle) {
+            toggle.onclick = () => {
+                if (isMobile()) {
+                    sidebar?.classList.toggle('open');
+                } else {
+                    document.body.classList.toggle('sidebar-collapsed');
+                    const collapsed = document.body.classList.contains('sidebar-collapsed');
+                    toggle.setAttribute('aria-expanded', String(!collapsed));
+                }
+            };
+        }
+
+        nav?.addEventListener('click', (e) => {
+            const section = e.target.closest('.nav-section-toggle');
+            if (section) {
+                e.preventDefault();
+                const group = section.closest('.nav-group');
+                if (!group) return;
+                const shouldOpen = !group.classList.contains('is-open');
+                nav.querySelectorAll('.nav-group').forEach(g => {
+                    const open = shouldOpen && g === group;
+                    g.classList.toggle('is-open', open);
+                    const button = g.querySelector('.nav-section-toggle');
+                    if (button) {
+                        button.setAttribute('aria-expanded', String(open));
+                        const icon = button.querySelector('i');
+                        if (icon) icon.className = open ? 'fas fa-chevron-down' : 'fas fa-chevron-right';
+                    }
+                });
+                return;
+            }
+
+            const item = e.target.closest('.nav-item');
+            if (!item) return;
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            item.classList.add('active');
+            syncGroupForView(item.dataset.view);
+            Router.go(item.dataset.view);
+            if (isMobile()) sidebar?.classList.remove('open');
+            document.getElementById('globalSearch').value = '';
+        });
+
+        topTabs?.addEventListener('click', (e) => {
+            const tab = e.target.closest('.top-tab');
+            if (!tab) return;
+            e.preventDefault();
+            let view = tab.dataset.view;
+            if (view === 'trips-list') view = 'trips';
+            Router._topTabSection = tab.dataset.section || '';
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.view === view));
+            topTabs.querySelectorAll('.top-tab').forEach(t => t.classList.toggle('active', t === tab));
+            Router.go(view);
+            if (isMobile()) sidebar?.classList.remove('open');
+            const search = document.getElementById('globalSearch');
+            if (search) search.value = '';
+        });
+
+        const current = document.querySelector('.nav-item.active')?.dataset.view || 'dashboard';
+        syncGroupForView(current);
+        window.addEventListener('resize', () => {
+            if (isMobile()) document.body.classList.remove('sidebar-collapsed');
+        }, {passive:true});
+
+        // Keep route-driven navigation (buttons/cards calling Router.go) in sync.
+        window.anoriSyncSidebar = syncGroupForView;
     },
 
     bindSearch() {
@@ -613,44 +449,24 @@ const UI = {
         document.getElementById('previewClose').onclick = () => this.closePreview();
         document.getElementById('previewModal').onclick = (e) => { if(e.target.id === 'previewModal') this.closePreview(); };
         
-        document.getElementById('previewDownloadBtn').onclick = async (e) => {
-            if (e) { e.preventDefault(); e.stopPropagation(); }
-            const btn = document.getElementById('previewDownloadBtn');
+        document.getElementById('previewDownloadBtn').onclick = () => {
             const invoiceId = document.getElementById('previewContent').dataset.invoiceId;
-            if (!invoiceId) {
-                try { Utils.toast('Invoice is not available for PDF download.', 'warning'); } catch (_) {}
-                return;
-            }
-            if (btn && btn.dataset.pdfBusy === '1') return;
-            if (btn) {
-                btn.dataset.pdfBusy = '1';
-                btn.disabled = true;
-                btn.dataset.originalHtml = btn.innerHTML;
-                btn.innerHTML = '<i class=\"fas fa-spinner fa-spin\"></i> Downloading PDF…';
-            }
-            try {
-                // In Electron this routes to the native printToPDF IPC handler,
-                // which writes directly to the Windows Downloads folder without
-                // opening a Save As dialog. Browser/file mode retains its native
-                // print fallback.
-                await Invoices.downloadExisting(invoiceId);
-            } catch (err) {
-                console.error('Invoice PDF download error:', err);
-                try { Utils.toast(err && err.message ? err.message : 'Unable to download PDF.', 'error'); } catch (_) {}
-            } finally {
-                if (btn) {
-                    btn.dataset.pdfBusy = '0';
-                    btn.disabled = false;
-                    btn.innerHTML = btn.dataset.originalHtml || '<i class=\"fas fa-download\"></i> Download PDF';
-                }
-            }
+            if(invoiceId) Invoices.downloadExisting(invoiceId);
         };
 
         document.getElementById('backupBtn').onclick = () => Settings.backup();
     },
     
     openModal(title, bodyHtml, onSave, isTripForm = false) {
-        document.getElementById('modalTitle').innerText = title;
+        const titleEl = document.getElementById('modalTitle');
+        if (isTripForm) {
+            const heading = String(title || '').toLowerCase().includes('edit') ? 'EDIT TRIP' : 'CREATE NEW TRIP';
+            titleEl.innerHTML = `<span class="trip-modal-title-main"><i class="fas fa-truck-fast" aria-hidden="true"></i>${heading}</span><span class="trip-modal-title-sub">Add trip details to create a new trip</span>`;
+            titleEl.classList.add('trip-modal-title');
+        } else {
+            titleEl.textContent = title;
+            titleEl.classList.remove('trip-modal-title');
+        }
         const body = document.getElementById('modalBody');
         body.innerHTML = bodyHtml;
         if (isTripForm) body.classList.add('trip-form-bg');
@@ -671,9 +487,18 @@ const UI = {
 };
 
 const Router = {
+    _topTabSection: '',
     go(view) {
         if (!Auth.requireAuth()) return;
-        const allowed = ['dashboard','masters','trips','invoices','settlements','expenses','reports','settings'];
+        try {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.toggle('active', n.dataset.view === view));
+            document.querySelectorAll('.top-tab').forEach(t => {
+                const sectionMatch = view === 'masters' && Router._topTabSection && t.dataset.section === Router._topTabSection;
+                t.classList.toggle('active', sectionMatch || (!Router._topTabSection && (t.dataset.view === view || (view === 'trips' && t.dataset.view === 'trips-list'))));
+            });
+            window.anoriSyncSidebar?.(view);
+        } catch (_) {}
+        const allowed = ['dashboard','masters','trips','invoices','documents','settlements','expenses','reports','settings'];
         if (!allowed.includes(view)) {
             console.warn('Unknown route:', view);
             view = 'dashboard';
@@ -693,6 +518,7 @@ const Router = {
         if (view === 'masters') Masters.render(content);
         if (view === 'trips') Trips.render(content);
         if (view === 'invoices') Invoices.render(content);
+        if (view === 'documents') { if (window.AnoriDocuments) window.AnoriDocuments.render(content); else content.innerHTML = '<div class="card"><h1 class="page-title">Documents</h1><p>Documents module is loading.</p></div>'; }
         if (view === 'settlements') DriverSettlement.render(content);
         if (view === 'expenses') Expenses.render(content);
         if (view === 'reports') Reports.render(content);
@@ -707,9 +533,10 @@ const Router = {
 // 3. DASHBOARD MODULE
 // ==========================================
 
-/* ===== END core.js ===== */
+/* ===== END js/core.js ===== */
 
-/* ===== BEGIN dashboard.js ===== */
+
+/* ===== BEGIN js/dashboard.js ===== */
 const Dashboard = {
     selectedMonth: null,
     selectedYear: null,
@@ -784,13 +611,6 @@ const Dashboard = {
     },
     
     renderCharts(trips) {
-        if (typeof window.Chart !== 'function') {
-            const p = document.getElementById('chartProfit');
-            const e = document.getElementById('chartExp');
-            if (p) { const box=p.parentElement; box.innerHTML='<div class="anori-chart-fallback"><strong>Profit Trend</strong><span>Chart library is not bundled in this build.</span><em>Financial totals above remain fully available.</em></div>'; }
-            if (e) { const box=e.parentElement; box.innerHTML='<div class="anori-chart-fallback"><strong>Expense Breakdown</strong><span>Chart library is not bundled in this build.</span><em>Use Reports &amp; Analytics for detailed figures.</em></div>'; }
-            return;
-        }
         const ctx1 = document.getElementById('chartProfit');
         if (ctx1 && ctx1.offsetParent !== null) {
             const chart1 = new Chart(ctx1, { type: 'line', data: { labels: trips.map(t => t.date), datasets: [{ label: 'Profit', data: trips.map(t => t.freight - (t.expenses||[]).reduce((s,e)=>s+e.amount,0)), borderColor: '#6366f1', tension: 0.4, fill: true, backgroundColor: 'rgba(99, 102, 241, 0.1)' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } } });
@@ -810,9 +630,10 @@ const Dashboard = {
 // 4. MASTERS MODULE (FIXED delete)
 // ==========================================
 
-/* ===== END dashboard.js ===== */
+/* ===== END js/dashboard.js ===== */
 
-/* ===== BEGIN trip-management.js ===== */
+
+/* ===== BEGIN js/trip-management.js ===== */
 const Trips = {
     render(container) {
         const trips = DB.get('trips'); 
@@ -1192,9 +1013,10 @@ const Trips = {
 // 6. INVOICES MODULE (FIXED PDF & delete)
 // ==========================================
 
-/* ===== END trip-management.js ===== */
+/* ===== END js/trip-management.js ===== */
 
-/* ===== BEGIN invoices-billing.js ===== */
+
+/* ===== BEGIN js/invoices-billing.js ===== */
 const Invoices = {
     render(container) {
         const invoices = DB.get('invoices'); const parties = DB.get('parties');
@@ -1402,9 +1224,6 @@ const Invoices = {
     buildInvoiceHTML(invoice, preview = false) {
         const company = DB.get('company_profile');
         const party = DB.get('parties').find(p => p.id === invoice.party_id) || {};
-        const creditDays = typeof window.anoriResolvePartyCreditDays === 'function'
-            ? window.anoriResolvePartyCreditDays(party, invoice.credit_days)
-            : (Number.isFinite(Number(party.credit_days)) ? Math.max(0, Math.floor(Number(party.credit_days))) : (Number.isFinite(Number(invoice.credit_days)) ? Math.max(0, Math.floor(Number(invoice.credit_days))) : 30));
         const rows = (invoice.trips_data || []).map((t, i) => `
             <tr>
                 <td>${i + 1}</td>
@@ -1425,7 +1244,7 @@ const Invoices = {
         @media print{body{padding:0;background:#fff}.invoice-wrapper{margin:0;box-shadow:none}}
         </style></head><body><div class="invoice-wrapper">
         <div class="header"><div><h1>${Sanitize.html(company.name || 'Anori Transport Services')}</h1><div>${Sanitize.html(company.addr || '')}</div><div>GSTIN: ${Sanitize.html(company.gst || 'N/A')} | Phone: ${Sanitize.html(company.phone || '')}</div></div><div style="text-align:right"><h2>TAX INVOICE</h2><div><strong>Invoice No:</strong> ${Sanitize.html(invoice.invoice_no)}</div><div><strong>Date:</strong> ${Sanitize.html(invoice.date)}</div><div><strong>Status:</strong> ${Sanitize.html(invoice.status)}</div></div></div>
-        <div class="grid"><div class="party"><strong>Bill To</strong><br>${Sanitize.html(party.name || 'N/A')}<br>${Sanitize.html(party.addr || '')}<br>GSTIN: ${Sanitize.html(party.gst || 'N/A')}</div><div class="party"><strong>Payment Terms</strong><br>Credit Period: ${creditDays} Days<br>Due Date: ${Sanitize.html(this.getDueDate(invoice.date, creditDays))}</div></div>
+        <div class="grid"><div class="party"><strong>Bill To</strong><br>${Sanitize.html(party.name || 'N/A')}<br>${Sanitize.html(party.addr || '')}<br>GSTIN: ${Sanitize.html(party.gst || 'N/A')}</div><div class="party"><strong>Payment Terms</strong><br>Credit Period: 30 Days<br>Due Date: ${Sanitize.html(this.getDueDate(invoice.date))}</div></div>
         <table><thead><tr><th>#</th><th>Trip No.</th><th>Date</th><th>Route</th><th>Vehicle</th><th style="text-align:right">Freight</th></tr></thead><tbody>${rows}</tbody><tfoot>
         <tr><td colspan="5" style="text-align:right"><strong>Subtotal</strong></td><td style="text-align:right"><strong>${Utils.fmt(invoice.subtotal)}</strong></td></tr>${taxRows}
         <tr><td colspan="5" style="text-align:right"><strong>Total</strong></td><td style="text-align:right"><strong>${Utils.fmt(invoice.total_amount)}</strong></td></tr>
@@ -1437,10 +1256,10 @@ const Invoices = {
         </div></body></html>`;
     },
 
-    getDueDate(date, days = 30) {
+    getDueDate(date) {
         const d = new Date(date);
         if (Number.isNaN(d.getTime())) return Utils.today();
-        d.setDate(d.getDate() + Math.max(0, Number(days) || 0));
+        d.setDate(d.getDate() + 30);
         return d.toISOString().split('T')[0];
     },
 
@@ -1454,9 +1273,10 @@ const Invoices = {
 // 7. DRIVER SETTLEMENT
 // ==========================================
 
-/* ===== END invoices-billing.js ===== */
+/* ===== END js/invoices-billing.js ===== */
 
-/* ===== BEGIN driver-settlement.js ===== */
+
+/* ===== BEGIN js/driver-settlement.js ===== */
 const DriverSettlement = {
     render(container) {
         const drivers = DB.get('drivers');
@@ -1477,9 +1297,10 @@ const DriverSettlement = {
 // 8. REPORTS
 // ==========================================
 
-/* ===== END driver-settlement.js ===== */
+/* ===== END js/driver-settlement.js ===== */
 
-/* ===== BEGIN expenses.js ===== */
+
+/* ===== BEGIN js/expenses.js ===== */
 /* ANORI TRANSPORT — Expenses tab
  * Read-only consolidated operating-expense ledger built from Trip expenses.
  * Driver Amount / Advance is intentionally excluded.
@@ -1632,11 +1453,13 @@ const Expenses = {
 };
 window.Expenses = Expenses;
 
-/* ===== END expenses.js ===== */
+/* ===== END js/expenses.js ===== */
 
-/* ===== BEGIN master-data.js ===== */
+
+/* ===== BEGIN js/master-data.js ===== */
 const Masters = {
     render(container) {
+        container.classList.add('anori-masters-view');
         const vehicles = DB.get('vehicles'); 
         const drivers = DB.get('drivers'); 
         const parties = DB.get('parties');
@@ -1644,14 +1467,7 @@ const Masters = {
         const addressLines = Array.isArray(company.addr_lines) ? company.addr_lines : (String(company.addr || '').split(/\r?\n/).filter(Boolean));
 
         container.innerHTML += `
-            <div class="anori-master-excel-toolbar">
-                <div class="anori-master-excel-copy"><strong>📊 Master Data Excel</strong><span>Bulk export, edit and import Vehicles, Drivers, Customers and Expenses.</span></div>
-                <div class="anori-master-excel-actions">
-                    <button type="button" class="btn btn-outline btn-sm" onclick="Masters.downloadExcelTemplate()"><i class="fas fa-file-excel"></i> Excel Template</button>
-                    <button type="button" class="btn btn-primary btn-sm" onclick="Masters.exportMasterExcel()"><i class="fas fa-download"></i> Export Master Excel</button>
-                    <button type="button" class="btn btn-success btn-sm" onclick="Masters.importMasterExcel()"><i class="fas fa-upload"></i> Bulk Import Excel</button>
-                </div>
-            </div>
+            <div class="anori-page-heading"><div><h1>MASTER DATA</h1><p>Manage company, vehicles, drivers and customer master records.</p></div></div>
             <div class="card" style="border-left: 4px solid var(--primary);">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
                     <h3 class="card-title"><i class="fas fa-building"></i> Company Profile</h3>
@@ -1673,8 +1489,8 @@ const Masters = {
                         <button class="btn btn-primary btn-sm" onclick="Masters.openModal('vehicle')"><i class="fas fa-plus"></i> Add</button>
                     </div>
                     ${vehicles.length === 0 ? `<div class="empty-state"><i class="fas fa-truck"></i><h3>No Vehicles</h3><p>Add your first vehicle to get started.</p></div>` : `
-                    <div class="table-wrapper"><table><thead><tr><th>Sr. No.</th><th>Number</th><th>Type</th><th>Driver Amount (₹)</th><th>Action</th></tr></thead><tbody>
-                        ${vehicles.map((v,i) => `<tr><td>${i+1}</td><td>${Sanitize.html(v.number)}</td><td>${Sanitize.html(v.type)}</td><td>${Utils.fmt(Number(v.driver_amount)||0)}</td><td class="master-action-cell"><div class="master-row-actions"><button type="button" class="btn btn-outline btn-sm master-action-btn master-edit-btn" title="Edit vehicle" aria-label="Edit vehicle" onclick="Masters.openModal('vehicle', '${v.id}')"><i class="fas fa-edit"></i><span>Edit</span></button><button type="button" class="btn btn-danger btn-sm master-action-btn master-delete-btn" title="Delete vehicle" aria-label="Delete vehicle" data-action="delete-master" data-type="vehicle" data-id="${v.id}"><i class="fas fa-trash"></i><span>Delete</span></button></div></td></tr>`).join('')}
+                    <div class="table-wrapper"><table><thead><tr><th>Number</th><th>Type</th><th>Classification</th><th>Driver Amount (₹)</th><th>Action</th></tr></thead><tbody>
+                        ${vehicles.map(v => `<tr><td>${Sanitize.html(v.number)}</td><td>${Sanitize.html(v.type)}</td><td><span class="status-badge ${String(v.classification||'company').toLowerCase().includes('outside')?'status-pending':'status-paid'}">${Sanitize.html(v.classification||'COMPANY VEHICLE')}</span></td><td>${Utils.fmt(Number(v.driver_amount)||0)}</td><td><button class="btn btn-primary btn-sm master-action-edit" type="button" title="Edit vehicle" onclick="Masters.openModal('vehicle', '${v.id}')"><i class="fas fa-edit"></i> Edit</button> <button class="btn btn-danger btn-sm master-action-delete" type="button" title="Delete vehicle" data-action="delete-master" data-type="vehicle" data-id="${v.id}"><i class="fas fa-trash"></i> Delete</button></td></tr>`).join('')}
                     </tbody></table></div>`}
                 </div>
                 <div class="card">
@@ -1683,8 +1499,8 @@ const Masters = {
                         <button class="btn btn-primary btn-sm" onclick="Masters.openModal('driver')"><i class="fas fa-plus"></i> Add</button>
                     </div>
                     ${drivers.length === 0 ? `<div class="empty-state"><i class="fas fa-user"></i><h3>No Drivers</h3><p>Add your first driver.</p></div>` : `
-                    <div class="table-wrapper"><table><thead><tr><th>Sr. No.</th><th>Name</th><th>Mobile</th><th>Action</th></tr></thead><tbody>
-                        ${drivers.map((d,i) => `<tr><td>${i+1}</td><td>${Sanitize.html(d.name)}</td><td>${Sanitize.html(d.mobile)}</td><td class="master-action-cell"><div class="master-row-actions"><button type="button" class="btn btn-outline btn-sm master-action-btn master-edit-btn" title="Edit driver" aria-label="Edit driver" onclick="Masters.openModal('driver', '${d.id}')"><i class="fas fa-edit"></i><span>Edit</span></button><button type="button" class="btn btn-danger btn-sm master-action-btn master-delete-btn" title="Delete driver" aria-label="Delete driver" data-action="delete-master" data-type="driver" data-id="${d.id}"><i class="fas fa-trash"></i><span>Delete</span></button></div></td></tr>`).join('')}
+                    <div class="table-wrapper"><table><thead><tr><th>Name</th><th>Mobile</th><th>Action</th></tr></thead><tbody>
+                        ${drivers.map(d => `<tr><td>${Sanitize.html(d.name)}</td><td>${Sanitize.html(d.mobile)}</td><td><button class="btn btn-primary btn-sm master-action-edit" type="button" title="Edit driver" onclick="Masters.openModal('driver', '${d.id}')"><i class="fas fa-edit"></i> Edit</button> <button class="btn btn-danger btn-sm master-action-delete" type="button" title="Delete driver" data-action="delete-master" data-type="driver" data-id="${d.id}"><i class="fas fa-trash"></i> Delete</button></td></tr>`).join('')}
                     </tbody></table></div>`}
                 </div>
             </div>
@@ -1695,8 +1511,8 @@ const Masters = {
                     <button class="btn btn-primary btn-sm" onclick="Masters.openModal('party')"><i class="fas fa-plus"></i> Add</button>
                 </div>
                 ${parties.length === 0 ? `<div class="empty-state"><i class="fas fa-users"></i><h3>No Parties</h3><p>Add your first customer.</p></div>` : `
-                <div class="table-wrapper"><table><thead><tr><th>Sr. No.</th><th>Name</th><th>GSTIN</th><th>Address</th><th>Credit Days</th><th>Action</th></tr></thead><tbody>
-                    ${parties.map((p,i) => `<tr><td>${i+1}</td><td>${Sanitize.html(p.name)}</td><td>${Sanitize.html(p.gst) || '-'}</td><td>${Sanitize.html(p.addr) || '-'}</td><td>${Number.isFinite(Number(p.credit_days)) && Number(p.credit_days) >= 0 ? Math.floor(Number(p.credit_days)) : 30} Days</td><td class="master-action-cell"><div class="master-row-actions"><button type="button" class="btn btn-outline btn-sm master-action-btn master-edit-btn" title="Edit customer" aria-label="Edit customer" onclick="Masters.openModal('party', '${p.id}')"><i class="fas fa-edit"></i><span>Edit</span></button><button type="button" class="btn btn-danger btn-sm master-action-btn master-delete-btn" title="Delete customer" aria-label="Delete customer" data-action="delete-master" data-type="party" data-id="${p.id}"><i class="fas fa-trash"></i><span>Delete</span></button></div></td></tr>`).join('')}
+                <div class="table-wrapper"><table><thead><tr><th>Name</th><th>GSTIN</th><th>Address</th><th>Action</th></tr></thead><tbody>
+                    ${parties.map(p => `<tr><td>${Sanitize.html(p.name)}</td><td>${Sanitize.html(p.gst) || '-'}</td><td>${Sanitize.html(p.addr) || '-'}</td><td><button class="btn btn-primary btn-sm master-action-edit" type="button" title="Edit customer" onclick="Masters.openModal('party', '${p.id}')"><i class="fas fa-edit"></i> Edit</button> <button class="btn btn-danger btn-sm master-action-delete" type="button" title="Delete customer" data-action="delete-master" data-type="party" data-id="${p.id}"><i class="fas fa-trash"></i> Delete</button></td></tr>`).join('')}
                 </tbody></table></div>`}
             </div>
         `;
@@ -1750,7 +1566,9 @@ const Masters = {
             const rawType = String(item.type || '');
             const upperType = rawType.toUpperCase();
             const legacyTypeOption = rawType && !['PETRO','DESIEL','CNG'].includes(upperType) ? `<option value="${Sanitize.html(rawType)}" selected>${Sanitize.html(rawType)}</option>` : '';
-            html = `<div class="form-group"><label>Vehicle Number</label><input class="form-control" id="m_number" value="${Sanitize.html(item.number)}" required></div><div class="form-group"><label>Type</label><select class="form-control" id="m_type"><option value="">Select Type</option><option value="PETRO" ${upperType==='PETRO'?'selected':''}>PETRO</option><option value="DESIEL" ${upperType==='DESIEL'?'selected':''}>DESIEL</option><option value="CNG" ${upperType==='CNG'?'selected':''}>CNG</option>${legacyTypeOption}</select></div><div class="form-group"><label>Driver Amount (₹)</label><input type="number" class="form-control" id="m_driver_amount" min="0" step="0.01" value="${Number(item.driver_amount)||0}" placeholder="Enter INR amount"></div>`;
+            const rawClass=String(item.classification||item.vehicle_classification||'COMPANY VEHICLE').toUpperCase();
+            const outsideClass=['OUTSIDE','OUTSIDE VEHICLE','OUTSIDE ORGANIZATION','OUTSIDE ORGANIZATION VEHICLE','EXTERNAL','VENDOR'].includes(rawClass)?'OUTSIDE ORGANIZATION VEHICLE':'COMPANY VEHICLE';
+            html = `<div class="form-group"><label>Vehicle Number</label><input class="form-control" id="m_number" value="${Sanitize.html(item.number)}" required></div><div class="form-group"><label>Vehicle Type</label><select class="form-control" id="m_type"><option value="">Select Type</option><option value="PETRO" ${upperType==='PETRO'?'selected':''}>PETRO</option><option value="DESIEL" ${upperType==='DESIEL'?'selected':''}>DESIEL</option><option value="CNG" ${upperType==='CNG'?'selected':''}>CNG</option>${legacyTypeOption}</select></div><div class="form-group"><label>Vehicle Classification</label><select class="form-control" id="m_classification"><option value="COMPANY VEHICLE" ${outsideClass==='COMPANY VEHICLE'?'selected':''}>COMPANY VEHICLE</option><option value="OUTSIDE ORGANIZATION VEHICLE" ${outsideClass==='OUTSIDE ORGANIZATION VEHICLE'?'selected':''}>OUTSIDE ORGANIZATION VEHICLE</option></select><small class="anori-help">Outside Organization Vehicle automatically opens the Outside Vehicle workflow in New Trip.</small></div><div class="form-group"><label>Driver Amount (₹)</label><input type="number" class="form-control" id="m_driver_amount" min="0" step="0.01" value="${Number(item.driver_amount)||0}" placeholder="Enter INR amount"></div>`;
         } else if (type === 'driver') {
             html = `<div class="form-group"><label>Name</label><input class="form-control" id="m_name" value="${Sanitize.html(item.name)}" required></div><div class="form-group"><label>Mobile</label><input class="form-control" id="m_mobile" value="${Sanitize.html(item.mobile)}"></div>`;
         } else if (type === 'party') {
@@ -1767,6 +1585,8 @@ const Masters = {
         if (type === 'vehicle') {
             item.number = Sanitize.html(document.getElementById('m_number').value);
             item.type = Sanitize.html(document.getElementById('m_type').value);
+            item.classification = Sanitize.html(document.getElementById('m_classification')?.value || 'COMPANY VEHICLE');
+            item.vehicle_classification = item.classification;
             const driverAmount = parseFloat(document.getElementById('m_driver_amount').value);
             item.driver_amount = Number.isFinite(driverAmount) && driverAmount >= 0 ? driverAmount : 0;
         } else if (type === 'driver') {
@@ -1840,138 +1660,14 @@ const Masters = {
     }
 };
 
-/* ===== MASTER DATA BULK EXCEL =====
- * Offline-safe XLSX exchange using the bundled JSZip runtime.
- * IMPORTANT: this importer accepts normal Excel-generated .xlsx files as well
- * as ANORI-generated workbooks. Only Master Data tables are changed.
- */
-(function installMasterExcel(){
-  'use strict';
-  if(window.__ANORI_MASTER_EXCEL_V2__) return;
-  window.__ANORI_MASTER_EXCEL_V2__=true;
-
-  const escXml=v=>String(v==null?'':v).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&apos;');
-  const clean=v=>String(v==null?'':v).replace(/\u00a0/g,' ').trim();
-  const key=v=>clean(v).toLowerCase().replace(/[_-]+/g,' ').replace(/\s+/g,' ').replace(/[^a-z0-9 ]/g,'').trim().replace(/ /g,'');
-  const numOr=v=>{ if(v==null||clean(v)==='') return null; const n=Number(String(v).replace(/,/g,'')); return Number.isFinite(n)?n:null; };
-  const bool=v=>{const x=key(v);if(['true','yes','y','1','on','active','show'].includes(x))return true;if(['false','no','n','0','off','inactive','hide','hidden'].includes(x))return false;return null;};
-  const idOrNew=v=>clean(v)||Utils.id();
-  const colName=n=>{let s='';n++;while(n){let r=(n-1)%26;s=String.fromCharCode(65+r)+s;n=Math.floor((n-1)/26);}return s;};
-  const cell=(ref,value)=>{const v=clean(value);return `<c r="${ref}" t="inlineStr"><is><t xml:space="preserve">${escXml(v)}</t></is></c>`;};
-  const sheetXml=rows=>`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetData>${rows.map((row,ri)=>`<row r="${ri+1}">${row.map((v,ci)=>cell(colName(ci)+(ri+1),v)).join('')}</row>`).join('')}</sheetData></worksheet>`;
-  const workbookFiles=sheets=>{
-    const wbSheets=sheets.map((x,i)=>`<sheet name="${escXml(x.name)}" sheetId="${i+1}" r:id="rId${i+1}"/>`).join('');
-    const rels=sheets.map((x,i)=>`<Relationship Id="rId${i+1}" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet${i+1}.xml"/>`).join('');
-    const types=sheets.map((x,i)=>`<Override PartName="/xl/worksheets/sheet${i+1}.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/>`).join('');
-    return {
-      '[Content_Types].xml':`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/>${types}</Types>`,
-      '_rels/.rels':`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>`,
-      'xl/workbook.xml':`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets>${wbSheets}</sheets></workbook>`,
-      'xl/_rels/workbook.xml.rels':`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">${rels}</Relationships>`
-    };
-  };
-  const downloadBytes=async(bytes,name)=>{
-    const blob=new Blob([bytes],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
-    const url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
-  };
-  const masterSheets=()=>{
-    const vehicles=DB.get('vehicles',[]).map((v,i)=>[i+1,v.id||'',v.number||'',v.type||'',Number(v.driver_amount)||0]);
-    const drivers=DB.get('drivers',[]).map((d,i)=>[i+1,d.id||'',d.name||'',d.mobile||'']);
-    const parties=DB.get('parties',[]).map((p,i)=>[i+1,p.id||'',p.name||'',p.email||'',Number.isFinite(Number(p.credit_days))?Math.max(0,Math.floor(Number(p.credit_days))):30,Number(p.credit_limit)||0,p.gst||'',p.mobile||'',p.addr||'']);
-    const expenses=DB.get('expense_master',[]).map((e,i)=>[i+1,e.id||'',e.name||'',Number(e.defaultAmount)||0,e.showOnInvoice!==false,e.active!==false]);
-    const c=DB.get('company_profile',{});
-    const company=[['Field','Value'],['Name',c.name||''],['Address',c.addr||''],['GSTIN',c.gst||''],['PAN',c.pan||''],['Phone',c.phone||''],['Bank Name',c.bank_name||''],['Bank Account',c.acc||''],['IFSC',c.bank||'']];
-    return [{name:'Vehicles',rows:[['Sr. No.','ID','Vehicle Number','Type','Driver Amount'],...vehicles]},{name:'Drivers',rows:[['Sr. No.','ID','Driver Name','Mobile'],...drivers]},{name:'Customers',rows:[['Sr. No.','ID','Customer Name','Email','Credit Days','Credit Limit','GSTIN','Mobile','Address'],...parties]},{name:'Expenses',rows:[['Sr. No.','ID','Expense Name','Default Amount','Show on Invoice','Active'],...expenses]},{name:'Company Profile',rows:company}];
-  };
-  const makeWorkbook=async sheets=>{if(!window.JSZip)throw new Error('Excel engine is unavailable.');const zip=new JSZip();const files=workbookFiles(sheets);Object.keys(files).forEach(k=>zip.file(k,files[k]));sheets.forEach((s,i)=>zip.file(`xl/worksheets/sheet${i+1}.xml`,sheetXml(s.rows)));return zip.generateAsync({type:'uint8array',compression:'DEFLATE'});};
-
-  const xmlDoc=xml=>{const d=new DOMParser().parseFromString(xml,'application/xml');if(d.getElementsByTagName('parsererror').length)throw new Error('Excel XML is invalid or corrupted.');return d;};
-  const normTarget=(base,target)=>{
-    let t=String(target||'').replace(/\\/g,'/');
-    if(/^https?:/i.test(t))return null;
-    if(t.startsWith('/'))return t.slice(1);
-    if(/^xl\//i.test(t))return t;
-    const parts=(base+'/'+t).split('/'),out=[];for(const part of parts){if(!part||part==='.')continue;if(part==='..')out.pop();else out.push(part);}return out.join('/');
-  };
-  const colIndex=letters=>{let n=0;for(const ch of String(letters||'').toUpperCase()){if(ch<'A'||ch>'Z')return -1;n=n*26+ch.charCodeAt(0)-64;}return n-1;};
-  const sharedText=si=>Array.from(si.getElementsByTagName('t')).map(t=>t.textContent||'').join('');
-  const textFromCell=(c,shared)=>{
-    if(!c)return '';
-    const t=c.getAttribute('t')||'';
-    if(t==='inlineStr')return Array.from(c.getElementsByTagName('t')).map(x=>x.textContent||'').join('');
-    if(t==='s'){const v=c.getElementsByTagName('v')[0]?.textContent||'';return shared[Number(v)]??'';}
-    if(t==='b'){const v=c.getElementsByTagName('v')[0]?.textContent||'';return v==='1'?'TRUE':'FALSE';}
-    if(t==='str')return c.getElementsByTagName('v')[0]?.textContent||'';
-    return c.getElementsByTagName('v')[0]?.textContent||'';
-  };
-  const parseSheet=(xml,shared)=>{
-    const doc=xmlDoc(xml),rows=[];
-    Array.from(doc.getElementsByTagName('row')).forEach(row=>{
-      const out=[];Array.from(row.getElementsByTagName('c')).forEach(c=>{const ref=c.getAttribute('r')||'';const m=ref.match(/^([A-Z]+)\d+$/i);if(!m)return;const idx=colIndex(m[1]);if(idx>=0)out[idx]=textFromCell(c,shared);});rows.push(out);
-    });return rows;
-  };
-  const readWorkbook=async file=>{
-    if(!window.JSZip)throw new Error('Excel engine is unavailable.');
-    if(!file||!/\.xlsx$/i.test(file.name||''))throw new Error('Please select an Excel .xlsx file.');
-    const zip=await JSZip.loadAsync(await file.arrayBuffer());
-    const get=async name=>{const f=zip.file(name);return f?f.async('string'):null;};
-    const wbXml=await get('xl/workbook.xml'),relXml=await get('xl/_rels/workbook.xml.rels');
-    if(!wbXml||!relXml)throw new Error('This file is not a valid .xlsx workbook. Please use .xlsx, not .xls or a renamed file.');
-    const wb=xmlDoc(wbXml),rel=xmlDoc(relXml),relMap={};
-    Array.from(rel.getElementsByTagName('Relationship')).forEach(r=>{relMap[r.getAttribute('Id')]=r.getAttribute('Target');});
-    let shared=[];const ss=await get('xl/sharedStrings.xml');
-    if(ss){const sd=xmlDoc(ss);shared=Array.from(sd.getElementsByTagName('si')).map(sharedText);}
-    const result={};
-    for(const sh of Array.from(wb.getElementsByTagName('sheet'))){
-      const name=clean(sh.getAttribute('name')||'');const rid=sh.getAttributeNS('http://schemas.openxmlformats.org/officeDocument/2006/relationships','id')||sh.getAttribute('r:id');
-      const target=normTarget('xl',relMap[rid]);if(!target)continue;
-      const xml=await get(target);if(xml)result[name]=parseSheet(xml,shared);
-    }
-    if(!Object.keys(result).length)throw new Error('No readable worksheets were found in this Excel file.');
-    return result;
-  };
-  const rowsToObjects=rows=>{if(!rows?.length)return[];const headers=(rows[0]||[]).map(x=>key(x));return rows.slice(1).filter(r=>Array.isArray(r)&&r.some(v=>clean(v)!=='')).map((r,ri)=>{const o={_row:ri+2};headers.forEach((h,i)=>{if(h)o[h]=clean(r[i]);});return o;});};
-  const aliases={id:['id'],number:['vehiclenumber','vehicle','vehicleno','registrationnumber','vehicleregistration'],type:['type','vehicletype'],driver_amount:['driveramount','driverpay','driverpayment'],name:['drivername','name','customername','partyname','expensename'],mobile:['mobile','phone','contact','mobileno','contactnumber'],email:['email','emailid'],credit_days:['creditdays','paymentterms','paymenttermsdays','creditperiod'],credit_limit:['creditlimit'],gst:['gstin','gst','gstnumber'],addr:['address','addr'],defaultAmount:['defaultamount','amount','defaultamt'],showOnInvoice:['showoninvoice','showinvoice','billable'],active:['active','status']};
-  const pick=(o,n)=>{for(const a of aliases[n]||[n])if(Object.prototype.hasOwnProperty.call(o,a))return o[a];return '';};
-  const validateAndBuild=book=>{
-    const errors=[],out={vehicles:[],drivers:[],parties:[],expense_master:[],company_profile:null};
-    const sheet=(...names)=>{const hit=Object.keys(book).find(k=>names.some(n=>key(k)===key(n)));return hit?book[hit]:null;};
-    const checkUnique=(arr,field,label)=>{const seen=new Map();arr.forEach(x=>{const k=key(x[field]);if(k){if(seen.has(k))errors.push(`${label}: duplicate ${field.replace('_',' ')} "${x[field]}" at rows ${seen.get(k)} and ${x._row}.`);else seen.set(k,x._row);}})};
-    const vr=sheet('Vehicles','Vehicle');rowsToObjects(vr||[]).forEach(o=>{const number=pick(o,'number');if(!number)errors.push(`Vehicles: Vehicle Number is required at row ${o._row}.`);const n=pick(o,'driver_amount')===''?0:numOr(pick(o,'driver_amount'));if(n===null||n<0)errors.push(`Vehicles: invalid Driver Amount at row ${o._row}.`);out.vehicles.push({id:idOrNew(pick(o,'id')),number,type:pick(o,'type'),driver_amount:n??0,_row:o._row});});checkUnique(out.vehicles,'number','Vehicles');
-    const dr=sheet('Drivers','Driver');rowsToObjects(dr||[]).forEach(o=>{const name=pick(o,'name');if(!name)errors.push(`Drivers: Driver Name is required at row ${o._row}.`);out.drivers.push({id:idOrNew(pick(o,'id')),name,mobile:pick(o,'mobile'),_row:o._row});});checkUnique(out.drivers,'name','Drivers');
-    const cu=sheet('Customers','Parties','Party','Customers / Parties');rowsToObjects(cu||[]).forEach(o=>{const name=pick(o,'name');if(!name)errors.push(`Customers: Customer Name is required at row ${o._row}.`);const cd=pick(o,'credit_days'),cl=pick(o,'credit_limit');const creditDays=cd===''?30:numOr(cd),creditLimit=cl===''?0:numOr(cl);if(creditDays===null||creditDays<0)errors.push(`Customers: invalid Credit Days at row ${o._row}.`);if(creditLimit===null||creditLimit<0)errors.push(`Customers: invalid Credit Limit at row ${o._row}.`);out.parties.push({id:idOrNew(pick(o,'id')),name,email:pick(o,'email'),credit_days:Math.floor(creditDays??30),credit_limit:creditLimit??0,gst:pick(o,'gst'),mobile:pick(o,'mobile'),addr:pick(o,'addr'),_row:o._row});});checkUnique(out.parties,'name','Customers');
-    const ex=sheet('Expenses','Expense Master','ExpenseMaster');rowsToObjects(ex||[]).forEach(o=>{const name=pick(o,'name');if(!name)errors.push(`Expenses: Expense Name is required at row ${o._row}.`);const n=pick(o,'defaultAmount')===''?0:numOr(pick(o,'defaultAmount')),show=bool(pick(o,'showOnInvoice')),active=bool(pick(o,'active'));if(n===null||n<0)errors.push(`Expenses: invalid Default Amount at row ${o._row}.`);out.expense_master.push({id:idOrNew(pick(o,'id')),name,defaultAmount:n??0,showOnInvoice:show===null?true:show,active:active===null?true:active,_row:o._row});});checkUnique(out.expense_master,'name','Expenses');
-    const cp=sheet('Company Profile','CompanyProfile');if(cp){const pairs=rowsToObjects(cp);const c={...DB.get('company_profile',{})};pairs.forEach(o=>{const f=key(o.field||o.name),v=clean(o.value||'');const map={name:'name',address:'addr',gstin:'gst',pan:'pan',phone:'phone',bankname:'bank_name',bankaccount:'acc',ifsc:'bank'};if(map[f])c[map[f]]=v;});out.company_profile=c;}
-    return {out,errors};
-  };
-  const upsert=(existing,incoming,natural,mapper)=>{const byId=new Map(existing.map(x=>[clean(x.id),x]));const byKey=new Map(existing.map(x=>[key(x[natural]),x]));let added=0,updated=0;incoming.forEach(x=>{const id=clean(x.id),nk=key(x[natural]);const match=(id&&byId.get(id))||byKey.get(nk);if(match){Object.assign(match,mapper(x,match));updated++;}else{const fresh=mapper(x,null);existing.push(fresh);added++;if(clean(fresh.id))byId.set(clean(fresh.id),fresh);if(nk)byKey.set(nk,fresh);}});return {added,updated};};
-  const importMaster=async file=>{
-    const book=await readWorkbook(file),names=Object.keys(book),{out,errors}=validateAndBuild(book);
-    const present=names.filter(k=>['vehicles','drivers','customers','parties','expenses','expense master','expensemaster','company profile','companyprofile'].includes(key(k)));
-    if(!present.length)throw new Error(`No supported Master Data sheets found. Found: ${names.join(', ')}. Use the ANORI Excel Template or name sheets Vehicles, Drivers, Customers, Expenses, Company Profile.`);
-    if(errors.length){const msg=errors.slice(0,20).join('<br>')+(errors.length>20?`<br>…and ${errors.length-20} more.`:'');if(window.Swal)await Swal.fire({icon:'error',title:'EXCEL VALIDATION FAILED',html:`<div style="text-align:left;font-size:13px;max-height:420px;overflow:auto">${msg}</div>`});else throw new Error(errors.join('\n'));return false;}
-    const counts=[out.vehicles.length,out.drivers.length,out.parties.length,out.expense_master.length].reduce((a,b)=>a+b,0);if(!counts&&!out.company_profile)throw new Error('The workbook contains no Master Data records.');
-    const confirm=window.Swal?await Swal.fire({icon:'warning',title:'IMPORT MASTER DATA?',html:`<div style="text-align:left"><p><strong>${counts}</strong> master records will be processed.</p><p>Existing records are updated by ID when supplied, otherwise by vehicle number/name. New rows are added.</p><p><strong>Trips, invoices and driver settlements are not changed.</strong></p>`,showCancelButton:true,confirmButtonText:'IMPORT & UPDATE',cancelButtonText:'CANCEL'}):{isConfirmed:window.confirm(`Import ${counts} master records?`)};if(!confirm.isConfirmed)return false;
-    const rollback={vehicles:DB.get('vehicles',[]),drivers:DB.get('drivers',[]),parties:DB.get('parties',[]),expense_master:DB.get('expense_master',[]),company_profile:DB.get('company_profile',{})};
-    try{if(window.ANORI_DATA_SAFETY?.createRollbackSnapshot)await window.ANORI_DATA_SAFETY.createRollbackSnapshot('pre-master-excel-import');}catch(e){console.warn('Master import snapshot:',e);}
-    try{
-      const result={v:upsert(DB.get('vehicles',[]),out.vehicles,'number',x=>({id:x.id,number:x.number,type:x.type,driver_amount:x.driver_amount})),d:upsert(DB.get('drivers',[]),out.drivers,'name',x=>({id:x.id,name:x.name,mobile:x.mobile})),p:upsert(DB.get('parties',[]),out.parties,'name',x=>({id:x.id,name:x.name,email:x.email,credit_days:x.credit_days,credit_limit:x.credit_limit,gst:x.gst,mobile:x.mobile,addr:x.addr})),e:upsert(DB.get('expense_master',[]),out.expense_master,'name',x=>({id:x.id,name:x.name,defaultAmount:x.defaultAmount,showOnInvoice:x.showOnInvoice,active:x.active}))};
-      DB.set('vehicles',DB.get('vehicles',[]),true);DB.set('drivers',DB.get('drivers',[]),true);DB.set('parties',DB.get('parties',[]),true);DB.set('expense_master',DB.get('expense_master',[]),true);if(out.company_profile)DB.set('company_profile',out.company_profile,true);if(typeof sync==='function')sync();Router.go('masters');
-      Utils.toast(`Master Excel imported: Vehicles +${result.v.added}/updated ${result.v.updated}, Drivers +${result.d.added}/updated ${result.d.updated}, Customers +${result.p.added}/updated ${result.p.updated}, Expenses +${result.e.added}/updated ${result.e.updated}`,'success');return true;
-    }catch(e){DB.set('vehicles',rollback.vehicles,true);DB.set('drivers',rollback.drivers,true);DB.set('parties',rollback.parties,true);DB.set('expense_master',rollback.expense_master,true);DB.set('company_profile',rollback.company_profile,true);throw e;}
-  };
-  Masters.exportMasterExcel=async()=>{try{const bytes=await makeWorkbook(masterSheets());await downloadBytes(bytes,`ANORI_TRANSPORT_MASTER_DATA_${typeof today==='function'?today():new Date().toISOString().slice(0,10)}.xlsx`);Utils.toast('Master Data Excel exported.','success');}catch(e){console.error(e);Utils.toast('Master Excel export failed: '+(e.message||'Unknown error'),'error');}};
-  Masters.downloadExcelTemplate=async()=>{try{const sheets=masterSheets().map(s=>({name:s.name,rows:[s.rows[0]]}));const bytes=await makeWorkbook(sheets);await downloadBytes(bytes,'ANORI_TRANSPORT_MASTER_DATA_TEMPLATE.xlsx');Utils.toast('Excel template downloaded.','success');}catch(e){console.error(e);Utils.toast('Excel template failed: '+(e.message||'Unknown error'),'error');}};
-  Masters.importMasterExcel=()=>{const i=document.createElement('input');i.type='file';i.accept='.xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';i.style.display='none';i.onchange=async()=>{const f=i.files?.[0];i.remove();if(!f)return;try{await importMaster(f);}catch(e){console.error('Master Excel import failed:',e);if(window.Swal)Swal.fire({icon:'error',title:'MASTER EXCEL IMPORT FAILED',html:`<div style="text-align:left">${escXml(e.message||'Unable to import Excel.')}</div>`});else Utils.toast(e.message||'Unable to import Excel.','error');}};document.body.appendChild(i);i.click();};
-})();
-
 // ==========================================
 // 5. TRIPS MODULE
 // ==========================================
 
-/* ===== END master-data.js ===== */
+/* ===== END js/master-data.js ===== */
 
-/* ===== BEGIN reports-analytics.js ===== */
+
+/* ===== BEGIN js/reports-analytics.js ===== */
 const Reports = {
     render(container){
         const trips=DB.get('trips');const revenue=trips.reduce((s,t)=>s+Sanitize.number(t.freight),0);const expenses=trips.reduce((s,t)=>s+(t.expenses||[]).reduce((x,e)=>x+Sanitize.number(e.amount),0),0);
@@ -1983,9 +1679,10 @@ const Reports = {
 // 9. SETTINGS / BACKUP
 // ==========================================
 
-/* ===== END reports-analytics.js ===== */
+/* ===== END js/reports-analytics.js ===== */
 
-/* ===== BEGIN settings.js ===== */
+
+/* ===== BEGIN js/settings.js ===== */
 const Settings = {
     render(container){
         const c=DB.get('company_profile');
@@ -2007,9 +1704,10 @@ const Settings = {
 // ==========================================
 // 10. APP STARTUP + SESSION WATCH
 
-/* ===== END settings.js ===== */
+/* ===== END js/settings.js ===== */
 
-/* ===== BEGIN app.js ===== */
+
+/* ===== BEGIN js/app.js ===== */
 /* ANORI TRANSPORT — INVOICES & BILLING ACTION PDF FINAL ROUTE — 2026-08-29 */
 // ==========================================
 document.addEventListener('DOMContentLoaded', () => UI.init());
@@ -2225,28 +1923,14 @@ setInterval(() => {
   // ------------------------------------------------------------
   // 1 + 17. SMART UI / SMART DEFAULTS / PARTY CREDIT DAYS
   // ------------------------------------------------------------
-  // ------------------------------------------------------------
-  // PAYMENT TERMS — ALWAYS RESOLVE FROM PARTY MASTER DATA
-  // ------------------------------------------------------------
-  function resolvePartyCreditDays(party, fallback=30){
-    const raw = party && party.credit_days;
-    const value = Number(raw);
-    if (Number.isFinite(value) && value >= 0) return Math.floor(value);
-    const stored = Number(fallback);
-    if (Number.isFinite(stored) && stored >= 0) return Math.floor(stored);
-    return 30;
-  }
-  // Stable global reference: later amendment blocks live in separate scopes.
-  window.anoriResolvePartyCreditDays = resolvePartyCreditDays;
-
   const originalPartyOpen=Masters.openModal.bind(Masters);
   Masters.openModal=function(type,id=null){
     if(type!=='party') return originalPartyOpen(type,id);
     const data=DB.get('parties'); const item=id?data.find(x=>x.id===id)||{}:{};
-    const html=`<div class="form-row"><div class="form-group"><label>Customer Name *</label><input class="form-control" id="m_name" value="${esc(item.name)}" required></div><div class="form-group"><label>Credit Days</label><input class="form-control" id="m_credit_days" type="number" min="0" value="${Number.isFinite(Number(item.credit_days)) ? Math.max(0, Math.floor(Number(item.credit_days))) : 30}"></div></div><div class="form-row"><div class="form-group"><label>GSTIN</label><input class="form-control" id="m_gst" value="${esc(item.gst)}"></div><div class="form-group"><label>Mobile</label><input class="form-control" id="m_mobile" value="${esc(item.mobile||'')}"></div></div><div class="form-group"><label>Address</label><input class="form-control" id="m_addr" value="${esc(item.addr)}"></div>`;
+    const html=`<div class="form-row"><div class="form-group"><label>Customer Name *</label><input class="form-control" id="m_name" value="${esc(item.name)}" required></div><div class="form-group"><label>Credit Days</label><input class="form-control" id="m_credit_days" type="number" min="0" value="${num(item.credit_days)||30}"></div></div><div class="form-row"><div class="form-group"><label>GSTIN</label><input class="form-control" id="m_gst" value="${esc(item.gst)}"></div><div class="form-group"><label>Mobile</label><input class="form-control" id="m_mobile" value="${esc(item.mobile||'')}"></div></div><div class="form-group"><label>Address</label><input class="form-control" id="m_addr" value="${esc(item.addr)}"></div>`;
     UI.openModal(`${id?'Edit':'Add'} Customer`,html,()=>{
       const name=document.getElementById('m_name').value.trim();if(!name)return Utils.toast('Customer name is required.','error');
-      const arr=DB.get('parties');const x=id?arr.find(a=>a.id===id):{id:Utils.id()};x.name=esc(name);x.gst=esc(document.getElementById('m_gst').value);x.addr=esc(document.getElementById('m_addr').value);x.mobile=esc(document.getElementById('m_mobile').value);x.credit_days=Math.max(0, Math.floor(num(document.getElementById('m_credit_days').value)));if(!id)arr.push(x);DB.set('parties',arr);UI.closeModal();Utils.toast('Customer saved.');Router.go('masters');
+      const arr=DB.get('parties');const x=id?arr.find(a=>a.id===id):{id:Utils.id()};x.name=esc(name);x.gst=esc(document.getElementById('m_gst').value);x.addr=esc(document.getElementById('m_addr').value);x.mobile=esc(document.getElementById('m_mobile').value);x.credit_days=Math.max(0,num(document.getElementById('m_credit_days').value)||30);if(!id)arr.push(x);DB.set('parties',arr);UI.closeModal();Utils.toast('Customer saved.');Router.go('masters');
     });
   };
 
@@ -2355,7 +2039,7 @@ setInterval(() => {
       const subtotal=trips.reduce((s,t)=>s+num(t.freight),0)+expenseLines.reduce((s,e)=>s+num(e.amount),0);
       const cgst=isGst?subtotal*0.09:0, sgst=isGst?subtotal*0.09:0, total=subtotal+cgst+sgst;
       if(advance>total) throw new Error('Advance cannot be greater than invoice total.');
-      const invoice={id:Utils.id(),invoice_no:Utils.generateInvoiceNo(),date:today(),party_id:party.id,trip_ids:trips.map(t=>t.id),trip_count:trips.length,subtotal,cgst,sgst,total_amount:total,advance,balance_due:total-advance,is_gst:isGst,status:'issued',expense_lines,credit_days:window.anoriResolvePartyCreditDays(party),trips_data:trips.map(t=>({...t,vehicle:vehicles.find(v=>v.id===t.vehicle_id)}))};
+      const invoice={id:Utils.id(),invoice_no:Utils.generateInvoiceNo(),date:today(),party_id:party.id,trip_ids:trips.map(t=>t.id),trip_count:trips.length,subtotal,cgst,sgst,total_amount:total,advance,balance_due:total-advance,is_gst:isGst,status:'issued',expense_lines,credit_days:Math.max(0,num(party.credit_days)||30),trips_data:trips.map(t=>({...t,vehicle:vehicles.find(v=>v.id===t.vehicle_id)}))};
       const inv=DB.get('invoices');inv.push(invoice);DB.set('invoices',inv);const all=DB.get('trips');trips.forEach(t=>{const x=all.find(a=>a.id===t.id);if(x)x.invoice_status='shared';});DB.set('trips',all);Utils.hideLoader();Invoices.previewInvoice(invoice);Utils.toast('Invoice created. Check Preview before PDF.');
     }catch(e){Utils.hideLoader();Utils.toast(e.message||'Could not create invoice.','error');}},250);
   };
@@ -2365,15 +2049,14 @@ setInterval(() => {
   // ------------------------------------------------------------
   Invoices.buildInvoiceHTML=function(invoice, preview=false){
     const company=DB.get('company_profile'), party=DB.get('parties').find(p=>p.id===invoice.party_id)||{};
-    const creditDays=window.anoriResolvePartyCreditDays(party, invoice.credit_days);
-    const due=this.getDueDate(invoice.date, creditDays);
+    const due=this.getDueDate(invoice.date, invoice.credit_days || party.credit_days || 30);
     const tripRows=(invoice.trips_data||[]).map((t,i)=>`<tr><td>${i+1}</td><td><strong>${esc(t.trip_no)}</strong></td><td>${esc(t.date)}</td><td>${esc(t.from)} → ${esc(t.to)}</td><td>${esc(t.vehicle?.number||'')}</td><td class="money">${money(t.freight)}</td></tr>`).join('');
     const expRows=(invoice.expense_lines||[]).map((e,i)=>`<tr class="expense-line"><td>${(invoice.trips_data||[]).length+i+1}</td><td><strong>${esc(e.name)}</strong><small>Billable Expense</small></td><td>-</td><td>-</td><td>-</td><td class="money">${money(e.amount)}</td></tr>`).join('');
     const tax=invoice.cgst+invoice.sgst;
-    const terms=invoice.status==='paid'?'Paid':invoice.status==='cancelled'?'Cancelled':creditDays+' Days';
+    const terms=invoice.status==='paid'?'Paid':invoice.status==='cancelled'?'Cancelled':(invoice.credit_days||30)+' Days';
     const status=String(invoice.status||'issued').replace('_',' ').toUpperCase();
     const total=invoice.total_amount, balance=Math.max(0,invoice.balance_due);
-    const css=`*{box-sizing:border-box}html,body{margin:0;padding:0;background:${preview?'#e8edf4':'#fff'};font-family:Inter,Arial,sans-serif;color:#172033}body{padding:${preview?'18px':'0'}}.invoice-page{width:210mm;min-height:297mm;margin:0 auto;background:#fff;padding:14mm 15mm;font-size:11px;line-height:1.45;box-shadow:${preview?'0 14px 40px rgba(15,23,42,.22)':'none'}}.inv-head{display:grid;grid-template-columns:1fr 245px;gap:18px;padding-bottom:14px;border-bottom:3px solid #173b7a}.brand{font-size:24px;font-weight:800;color:#10213d}.muted{color:#64748b}.inv-title{font-size:24px;font-weight:900;text-align:right;color:#10213d}.meta{margin-top:8px;border:1px solid #d8e0ea;border-radius:7px;overflow:hidden}.meta-row{display:grid;grid-template-columns:100px 1fr}.meta-row:nth-child(even){background:#f8fafc}.meta-row b{padding:6px 7px;background:#edf4fb}.meta-row span{padding:6px 7px;text-align:right;word-break:break-word}.badge{display:inline-block;padding:3px 7px;border-radius:999px;background:#dbeafe;color:#1d4ed8;font-weight:800;font-size:9px}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:13px}.box{border:1px solid #d8e0ea;border-radius:7px;overflow:hidden}.box-title{background:#edf4fb;color:#173b7a;font-weight:900;padding:7px 9px;font-size:10px}.box-body{padding:9px;min-height:72px}.section{margin-top:13px;background:#173b7a;color:#fff;font-weight:900;padding:7px 9px;border-radius:6px 6px 0 0}.inv-table{width:100%;border-collapse:collapse;table-layout:fixed}.inv-table th{background:#eef3f8;color:#334155;font-size:9px;padding:7px 5px;border:1px solid #d8e0ea;text-align:left}.inv-table td{padding:7px 5px;border:1px solid #d8e0ea;vertical-align:top;overflow-wrap:anywhere}.money{text-align:right;white-space:nowrap}.inv-table small{display:block;color:#64748b;font-size:8px}.summary-wrap{display:flex;justify-content:flex-end;margin-top:12px}.summary{width:310px;border:1px solid #d8e0ea;border-radius:7px;overflow:hidden}.sum-row{display:grid;grid-template-columns:1fr 120px;padding:7px 9px;border-bottom:1px solid #e2e8f0}.sum-row span:last-child{text-align:right;white-space:nowrap}.sum-total{font-weight:900;background:#f0fdf4}.sum-balance{font-size:14px;font-weight:900;background:#173b7a;color:#fff}.words{margin-top:12px;border:1px solid #d8e0ea;border-radius:7px;padding:9px}.bottom{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.sign{text-align:right;min-height:105px}.sign-line{margin-top:42px;border-top:1px solid #64748b;padding-top:5px}.terms{margin-top:12px;border-top:1px solid #d8e0ea;padding-top:8px;color:#475569;font-size:9px}.footer{display:flex;justify-content:space-between;gap:12px;border-top:2px solid #173b7a;margin-top:12px;padding-top:7px;font-size:8px;color:#64748b}@media print{body{padding:0;background:#fff}.invoice-page{margin:0;box-shadow:none;page-break-after:always}@page{size:A4 portrait;margin:0}}`;
+    const css=`*{box-sizing:border-box}html,body{margin:0;padding:0;background:${preview?'#e8edf4':'#fff'};font-family:Inter,Arial,sans-serif;color:#172033}body{padding:${preview?'18px':'0'}}.invoice-page{width:210mm;min-height:297mm;margin:0 auto;background:#fff;padding:14mm 15mm;font-size:11px;line-height:1.45;box-shadow:${preview?'0 14px 40px rgba(15,23,42,.22)':'none'}}.inv-head{display:grid;grid-template-columns:1fr 245px;gap:18px;padding-bottom:14px;border-bottom:3px solid #173b7a}.brand{font-size:24px;font-weight:800;color:#10213d}.muted{color:#64748b}.inv-title{font-size:24px;font-weight:900;text-align:right;color:#10213d}.meta{margin-top:8px;border:1px solid #d8e0ea;border-radius:7px;overflow:hidden}.meta-row{display:grid;grid-template-columns:100px 1fr}.meta-row:nth-child(even){background:#f8fafc}.meta-row b{padding:6px 7px;background:#edf4fb}.meta-row span{padding:6px 7px;text-align:right;word-break:break-word}.badge{display:inline-block;padding:3px 7px;border-radius:999px;background:#dbeafe;color:#1d4ed8;font-weight:800;font-size:9px}.two{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:13px}.box{border:1px solid #d8e0ea;border-radius:7px;overflow:hidden}.box-title{background:#edf4fb;color:#173b7a;font-weight:900;padding:7px 9px;font-size:10px}.box-body{padding:9px;min-height:72px}.section{margin-top:13px;background:#173b7a;color:#fff;font-weight:900;padding:7px 9px;border-radius:6px 6px 0 0}.inv-table{width:100%;border-collapse:collapse;table-layout:fixed}.inv-table th{background:#eef3f8;color:#334155;font-size:9px;padding:7px 5px;border:1px solid #d8e0ea;text-align:left}.inv-table td{padding:7px 5px;border:1px solid #d8e0ea;vertical-align:top;overflow-wrap:anywhere}.money{text-align:right;white-space:nowrap}.inv-table small{display:block;color:#64748b;font-size:8px}.summary-wrap{display:flex;justify-content:flex-end;margin-top:12px}.summary{width:310px;border:1px solid #d8e0ea;border-radius:7px;overflow:hidden}.sum-row{display:grid;grid-template-columns:1fr 120px;padding:7px 9px;border-bottom:1px solid #e2e8f0}.sum-row span:last-child{text-align:right;white-space:nowrap}.sum-total{font-weight:900;background:#f0fdf4}.sum-balance{font-size:14px;font-weight:900;background:#173b7a;color:#fff!important}.sum-balance span,.sum-balance strong{color:#fff!important}.words{margin-top:12px;border:1px solid #d8e0ea;border-radius:7px;padding:9px}.bottom{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px}.sign{text-align:right;min-height:105px}.sign-line{margin-top:42px;border-top:1px solid #64748b;padding-top:5px}.terms{margin-top:12px;border-top:1px solid #d8e0ea;padding-top:8px;color:#475569;font-size:9px}.footer{display:flex;justify-content:space-between;gap:12px;border-top:2px solid #173b7a;margin-top:12px;padding-top:7px;font-size:8px;color:#64748b}@media print{body{padding:0;background:#fff}.invoice-page{margin:0;box-shadow:none;page-break-after:always}@page{size:A4 portrait;margin:0}}`;
     return `<!doctype html><html><head><meta charset="UTF-8"><title>${esc(invoice.invoice_no)}</title><style>${css}</style></head><body><div class="invoice-page" id="invoice-page">
       <div class="inv-head"><div><div class="brand">${esc(company.name||'Anori Transport Services')}</div><div>${esc(company.addr||'')}</div><div>GSTIN: ${esc(company.gst||'N/A')} &nbsp; | &nbsp; Phone: ${esc(company.phone||'N/A')}</div></div><div><div class="inv-title">TAX INVOICE</div><div class="meta"><div class="meta-row"><b>Invoice No.</b><span>${esc(invoice.invoice_no)}</span></div><div class="meta-row"><b>Date</b><span>${esc(invoice.date)}</span></div><div class="meta-row"><b>Due Date</b><span>${esc(due)}</span></div><div class="meta-row"><b>Status</b><span><em class="badge">${esc(status)}</em></span></div></div></div></div>
       <div class="two"><div class="box"><div class="box-title">BILL TO</div><div class="box-body"><strong>${esc(party.name||'N/A')}</strong><br>${esc(party.addr||'')}${party.gst?`<br>GSTIN: ${esc(party.gst)}`:''}</div></div><div class="box"><div class="box-title">PAYMENT TERMS</div><div class="box-body"><strong>${esc(terms)}</strong><br>Due Date: ${esc(due)}<br>Invoice Type: ${isGstInvoice?'GST':'Non-GST'}${invoice.is_gst?`<br>Tax Type: ${invoice.tax_type==='igst'?'IGST 18%':'CGST 9% + SGST 9%'}`:''}</div></div></div>
@@ -2393,7 +2076,10 @@ setInterval(() => {
       document.getElementById('previewModal')?.classList.add('active');
     }catch(e){ console.error('Invoice preview error:',e); Utils.toast(e.message||'Unable to open invoice preview.','error'); }
   };
-  Invoices.downloadInvoice = function(invoice) { return (window.__ANORI_PDF_FINAL_FUNCTION ? window.__ANORI_PDF_FINAL_FUNCTION(invoice) : Promise.reject(new Error('PDF engine is initializing.'))); };
+  Invoices.downloadInvoice=function(invoice){
+    if(typeof this.downloadInvoiceSafe==='function') return this.downloadInvoiceSafe(invoice);
+    Utils.toast('PDF generation is not ready yet. Please try again.','warning');
+  };
   Invoices.updateStatus=function(id,status){const a=DB.get('invoices');const x=a.find(i=>i.id===id);if(!x)return;x.status=status;DB.set('invoices',a);Utils.toast('Invoice status updated.');Router.go('invoices');};
   Invoices.deleteInvoice=function(id){const a=DB.get('invoices'),x=a.find(i=>i.id===id);if(!x)return;if(String(x.status).toLowerCase()!=='draft'){Swal.fire({title:'Cancel Invoice?',text:'Issued invoices are kept for history. Only the status will change to Cancelled.',icon:'warning',showCancelButton:true,confirmButtonText:'Cancel Invoice'}).then(r=>{if(!r.isConfirmed)return;x.status='cancelled';x.cancelledAt=new Date().toISOString();DB.set('invoices',a);Router.go('invoices');});}else{DB.set('invoices',a.filter(i=>i.id!==id));Router.go('invoices');}};
   Invoices.render=function(container){const a=DB.get('invoices'),parties=DB.get('parties');container.innerHTML+=`<div class="anori-section-intro"><div><strong>Invoices</strong><span>Preview first. Then send, download or record payment.</span></div><button class="btn btn-success" onclick="Invoices.showInvoiceGenerator()">＋ New Invoice</button></div><div class="anori-kpi-grid"><div class="anori-kpi-card"><span>🧾 Total</span><strong>${a.length}</strong><small>Invoices</small></div><div class="anori-kpi-card"><span>💰 Outstanding</span><strong>${money(a.reduce((s,x)=>s+Math.max(0,num(x.balance_due)),0))}</strong><small>Balance due</small></div><div class="anori-kpi-card"><span>🟢 Paid</span><strong>${a.filter(x=>x.status==='paid').length}</strong><small>Completed</small></div><div class="anori-kpi-card"><span>🟠 Follow-up</span><strong>${a.filter(x=>num(x.balance_due)>0&&x.status!=='cancelled').length}</strong><small>Need payment</small></div></div><div class="card"><div class="table-wrapper"><table><thead><tr><th>Invoice</th><th>Date</th><th>Customer</th><th>Total</th><th>Balance</th><th>Status</th><th>Action</th></tr></thead><tbody>${a.slice().reverse().map(x=>{const p=parties.find(y=>y.id===x.party_id);return `<tr><td><strong>${esc(x.invoice_no)}</strong></td><td>${esc(x.date)}</td><td>${esc(p?.name||'-')}</td><td>${money(x.total_amount)}</td><td><strong>${money(x.balance_due)}</strong></td><td><select class="form-control anori-status-select" data-action="update-invoice-status" data-id="${esc(x.id)}"><option value="issued" ${x.status==='issued'?'selected':''}>Issued</option><option value="sent" ${x.status==='sent'?'selected':''}>Sent</option><option value="part_paid" ${x.status==='part_paid'?'selected':''}>Part Paid</option><option value="paid" ${x.status==='paid'?'selected':''}>Paid</option><option value="cancelled" ${x.status==='cancelled'?'selected':''}>Cancelled</option></select></td><td class="anori-actions"><button class="btn btn-outline btn-sm" onclick="Invoices.previewExisting('${esc(x.id)}')">👁 Preview</button><button class="btn btn-primary btn-sm" onclick="Invoices.downloadExisting('${esc(x.id)}')">📄 PDF</button>${x.status!=='cancelled'&&x.status!=='paid'?`<button class="btn btn-outline btn-sm" onclick="anoriAddFollowup('${esc(x.party_id)}','${esc(x.id)}')">📞 Follow-up</button>`:''}<button class="btn btn-danger btn-sm" data-action="delete-invoice" data-id="${esc(x.id)}">${x.status==='draft'?'Delete':'Cancel'}</button></td></tr>`}).join('')||'<tr><td colspan="7" class="empty-state">No invoices yet.</td></tr>'}</tbody></table></div></div>`;};
@@ -2405,10 +2091,11 @@ setInterval(() => {
   Settings.render=function(container){originalSettingsRender(container);const logs=DB.get('audit_log',[]).slice(0,20);container.insertAdjacentHTML('beforeend',`<div class="card"><div class="anori-section-head"><div><h3 class="card-title">🛡️ Change History</h3><span class="anori-help">Recent data changes saved in this browser.</span></div></div><div class="table-wrapper"><table><thead><tr><th>Time</th><th>Area</th><th>Action</th></tr></thead><tbody>${logs.map(x=>`<tr><td>${esc(new Date(x.time).toLocaleString('en-IN'))}</td><td>${esc(x.key)}</td><td>${esc(x.action)}</td></tr>`).join('')||'<tr><td colspan="3">No changes recorded yet.</td></tr>'}</tbody></table></div></div>`);};
 
   // ------------------------------------------------------------
-  // Initial nav injection for Documents
+  // Documents navigation is declared in index.html. Do not dynamically
+  // insert it into #navMenu: inserting before a descendant node causes
+  // a DOM NotFoundError. Keep only the dashboard refresh here.
   // ------------------------------------------------------------
   document.addEventListener('DOMContentLoaded',()=>{
-    const nav=document.getElementById('navMenu');if(nav&&!nav.querySelector('[data-view="documents"]')){const a=document.createElement('a');a.className='nav-item';a.dataset.view='documents';a.setAttribute('role','button');a.tabIndex=0;a.innerHTML='<i class="fas fa-folder-open"></i> Documents';nav.insertBefore(a,nav.querySelector('[data-view="settings"]'));}
     setTimeout(()=>{try{renderAnoriDashboardTop();}catch(e){}},150);
   });
 })();
@@ -2473,8 +2160,9 @@ setInterval(() => {
     const rows=document.getElementById('expRows');if(!rows)return;
     const masters=getExpenseMaster();
     const row=document.createElement('div');row.className='form-row anori-trip-exp-row';row.style.marginBottom='8px';
-    row.innerHTML=`<div class="form-group"><select class="form-control exp-type"><option value="">Select Expense</option>${masters.map(e=>`<option value="${esc(e.name)}" ${e.name===type?'selected':''}>${esc(e.name)}</option>`).join('')}</select></div><div class="form-group"><input type="number" class="form-control exp-amt" min="0" placeholder="Amount" value="${num(amount)||''}"></div><div class="form-group"><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.anori-trip-exp-row').remove()">Remove</button></div>`;
+    row.innerHTML=`<div class="form-group"><select class="form-control exp-type"><option value="">Select Expense</option>${masters.map(e=>`<option value="${esc(e.name)}" ${e.name===type?'selected':''}>${esc(e.name)}</option>`).join('')}<option value="__manual__">Manual Entry</option></select><input class="form-control exp-type-manual" style="display:none;margin-top:6px" placeholder="Enter expense type manually"></div><div class="form-group"><input type="number" class="form-control exp-amt" min="0" placeholder="Amount" value="${num(amount)||''}"></div><div class="form-group"><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.anori-trip-exp-row').remove()">Remove</button></div>`;
     rows.appendChild(row);
+    row.querySelector('.exp-type')?.addEventListener('change',e=>{const m=row.querySelector('.exp-type-manual');if(m)m.style.display=e.target.value==='__manual__'?'block':'none';});
   };
   function readTripForm(){
     const from=document.getElementById('t_from').value.trim(),to=document.getElementById('t_to').value.trim();
@@ -2634,7 +2322,7 @@ setInterval(() => {
       const cgst=isGst?subtotal*0.09:0,sgst=isGst?subtotal*0.09:0,total=subtotal+cgst+sgst;
       if(advance<0)throw new Error('Advance cannot be negative.');
       if(advance>total)throw new Error(`Advance cannot be greater than invoice total of ${money(total)}.`);
-      const invoice={id:Utils.id(),invoice_no:Utils.generateInvoiceNo(),date:today(),party_id:party.id,trip_ids:trips.map(t=>t.id),trip_count:trips.length,subtotal,cgst,sgst,total_amount:total,advance,balance_due:total-advance,is_gst:isGst,status:advance>=total?'paid':'issued',expense_lines:expenseLines,credit_days:window.anoriResolvePartyCreditDays(party),trips_data:trips.map(t=>({...t,vehicle:DB.get('vehicles').find(v=>v.id===t.vehicle_id)})),payments:[]};
+      const invoice={id:Utils.id(),invoice_no:Utils.generateInvoiceNo(),date:today(),party_id:party.id,trip_ids:trips.map(t=>t.id),trip_count:trips.length,subtotal,cgst,sgst,total_amount:total,advance,balance_due:total-advance,is_gst:isGst,status:advance>=total?'paid':'issued',expense_lines:expenseLines,credit_days:Math.max(0,num(party.credit_days)||30),trips_data:trips.map(t=>({...t,vehicle:DB.get('vehicles').find(v=>v.id===t.vehicle_id)})),payments:[]};
       const invoices=DB.get('invoices',[]);invoices.push(invoice);if(!DB.set('invoices',invoices))throw new Error('Invoice could not be saved.');
       const allTrips=DB.get('trips',[]);trips.forEach(t=>{const x=allTrips.find(a=>a.id===t.id);if(x)x.invoice_status='invoiced';});DB.set('trips',allTrips);
       Utils.hideLoader();
@@ -2659,17 +2347,16 @@ setInterval(() => {
     const addressLines=Array.isArray(company.addr_lines)?company.addr_lines.map(x=>String(x||'').trim()).filter(Boolean):(String(company.addr||'').split(/\r?\n/).map(x=>x.trim()).filter(Boolean));
     const addressHtml=addressLines.map(line=>`<div class="brand-address-line">${esc(line)}</div>`).join('')||'<div class="brand-address-line"></div>';
     const status=String(invoice.status||'issued').replace('_',' ').toUpperCase();
-    const creditDays=window.anoriResolvePartyCreditDays(party, invoice.credit_days);
-    const due=this.getDueDate(invoice.date, creditDays);
+    const due=this.getDueDate(invoice.date,invoice.credit_days||30);
     const expenseRows=(invoice.expense_lines||[]).filter(e=>num(e.amount)>0).map(e=>`<tr><td colspan="5" class="summary-label">${esc(e.name)}</td><td class="money">${money(e.amount)}</td></tr>`).join('');
     const tripRows=(invoice.trips_data||[]).map((t,i)=>`<tr><td>${i+1}</td><td><strong>${esc(t.trip_no)}</strong></td><td>${esc(t.date)}</td><td>${esc(t.from)} → ${esc(t.to)}</td><td>${esc(t.vehicle?.number||'')}</td><td class="money">${money(t.freight)}</td></tr>`).join('');
     const isGstInvoice=invoice.is_gst===true||invoice.is_gst===1||String(invoice.is_gst).toLowerCase()==='true'; const taxRows=isGstInvoice?(invoice.tax_type==='igst'?`<tr><td colspan="5" class="summary-label">IGST 18%</td><td class="money">${money(invoice.igst||0)}</td></tr>`:`<tr><td colspan="5" class="summary-label">CGST 9%</td><td class="money">${money(invoice.cgst)}</td></tr><tr><td colspan="5" class="summary-label">SGST 9%</td><td class="money">${money(invoice.sgst)}</td></tr>`):'';
     return `<!doctype html><html><head><meta charset="utf-8"><title>${esc(invoice.invoice_no)}</title><style>
-      *{box-sizing:border-box}html,body{margin:0;padding:0}body{font-family:Arial,Helvetica,sans-serif;color:#0f172a;background:#fff;font-size:12px;line-height:1.45;text-transform:uppercase}.invoice-page{width:210mm;min-height:297mm;margin:0;background:#fff;padding:5mm;box-shadow:none;overflow:hidden}.top{display:grid;grid-template-columns:1.2fr .8fr;gap:12px;align-items:start}.brand h1{font-size:24px;margin:0 0 4px;color:#0f172a}.brand div{margin:2px 0}.brand-address-line{margin:2px 0}.invoice-title{text-align:right}.invoice-title h2{font-size:23px;margin:0 0 8px;color:#0f172a}.meta{width:100%;border:1px solid #cbd5e1;border-radius:8px;overflow:hidden}.meta-row{display:grid;grid-template-columns:105px 1fr;border-bottom:1px solid #e2e8f0}.meta-row:last-child{border-bottom:0}.meta-row b{background:#eaf2fb;padding:7px}.meta-row span{padding:7px;text-align:right}.badge{display:inline-block;padding:3px 9px;border-radius:20px;background:#dbeafe;color:#1d4ed8;font-weight:700;font-size:10px}.rule{height:2px;background:#1e3a8a;margin:10px 0}.two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}.box{border:1px solid #cbd5e1;border-radius:8px;overflow:hidden}.box-title{background:#eaf2fb;color:#0f3b78;font-weight:800;padding:7px 10px;text-transform:uppercase}.box-body{padding:7px;min-height:58px}.charges-title{background:#1e3a8a;color:#fff;font-weight:800;padding:8px 10px;text-transform:uppercase;border-radius:8px 8px 0 0}.charges{width:100%;border-collapse:collapse;margin:0}.charges th,.charges td{border:1px solid #cbd5e1;padding:5px 6px}.charges th{background:#eef3f8;font-size:11px;text-align:left}.money{text-align:right;white-space:nowrap}.summary-label{text-align:right}.charges tfoot td{background:#fff}.charges tfoot tr.total td{background:#effcf4;font-weight:800}.charges tfoot tr.balance td{background:#1e3a8a;color:#fff;font-weight:800;font-size:15px}.amount-words,.bank,.signature{border:1px solid #cbd5e1;border-radius:8px;margin-top:8px;overflow:hidden}.section-title{background:#eaf2fb;color:#0f3b78;font-weight:800;padding:7px 10px;text-transform:uppercase}.section-body{padding:10px}.bank-sign{display:grid;grid-template-columns:1fr 1fr;gap:8px}.signature-body{height:82px;padding:8px 10px;display:flex;align-items:flex-end;justify-content:flex-end;gap:8px;position:relative}.company-signature-stamp{max-width:150px;max-height:62px;object-fit:contain;display:block}.authorized-signatory-label{font-weight:700;white-space:nowrap}.terms{margin-top:8px;border-top:1px solid #cbd5e1;padding-top:10px;font-size:10px}.footer{margin-top:8px;border-top:2px solid #1e3a8a;padding-top:8px;text-align:center;font-size:10px;color:#475569}.avoid{break-inside:avoid;page-break-inside:avoid}@page{size:A4 portrait;margin:0}@media print{body{background:#fff}.invoice-page{margin:0;box-shadow:none}.no-print{display:none!important}}
+      *{box-sizing:border-box}html,body{margin:0;padding:0}body{font-family:Arial,Helvetica,sans-serif;color:#0f172a;background:#fff;font-size:12px;line-height:1.45;text-transform:uppercase}.invoice-page{width:210mm;min-height:297mm;margin:0;background:#fff;padding:5mm;box-shadow:none;overflow:hidden}.top{display:grid;grid-template-columns:1.2fr .8fr;gap:12px;align-items:start}.brand h1{font-size:24px;margin:0 0 4px;color:#0f172a}.brand div{margin:2px 0}.brand-address-line{margin:2px 0}.invoice-title{text-align:right}.invoice-title h2{font-size:23px;margin:0 0 8px;color:#0f172a}.meta{width:100%;border:1px solid #cbd5e1;border-radius:8px;overflow:hidden}.meta-row{display:grid;grid-template-columns:105px 1fr;border-bottom:1px solid #e2e8f0}.meta-row:last-child{border-bottom:0}.meta-row b{background:#eaf2fb;padding:7px}.meta-row span{padding:7px;text-align:right}.badge{display:inline-block;padding:3px 9px;border-radius:20px;background:#dbeafe;color:#1d4ed8;font-weight:700;font-size:10px}.rule{height:2px;background:#1e3a8a;margin:10px 0}.two{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px}.box{border:1px solid #cbd5e1;border-radius:8px;overflow:hidden}.box-title{background:#eaf2fb;color:#0f3b78;font-weight:800;padding:7px 10px;text-transform:uppercase}.box-body{padding:7px;min-height:58px}.charges-title{background:#1e3a8a;color:#fff;font-weight:800;padding:8px 10px;text-transform:uppercase;border-radius:8px 8px 0 0}.charges{width:100%;border-collapse:collapse;margin:0}.charges th,.charges td{border:1px solid #cbd5e1;padding:5px 6px}.charges th{background:#eef3f8;font-size:11px;text-align:left}.money{text-align:right;white-space:nowrap}.summary-label{text-align:right}.charges tfoot td{background:#fff}.charges tfoot tr.total td{background:#effcf4;font-weight:800}.charges tfoot tr.balance td,.charges tfoot tr.balance td strong,.charges tfoot tr.balance td span{background:#1e3a8a;color:#fff!important;font-weight:800;font-size:15px}.amount-words,.bank,.signature{border:1px solid #cbd5e1;border-radius:8px;margin-top:8px;overflow:hidden}.section-title{background:#eaf2fb;color:#0f3b78;font-weight:800;padding:7px 10px;text-transform:uppercase}.section-body{padding:10px}.bank-sign{display:grid;grid-template-columns:1fr 1fr;gap:8px}.signature-body{height:82px;padding:8px 10px;display:flex;align-items:flex-end;justify-content:flex-end;gap:8px;position:relative}.company-signature-stamp{max-width:150px;max-height:62px;object-fit:contain;display:block}.authorized-signatory-label{font-weight:700;white-space:nowrap}.terms{margin-top:8px;border-top:1px solid #cbd5e1;padding-top:10px;font-size:10px}.footer{margin-top:8px;border-top:2px solid #1e3a8a;padding-top:8px;text-align:center;font-size:10px;color:#475569}.avoid{break-inside:avoid;page-break-inside:avoid}@page{size:A4 portrait;margin:0}@media print{body{background:#fff}.invoice-page{margin:0;box-shadow:none}.no-print{display:none!important}}
     </style></head><body><div class="invoice-page">
       <div class="top avoid"><div class="brand"><h1>${esc(company.name||'Anori Transport Services')}</h1>${addressHtml}${isGstInvoice?`<div>GSTIN: ${esc(company.gst||'N/A')} &nbsp; | &nbsp; PAN: ${esc(company.pan||'N/A')} &nbsp; | &nbsp; Phone: ${esc(company.phone||'')}</div>`:`<div>PAN: ${esc(company.pan||'N/A')} &nbsp; | &nbsp; Phone: ${esc(company.phone||'')}</div>`}</div><div class="invoice-title"><h2>${isGstInvoice?'TAX INVOICE':'INVOICE'}</h2><div class="meta"><div class="meta-row"><b>Invoice No.</b><span>${esc(invoice.invoice_no)}</span></div><div class="meta-row"><b>Date</b><span>${esc(invoice.date)}</span></div><div class="meta-row"><b>Due Date</b><span>${esc(due)}</span></div><div class="meta-row"><b>Status</b><span><span class="badge">${esc(status)}</span></span></div></div></div></div>
       <div class="rule"></div>
-      <div class="two avoid"><div class="box"><div class="box-title">Bill To</div><div class="box-body"><strong>${esc(party.name||'N/A')}</strong><br>${esc(party.addr||'')}${isGstInvoice?`<br>GSTIN: ${esc(party.gst||'N/A')}`:''}</div></div><div class="box"><div class="box-title">Payment Terms</div><div class="box-body"><strong>${esc(creditDays)} Days</strong><br>Due Date: ${esc(due)}<br>Invoice Type: ${isGstInvoice?'GST':'Non-GST'}${isGstInvoice && invoice.tax_type?`<br>Tax Type: ${invoice.tax_type==='igst'?'IGST 18%':'CGST 9% + SGST 9%'}`:''}</div></div></div>
+      <div class="two avoid"><div class="box"><div class="box-title">Bill To</div><div class="box-body"><strong>${esc(party.name||'N/A')}</strong><br>${esc(party.addr||'')}${isGstInvoice?`<br>GSTIN: ${esc(party.gst||'N/A')}`:''}</div></div><div class="box"><div class="box-title">Payment Terms</div><div class="box-body"><strong>${esc(invoice.credit_days||30)} Days</strong><br>Due Date: ${esc(due)}<br>Invoice Type: ${isGstInvoice?'GST':'Non-GST'}${isGstInvoice && invoice.tax_type?`<br>Tax Type: ${invoice.tax_type==='igst'?'IGST 18%':'CGST 9% + SGST 9%'}`:''}</div></div></div>
       <div class="avoid"><div class="charges-title">Transport / Billable Charges</div><table class="charges"><thead><tr><th style="width:5%">#</th><th style="width:22%">Trip No.</th><th style="width:13%">Date</th><th style="width:28%">Route</th><th style="width:17%">Vehicle</th><th style="width:15%;text-align:right">Amount</th></tr></thead><tbody>${tripRows||'<tr><td colspan="6">No trip lines</td></tr>'}</tbody><tfoot>${expenseRows}${`<tr><td colspan="5" class="summary-label"><strong>Subtotal</strong></td><td class="money"><strong>${money(invoice.subtotal)}</strong></td></tr>`}${taxRows}<tr class="total"><td colspan="5" class="summary-label"><strong>Total</strong></td><td class="money"><strong>${money(invoice.total_amount)}</strong></td></tr><tr><td colspan="5" class="summary-label">Advance Received</td><td class="money">-${money(invoice.advance)}</td></tr><tr class="balance"><td colspan="5" class="summary-label"><strong>BALANCE DUE</strong></td><td class="money"><strong>${money(invoice.balance_due)}</strong></td></tr></tfoot></table></div>
       <div class="amount-words avoid"><div class="section-title">Amount in Words</div><div class="section-body">${esc(Utils.numberToWords(invoice.total_amount))}</div></div>
       <div class="bank-sign"><div class="bank avoid"><div class="section-title">Bank Details</div><div class="section-body">Bank Name: <strong>${esc(company.bank_name||'N/A')}</strong><br>Account No.: <strong>${esc(company.acc||'N/A')}</strong><br>IFSC: <strong>${esc(company.bank||'N/A')}</strong></div></div><div class="signature avoid"><div class="section-title" style="text-align:right">For ${esc(company.name||'Anori Transport Services')}</div><div class="signature-body">${company.signature_stamp?`<img class="company-signature-stamp" src="${esc(company.signature_stamp)}" alt="Authorized Signatory">`:''}<span class="authorized-signatory-label">Authorized Signatory</span></div></div></div>
@@ -2722,7 +2409,32 @@ setInterval(() => {
     }
   };
 
-  Invoices.downloadInvoice = function(invoice) { return (window.__ANORI_PDF_FINAL_FUNCTION ? window.__ANORI_PDF_FINAL_FUNCTION(invoice) : Promise.reject(new Error('PDF engine is initializing.'))); };
+  Invoices.downloadInvoice=async function(invoice){
+    try{
+      if(typeof html2pdf!=='function')throw new Error('PDF library is not available. Open the application with internet access once, or bundle html2pdf locally.');
+      const normalized=normalizeInvoiceForRender(invoice);
+      const content=document.getElementById('previewContent');
+      let page=content?.dataset.invoiceId===normalized.id?content.querySelector('.invoice-page'):null;
+      if(!page)page=this.mountInvoiceDocument(normalized);
+      if(!page)throw new Error('Invoice preview could not be prepared for PDF.');
+      const stage=page.parentElement;
+      const previousWidth=stage.style.width,previousTransform=stage.style.transform,previousOverflow=stage.style.overflow;
+      stage.style.width='210mm';stage.style.transform='none';stage.style.overflow='visible';
+      if(document.fonts?.ready)await document.fonts.ready;
+      await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+      await html2pdf().set({
+        margin:0,filename:`${normalized.invoice_no}.pdf`,image:{type:'jpeg',quality:.98},
+        html2canvas:{scale:2,useCORS:true,allowTaint:false,backgroundColor:'#ffffff',logging:false,scrollX:0,scrollY:0},
+        pagebreak:{mode:['css','legacy'],avoid:['.avoid']},
+        jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+      }).from(page).save();
+      stage.style.width=previousWidth;stage.style.transform=previousTransform;stage.style.overflow=previousOverflow;
+      Utils.toast('PDF downloaded successfully using the exact Invoice Preview layout.','success');
+    }catch(e){
+      console.error('Invoice PDF generation error:',e);
+      Swal.fire({icon:'error',title:'PDF Generation Failed',text:e.message||'Unable to create PDF.',confirmButtonText:'OK'});
+    }
+  };
 
 
   // ------------------------------
@@ -2732,7 +2444,27 @@ setInterval(() => {
   window.__anoriV28InvoiceActionsReady=true;
 
   // Local-file safe PDF helper: uses the current DOM only; never creates a file:// iframe.
-  Invoices.downloadInvoiceSafe = function(invoice) { return (window.__ANORI_PDF_FINAL_FUNCTION ? window.__ANORI_PDF_FINAL_FUNCTION(invoice) : Promise.reject(new Error('PDF engine is initializing.'))); };
+  Invoices.downloadInvoiceSafe=async function(invoice){
+    try{
+      if(typeof window.html2canvas!=='function')throw new Error('PDF image renderer is not loaded.');
+      if(!window.jspdf?.jsPDF)throw new Error('PDF engine is not loaded.');
+      const content=document.getElementById('previewContent');
+      if(!content)throw new Error('Invoice preview area is not available.');
+      let page=content.querySelector('.invoice-page');
+      if(!page){
+        if(typeof this.mountInvoiceDocument!=='function')throw new Error('Invoice Preview renderer is unavailable.');
+        page=this.mountInvoiceDocument(invoice);
+      }
+      const canvas=await window.html2canvas(page,{scale:2,useCORS:true,allowTaint:false,backgroundColor:'#fff',logging:false,scrollX:0,scrollY:0});
+      const {jsPDF}=window.jspdf;
+      const pdf=new jsPDF({unit:'mm',format:'a4',orientation:'portrait',compress:true});
+      const ratio=canvas.width/canvas.height; let w=200,h=w/ratio;
+      if(h>287){h=287;w=h*ratio;}
+      pdf.addImage(canvas.toDataURL('image/jpeg',0.98),'JPEG',(210-w)/2,(297-h)/2,w,h,undefined,'FAST');
+      pdf.save(`${invoice.invoice_no}.pdf`);
+      Utils.toast('PDF downloaded successfully.','success');
+    }catch(e){console.error('Invoice PDF generation error:',e);Utils.toast(e.message||'Unable to create PDF.','error');}
+  };
 
   // ------------------------------
   // AUTO BACKUP HOOK
@@ -2960,7 +2692,34 @@ setInterval(() => {
   };
 
   // ---------- SAME PREVIEW DOM = SAME PDF SOURCE ----------
-  Invoices.downloadInvoice = function(invoice) { return (window.__ANORI_PDF_FINAL_FUNCTION ? window.__ANORI_PDF_FINAL_FUNCTION(invoice) : Promise.reject(new Error('PDF engine is initializing.'))); };
+  Invoices.downloadInvoice=async function(invoice){
+    try{
+      if(typeof html2pdf!=='function')throw new Error('PDF library is unavailable.');
+      const normalized=typeof normalizeInvoiceForRender==='function'?normalizeInvoiceForRender(invoice):invoice;
+      const content=document.getElementById('previewContent');
+      let page=content?.dataset.invoiceId===normalized.id?content.querySelector('.invoice-page'):null;
+      if(!page)page=this.mountInvoiceDocument(normalized);
+      if(!page)throw new Error('Invoice Preview could not be prepared.');
+      document.getElementById('previewModal')?.classList.add('active');
+      await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+      if(document.fonts?.ready)await document.fonts.ready;
+      const stage=page.parentElement;
+      const old={width:stage.style.width,height:stage.style.height,overflow:stage.style.overflow,transform:stage.style.transform};
+      stage.style.width='210mm';stage.style.height='auto';stage.style.overflow='visible';stage.style.transform='none';
+      await html2pdf().set({
+        margin:0,filename:`${normalized.invoice_no}.pdf`,
+        image:{type:'jpeg',quality:.98},
+        html2canvas:{scale:2,useCORS:true,allowTaint:false,backgroundColor:'#fff',logging:false,scrollX:0,scrollY:0,windowWidth:794},
+        pagebreak:{mode:['css','legacy'],avoid:['.avoid']},
+        jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+      }).from(page).save();
+      Object.assign(stage.style,old);
+      Utils.toast('PDF downloaded — same layout as Invoice Preview.','success');
+    }catch(e){
+      console.error('Invoice PDF generation error:',e);
+      Swal.fire({icon:'error',title:'PDF Generation Failed',text:e?.message||'Unable to create PDF.',confirmButtonText:'OK'});
+    }
+  };
 
   // ---------- MASTER EXPENSE DATA MIGRATION ----------
   const exp=DB.get('expense_master',[]);
@@ -3060,7 +2819,7 @@ Trips.update=Trips.updateV25;
 Trips.delete=function(id){const i=anyInv(id);if(i)return Swal.fire({icon:'warning',title:'Trip Locked',html:`Trip is linked to <strong>${esc(i.invoice_no)}</strong>.<br><br>Cancel the invoice first. Financial history is preserved.`,confirmButtonText:'OK'});Swal.fire({title:'Delete Trip?',icon:'warning',showCancelButton:true,confirmButtonText:'Delete Trip'}).then(r=>{if(!r.isConfirmed)return;DB.set('trips',trips().filter(t=>t.id!==id));DB.set('driver_settlements',DB.get('driver_settlements',[]).filter(x=>x.trip_id!==id),true);Utils.toast('Trip deleted.','success');Router.go('trips')})};
 
 // INVOICE CREATION / LIFECYCLE
-Invoices.createInvoiceV28=async function(sel,isGst,advance,lines=[]){try{const fresh=trips().filter(t=>sel?.some(x=>x.id===t.id)),blocked=fresh.filter(t=>activeInv(t.id));if(!fresh.length)throw Error('Please select at least one trip.');if(blocked.length)throw Error('Invoice already exists for one or more selected trips. Cancel the old invoice first.');if(new Set(fresh.map(t=>t.party_id)).size!==1)throw Error('Please select trips for one customer only.');const p=party(fresh[0].party_id);if(!p)throw Error('Customer not found.');const billable=new Map(exps().filter(x=>x.showOnInvoice).map(x=>[x.id,x]));const expense_lines=(Array.isArray(lines)?lines:[]).map(e=>({masterId:e.masterId,name:e.name,amount:num(e.amount)})).filter(e=>e.amount>0&&billable.has(e.masterId));const subtotal=fresh.reduce((s,t)=>s+num(t.freight),0)+expense_lines.reduce((s,e)=>s+e.amount,0),cgst=isGst?subtotal*.09:0,sgst=isGst?subtotal*.09:0,total=subtotal+cgst+sgst,adv=num(advance);if(adv<0||adv>total)throw Error(adv<0?'Advance cannot be negative.':`Advance cannot exceed ${money(total)}.`);const invoice={id:Utils.id(),invoice_no:Utils.generateInvoiceNo(),date:today(),party_id:p.id,trip_ids:fresh.map(t=>t.id),trip_count:fresh.length,subtotal,cgst,sgst,total_amount:total,advance:adv,balance_due:total-adv,paid_amount:adv,is_gst:!!isGst,status:adv>=total?'paid':'issued',expense_lines,credit_days:window.anoriResolvePartyCreditDays(p),trips_data:fresh.map(t=>({...t,vehicle:vehicle(t.vehicle_id)})),payments:[]};if(invs().some(i=>String(i.status).toLowerCase()!=='cancelled'&&i.trip_ids?.some(id=>invoice.trip_ids.includes(id))))throw Error('Duplicate active invoice detected.');DB.set('invoices',[...invs(),invoice]);const all=trips();fresh.forEach(t=>{const x=all.find(a=>a.id===t.id);if(x)x.invoice_status='invoiced';syncDriver(x)});DB.set('trips',all,true);await Swal.fire({icon:'success',title:'Invoice Generated Successfully',html:`<strong>${esc(invoice.invoice_no)}</strong><br>${esc(p.name)}<br><strong>${money(total)}</strong>`,showCancelButton:true,confirmButtonText:'Open Preview',cancelButtonText:'Close'}).then(r=>{if(r.isConfirmed)Invoices.previewInvoice(invoice)});Router.go('invoices');return invoice}catch(e){console.error(e);await Swal.fire({icon:'error',title:'Invoice Generation Failed',text:e.message||'Unable to generate invoice.',confirmButtonText:'OK'});return null}};
+Invoices.createInvoiceV28=async function(sel,isGst,advance,lines=[]){try{const fresh=trips().filter(t=>sel?.some(x=>x.id===t.id)),blocked=fresh.filter(t=>activeInv(t.id));if(!fresh.length)throw Error('Please select at least one trip.');if(blocked.length)throw Error('Invoice already exists for one or more selected trips. Cancel the old invoice first.');if(new Set(fresh.map(t=>t.party_id)).size!==1)throw Error('Please select trips for one customer only.');const p=party(fresh[0].party_id);if(!p)throw Error('Customer not found.');const billable=new Map(exps().filter(x=>x.showOnInvoice).map(x=>[x.id,x]));const expense_lines=(Array.isArray(lines)?lines:[]).map(e=>({masterId:e.masterId,name:e.name,amount:num(e.amount)})).filter(e=>e.amount>0&&billable.has(e.masterId));const subtotal=fresh.reduce((s,t)=>s+num(t.freight),0)+expense_lines.reduce((s,e)=>s+e.amount,0),cgst=isGst?subtotal*.09:0,sgst=isGst?subtotal*.09:0,total=subtotal+cgst+sgst,adv=num(advance);if(adv<0||adv>total)throw Error(adv<0?'Advance cannot be negative.':`Advance cannot exceed ${money(total)}.`);const invoice={id:Utils.id(),invoice_no:Utils.generateInvoiceNo(),date:today(),party_id:p.id,trip_ids:fresh.map(t=>t.id),trip_count:fresh.length,subtotal,cgst,sgst,total_amount:total,advance:adv,balance_due:total-adv,paid_amount:adv,is_gst:!!isGst,status:adv>=total?'paid':'issued',expense_lines,credit_days:Math.max(0,num(p.credit_days)||30),trips_data:fresh.map(t=>({...t,vehicle:vehicle(t.vehicle_id)})),payments:[]};if(invs().some(i=>String(i.status).toLowerCase()!=='cancelled'&&i.trip_ids?.some(id=>invoice.trip_ids.includes(id))))throw Error('Duplicate active invoice detected.');DB.set('invoices',[...invs(),invoice]);const all=trips();fresh.forEach(t=>{const x=all.find(a=>a.id===t.id);if(x)x.invoice_status='invoiced';syncDriver(x)});DB.set('trips',all,true);await Swal.fire({icon:'success',title:'Invoice Generated Successfully',html:`<strong>${esc(invoice.invoice_no)}</strong><br>${esc(p.name)}<br><strong>${money(total)}</strong>`,showCancelButton:true,confirmButtonText:'Open Preview',cancelButtonText:'Close'}).then(r=>{if(r.isConfirmed)Invoices.previewInvoice(invoice)});Router.go('invoices');return invoice}catch(e){console.error(e);await Swal.fire({icon:'error',title:'Invoice Generation Failed',text:e.message||'Unable to generate invoice.',confirmButtonText:'OK'});return null}};
 Invoices.createInvoice=Invoices.createInvoiceV28;
 Invoices.cancelInvoice=function(id){const i=invs().find(x=>x.id===id);if(!i)return;if(istatus(i)==='cancelled')return Utils.toast('Invoice is already cancelled.','info');Swal.fire({title:'Cancel Invoice?',html:`<strong>${esc(i.invoice_no)}</strong> will remain in history. Linked trips can be invoiced again only after cancellation.`,icon:'warning',input:'text',inputLabel:'Cancellation reason',showCancelButton:true,confirmButtonText:'Cancel Invoice',confirmButtonColor:'#dc2626'}).then(r=>{if(!r.isConfirmed)return;const a=invs(),x=a.find(z=>z.id===id);if(!x)return;x.status='cancelled';x.cancelled_at=new Date().toISOString();x.cancel_reason=r.value||'Cancelled by user';DB.set('invoices',a,true);dedupeInvoicesByNumber();sync();Utils.toast('Invoice cancelled. Trip is available for a new invoice.','success');Router.go('invoices')})};
 Invoices.deleteInvoice=function(id){const i=invs().find(x=>x.id===id);if(!i)return;if(String(i.status).toLowerCase()!=='draft')return Invoices.cancelInvoice(id);DB.set('invoices',invs().filter(x=>x.id!==id),true);Router.go('invoices');Utils.toast('Draft invoice deleted.')};
@@ -3072,7 +2831,7 @@ function normalize(i){const x={...i};x.expense_lines=Array.isArray(x.expense_lin
 Invoices.getInvoiceRenderHTML=i=>Invoices.buildInvoiceHTML(normalize(i),true);
 Invoices.mountInvoiceDocument=function(i){const c=document.getElementById('previewContent');if(!c)throw Error('Invoice preview container not found.');c.innerHTML='';c.dataset.invoiceId=i.id;const d=new DOMParser().parseFromString(Invoices.getInvoiceRenderHTML(i),'text/html'),stage=document.createElement('div');stage.className='anori-invoice-preview-stage';d.head.querySelectorAll('style').forEach(s=>{const st=document.createElement('style');st.textContent=s.textContent;stage.appendChild(st)});const page=d.body.querySelector('.invoice-page');if(!page)throw Error('Invoice page could not be rendered.');stage.appendChild(page.cloneNode(true));c.appendChild(stage);return stage.querySelector('.invoice-page')};
 Invoices.previewInvoice=function(i){try{this.mountInvoiceDocument(normalize(i));document.getElementById('previewModal').classList.add('active')}catch(e){console.error(e);Swal.fire({icon:'error',title:'Invoice Preview Failed',text:e.message||'Unable to open preview.'})}};
-Invoices.downloadInvoice = function(invoice) { return (window.__ANORI_PDF_FINAL_FUNCTION ? window.__ANORI_PDF_FINAL_FUNCTION(invoice) : Promise.reject(new Error('PDF engine is initializing.'))); };
+Invoices.downloadInvoice=async function(i){try{if(typeof html2pdf!=='function')throw Error('PDF library is unavailable.');const n=normalize(i);let page=document.getElementById('previewContent')?.dataset.invoiceId===n.id?document.querySelector('#previewContent .invoice-page'):null;if(!page)page=this.mountInvoiceDocument(n);const host=document.getElementById('previewContent'),stage=page.parentElement,old={width:host.style.width,height:host.style.height,overflow:host.style.overflow,padding:host.style.padding};host.style.width='210mm';host.style.height='auto';host.style.overflow='visible';host.style.padding='0';stage.style.width='210mm';stage.style.padding='0';stage.style.background='#fff';if(document.fonts?.ready)await document.fonts.ready;await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));await html2pdf().set({margin:0,filename:`${n.invoice_no}.pdf`,image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true,allowTaint:false,backgroundColor:'#fff',logging:false,scrollX:0,scrollY:0,windowWidth:794},pagebreak:{mode:['css','legacy'],avoid:['.avoid']},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(page).save();Object.assign(host.style,old);Utils.toast('PDF downloaded with the same Invoice Preview layout.','success')}catch(e){console.error(e);Swal.fire({icon:'error',title:'PDF Download Failed',text:e.message||'Unable to generate PDF.'})}};
 Invoices.previewExisting=id=>{const i=invs().find(x=>x.id===id);if(i)Invoices.previewInvoice(i)};Invoices.downloadExisting=id=>{const i=invs().find(x=>x.id===id);if(i)Invoices.downloadInvoice(i)};
 
 // GENERATOR: active-invoice trips hidden; cancellation required for re-invoice.
@@ -3107,7 +2866,7 @@ Reports.getSelected=function(){return [...document.querySelectorAll('.report-row
 Reports.downloadCustomerLedger=function(){const x=Reports.__lastFilter||{},rows=trips().filter(r=>(!x.pid||r.party_id===x.pid)&&(!x.f||r.date>=x.f)&&(!x.t||r.date<=x.t)),csv=['Date,Trip,Customer,Route,Vehicle,Driver,Freight,Invoice',...rows.map(r=>[r.date,r.trip_no,party(r.party_id)?.name||'',`${r.from} -> ${r.to}`,vehicle(r.vehicle_id)?.number||'',driver(r.driver_id)?.name||'',r.freight,activeInv(r.id)?.invoice_no||'Pending'].map(v=>'"'+String(v).replaceAll('"','""')+'"').join(','))].join('\n'),a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`customer-trip-ledger-${today()}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)};
 
 // DATA IMPORT / EXPORT / BACKUP
-const DATA=['company_profile','vehicles','drivers','parties','trips','invoices','driver_settlements','payments','expense_master','followups','audit_log'];const snapshot=()=>{const o={version:'2.13.0',exported_at:new Date().toISOString()};DATA.forEach(k=>o[k]=DB.get(k,[]));return o};const dl=(blob,name)=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)};
+const DATA=['company_profile','vehicles','drivers','parties','vendors','trips','invoices','driver_settlements','vendor_settlements','payments','expense_master','followups','audit_log'];const snapshot=()=>{const o={version:'2.13.0',exported_at:new Date().toISOString()};DATA.forEach(k=>o[k]=DB.get(k,[]));return o};const dl=(blob,name)=>{const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500)};
 window.anoriExportJSON=()=>{
   try{
     const data={format:'ANORI_TRANSPORT_BACKUP',schema_version:1,app_version:'2.24',
@@ -3148,11 +2907,18 @@ window.anoriExportXLSX=()=>{
 };
 
 window.anoriExportSQLite=async()=>{
+  if(typeof initSqlJs!=='function')return Utils.toast('SQLite library unavailable.','error');
   try{
-    const bytes=window.AnoriSQLite?.exportSnapshot?window.AnoriSQLite.exportSnapshot(dataSnapshot()):await sqliteBytes();
-    dl(new Blob([bytes],{type:'application/x-sqlite3'}),`ANORI_TRANSPORT_BACKUP_${today()}.sqlite`);
-    Utils.toast('SQLite export completed.','success');return true;
-  }catch(e){console.error(e);Utils.toast('SQLite export failed: '+(e.message||'unknown error'),'error');return false;}
+    const SQL=await initSqlJs({locateFile:f=>`https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${f}`});
+    const db=new SQL.Database();
+    DATA.forEach(k=>{
+      const v=DB.get(k,k==='company_profile'?{}:[]),table=k.replace(/[^A-Za-z0-9_]/g,'_');
+      db.run(`CREATE TABLE IF NOT EXISTS "${table}" (json TEXT NOT NULL)`);
+      (Array.isArray(v)?v:[v]).forEach(r=>db.run(`INSERT INTO "${table}" VALUES (?)`,[JSON.stringify(r??{})]));
+    });
+    dl(new Blob([db.export()],{type:'application/x-sqlite3'}),`ANORI_TRANSPORT_BACKUP_${today()}.sqlite`);
+    db.close();Utils.toast('SQLite export completed.','success');return true;
+  }catch(e){console.error(e);Utils.toast('SQLite export failed.','error');return false;}
 };
 
 function normalizeImportedData(raw){
@@ -3251,9 +3017,8 @@ window.anoriImportFile=()=>{
         return importData(d);
       }
       if(n.endsWith('.sqlite')||n.endsWith('.db')){
-        if(window.AnoriSQLite?.importBytes){return importData(window.AnoriSQLite.importBytes(await f.arrayBuffer()));}
-        if(typeof initSqlJs!=='function')throw Error('SQLite import engine unavailable.');
-        const SQL=await initSqlJs({locateFile: x => window.__ANORI_SQL_LOCAL__ ? `libs/sqljs/${x}` : `https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${x}`});
+        if(typeof initSqlJs!=='function')throw Error('SQLite library unavailable.');
+        const SQL=await initSqlJs({locateFile:x=>`https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${x}`});
         const db=new SQL.Database(new Uint8Array(await f.arrayBuffer())),d={};
         DATA.forEach(k=>{try{const q=db.exec(`SELECT json FROM "${k}"`);if(q[0])d[k]=q[0].values.map(r=>JSON.parse(r[0]));}catch(e){}});
         db.close();return importData(d);
@@ -3505,7 +3270,46 @@ if(!window.__anoriPreviewResizeBound){
 /* v2.15 FINAL — PDF uses the same preview DOM, temporarily unscaled for A4 capture. */
 (function(){
 'use strict';
-Invoices.downloadInvoice = function(invoice) { return (window.__ANORI_PDF_FINAL_FUNCTION ? window.__ANORI_PDF_FINAL_FUNCTION(invoice) : Promise.reject(new Error('PDF engine is initializing.'))); };
+Invoices.downloadInvoice=async function(invoice){
+  try{
+    if(typeof html2pdf!=='function')throw new Error('PDF library is unavailable. Please check the PDF library connection.');
+    const normalized=typeof normalize==='function'?normalize(invoice):invoice;
+    const host=document.getElementById('previewContent');
+    if(!host)throw new Error('Invoice preview area not found.');
+    let page=host.dataset.invoiceId===normalized.id?host.querySelector('.invoice-page'):null;
+    if(!page)page=this.mountInvoiceDocument(normalized);
+    if(!page)throw new Error('Invoice preview could not be prepared.');
+    const stage=page.parentElement;
+    const old={
+      hostWidth:host.style.width,hostHeight:host.style.height,hostOverflow:host.style.overflow,
+      stageWidth:stage.style.width,stageHeight:stage.style.height,stageOverflow:stage.style.overflow,
+      stagePadding:stage.style.padding,stageBackground:stage.style.background,stageMinHeight:stage.style.minHeight,
+      stageJustify:stage.style.justifyContent,pageTransform:page.style.transform,pageMarginLeft:page.style.marginLeft,pageMarginRight:page.style.marginRight
+    };
+    page.style.transform='none';
+    page.style.marginLeft='0';page.style.marginRight='0';
+    stage.style.width='210mm';stage.style.height='auto';stage.style.minHeight='0';stage.style.overflow='visible';stage.style.padding='0';stage.style.background='#fff';stage.style.justifyContent='flex-start';
+    host.style.width='210mm';host.style.height='auto';host.style.overflow='visible';
+    if(document.fonts?.ready)await document.fonts.ready;
+    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+    await html2pdf().set({
+      margin:0,
+      filename:`${normalized.invoice_no}.pdf`,
+      image:{type:'jpeg',quality:.98},
+      html2canvas:{scale:2,useCORS:true,allowTaint:false,backgroundColor:'#fff',logging:false,scrollX:0,scrollY:0,windowWidth:794},
+      pagebreak:{mode:['css','legacy'],avoid:['.avoid']},
+      jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+    }).from(page).save();
+    host.style.width=old.hostWidth;host.style.height=old.hostHeight;host.style.overflow=old.hostOverflow;
+    stage.style.width=old.stageWidth;stage.style.height=old.stageHeight;stage.style.overflow=old.stageOverflow;stage.style.padding=old.stagePadding;stage.style.background=old.stageBackground;stage.style.minHeight=old.stageMinHeight;stage.style.justifyContent=old.stageJustify;
+    page.style.transform=old.pageTransform;page.style.marginLeft=old.pageMarginLeft;page.style.marginRight=old.pageMarginRight;
+    this.fitPreviewToScreen();
+    Utils.toast('PDF downloaded with the same Invoice Preview layout.','success');
+  }catch(e){
+    console.error('Invoice PDF generation error:',e);
+    Swal.fire({icon:'error',title:'PDF Generation Failed',text:e?.message||'Unable to generate PDF.',confirmButtonText:'OK'});
+  }
+};
 })();
 
 /* ============================================================
@@ -3577,7 +3381,7 @@ window.toolbar=function(type,countId){
 window.AnoriDataTools=window.AnoriDataTools||{};
 window.AnoriDataTools.exportJSON=window.AnoriDataTools.exportJSON||function(){
   if(typeof window.anoriExportJSON==='function'){window.anoriExportJSON();return true;}
-  const keys=['company_profile','vehicles','drivers','parties','trips','invoices','driver_settlements','payments','expense_master','followups','audit_log'];
+  const keys=['company_profile','vehicles','drivers','parties','vendors','trips','invoices','driver_settlements','vendor_settlements','payments','expense_master','followups','audit_log'];
   const data={version:'2.16.0',exported_at:new Date().toISOString()};keys.forEach(k=>data[k]=DB.get(k,[]));
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'}));a.download=`anori-backup-${today()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);return true;
 };
@@ -3778,7 +3582,43 @@ Invoices.fitPreviewToScreen = function(){
 };
 
 /* Final PDF function. All temporary changes are restored in finally, even on error. */
-Invoices.downloadInvoice = function(invoice) { return (window.__ANORI_PDF_FINAL_FUNCTION ? window.__ANORI_PDF_FINAL_FUNCTION(invoice) : Promise.reject(new Error('PDF engine is initializing.'))); };
+Invoices.downloadInvoice = async function(invoice){
+  const originalPage = document.querySelector('#previewContent .invoice-page');
+  const hadPreview = !!originalPage;
+  let page=originalPage, stage=page?.parentElement, host=document.getElementById('previewContent');
+  let old=null;
+  try{
+    if(typeof html2pdf!=='function')throw new Error('PDF library is unavailable. Please open Anori Transport with the required libraries available.');
+    if(!host)throw new Error('Invoice Preview area is not available.');
+    if(!page || host.dataset.invoiceId!==invoice.id){
+      if(typeof this.mountInvoiceDocument==='function')page=this.mountInvoiceDocument(invoice);
+      else throw new Error('Invoice Preview renderer is unavailable.');
+      stage=page.parentElement;
+    }
+    if(!page||!stage)throw new Error('Invoice Preview could not be prepared.');
+    old={hostWidth:host.style.width,hostHeight:host.style.height,hostOverflow:host.style.overflow,
+      stageWidth:stage.style.width,stageHeight:stage.style.height,stageMinHeight:stage.style.minHeight,stageOverflow:stage.style.overflow,
+      stagePadding:stage.style.padding,stageJustify:stage.style.justifyContent,pageTransform:page.style.transform,pageOrigin:page.style.transformOrigin,
+      pageMargin:page.style.margin,pageOverflow:page.style.overflow};
+    page.style.transform='none'; page.style.transformOrigin='top center'; page.style.margin='0'; page.style.overflow='visible';
+    stage.style.width='210mm'; stage.style.height='auto'; stage.style.minHeight='0'; stage.style.overflow='visible'; stage.style.padding='0'; stage.style.justifyContent='flex-start';
+    host.style.width='210mm'; host.style.height='auto'; host.style.overflow='visible';
+    if(document.fonts?.ready)await document.fonts.ready;
+    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+    await html2pdf().set({margin:0,filename:`${invoice.invoice_no}.pdf`,image:{type:'jpeg',quality:.98},html2canvas:{scale:2,useCORS:true,allowTaint:false,backgroundColor:'#fff',logging:false,scrollX:0,scrollY:0,windowWidth:794},pagebreak:{mode:['css','legacy'],avoid:['.avoid']},jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}}).from(page).save();
+    toast('PDF downloaded using the exact Invoice Preview layout.','success');
+  }catch(e){
+    console.error('Invoice PDF generation error:',e);
+    await Swal.fire({icon:'error',title:'PDF Generation Failed',text:e?.message||'Unable to generate PDF.',confirmButtonText:'OK'});
+  }finally{
+    if(old&&page&&stage&&host){
+      host.style.width=old.hostWidth;host.style.height=old.hostHeight;host.style.overflow=old.hostOverflow;
+      stage.style.width=old.stageWidth;stage.style.height=old.stageHeight;stage.style.minHeight=old.stageMinHeight;stage.style.overflow=old.stageOverflow;stage.style.padding=old.stagePadding;stage.style.justifyContent=old.stageJustify;
+      page.style.transform=old.pageTransform;page.style.transformOrigin=old.pageOrigin;page.style.margin=old.pageMargin;page.style.overflow=old.pageOverflow;
+      if(document.getElementById('previewModal')?.classList.contains('active'))this.fitPreviewToScreen();
+    }
+  }
+};
 
 /* Prevent trip edits/deletes when an active invoice exists. */
 const oldTripEdit=Trips.edit;
@@ -4001,7 +3841,46 @@ window.ANORI_V217_RAWDATA=true;
   };
 
   // ---------- INVOICE PREVIEW = PDF, SAME DOM ----------
-  Invoices.downloadInvoice = function(invoice) { return (window.__ANORI_PDF_FINAL_FUNCTION ? window.__ANORI_PDF_FINAL_FUNCTION(invoice) : Promise.reject(new Error('PDF engine is initializing.'))); };
+  Invoices.downloadInvoice = async function(invoice){
+    if(typeof html2pdf!=='function') return Swal.fire({icon:'error',title:'PDF Library Unavailable',text:'The PDF library is not loaded. Check the application libraries.'});
+    const host=document.getElementById('previewContent');
+    if(!host) return toast('Invoice Preview area is not available.','error');
+    let page=host.dataset.invoiceId===invoice.id ? host.querySelector('.invoice-page') : null;
+    let stage=page?.parentElement;
+    if(!page){
+      if(typeof this.mountInvoiceDocument!=='function') return toast('Invoice Preview renderer is unavailable.','error');
+      page=this.mountInvoiceDocument(invoice); stage=page?.parentElement;
+    }
+    if(!page||!stage) return toast('Invoice Preview could not be prepared.','error');
+    const old={
+      pageTransform:page.style.transform,pageOrigin:page.style.transformOrigin,pageMargin:page.style.margin,pageOverflow:page.style.overflow,
+      stageWidth:stage.style.width,stageHeight:stage.style.height,stageMinHeight:stage.style.minHeight,stageOverflow:stage.style.overflow,stagePadding:stage.style.padding,stageJustify:stage.style.justifyContent,
+      hostWidth:host.style.width,hostHeight:host.style.height,hostOverflow:host.style.overflow
+    };
+    try{
+      page.style.transform='none'; page.style.transformOrigin='top center'; page.style.margin='0'; page.style.overflow='visible';
+      stage.style.width='210mm'; stage.style.height='auto'; stage.style.minHeight='0'; stage.style.overflow='visible'; stage.style.padding='0'; stage.style.justifyContent='flex-start';
+      host.style.width='210mm'; host.style.height='auto'; host.style.overflow='visible';
+      if(document.fonts?.ready) await document.fonts.ready;
+      await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+      await html2pdf().set({
+        margin:0,filename:`${invoice.invoice_no}.pdf`,
+        image:{type:'jpeg',quality:.98},
+        html2canvas:{scale:2,useCORS:true,allowTaint:false,backgroundColor:'#fff',logging:false,scrollX:0,scrollY:0,windowWidth:794},
+        pagebreak:{mode:['css','legacy'],avoid:['.avoid']},
+        jsPDF:{unit:'mm',format:'a4',orientation:'portrait'}
+      }).from(page).save();
+      toast('PDF downloaded with the same Invoice Preview layout.','success');
+    }catch(e){
+      console.error('PDF generation failed',e);
+      await Swal.fire({icon:'error',title:'PDF Generation Failed',text:e?.message||'Unable to generate the PDF.'});
+    }finally{
+      page.style.transform=old.pageTransform; page.style.transformOrigin=old.pageOrigin; page.style.margin=old.pageMargin; page.style.overflow=old.pageOverflow;
+      stage.style.width=old.stageWidth; stage.style.height=old.stageHeight; stage.style.minHeight=old.stageMinHeight; stage.style.overflow=old.stageOverflow; stage.style.padding=old.stagePadding; stage.style.justifyContent=old.stageJustify;
+      host.style.width=old.hostWidth; host.style.height=old.hostHeight; host.style.overflow=old.hostOverflow;
+      if(document.getElementById('previewModal')?.classList.contains('active')) this.fitPreviewToScreen?.();
+    }
+  };
 
   // Long invoices must not be clipped by the invoice renderer.
   const baseBuild=Invoices.buildInvoiceHTML;
@@ -4023,10 +3902,10 @@ window.ANORI_V217_RAWDATA=true;
   Masters.openModal=function(type,id=null){
     if(type!=='party') return originalPartyModal(type,id);
     const arr=DB.get('parties',[]), item=id?(arr.find(x=>x.id===id)||{}):{};
-    const html=`<div class="form-row"><div class="form-group"><label>Customer Name *</label><input class="form-control" id="m_name" value="${esc(item.name)}"></div><div class="form-group"><label>Email</label><input class="form-control" id="m_email" type="email" value="${esc(item.email||'')}"></div></div><div class="form-row"><div class="form-group"><label>Credit Days</label><input class="form-control" id="m_credit_days" type="number" min="0" value="${Number.isFinite(Number(item.credit_days)) ? Math.max(0, Math.floor(Number(item.credit_days))) : 30}"></div><div class="form-group"><label>Credit Limit (₹)</label><input class="form-control" id="m_credit_limit" type="number" min="0" value="${num(item.credit_limit)||0}"></div></div><div class="form-row"><div class="form-group"><label>GSTIN</label><input class="form-control" id="m_gst" value="${esc(item.gst)}"></div><div class="form-group"><label>Mobile</label><input class="form-control" id="m_mobile" value="${esc(item.mobile||'')}"></div></div><div class="form-group"><label>Address</label><input class="form-control" id="m_addr" value="${esc(item.addr)}"></div>`;
+    const html=`<div class="form-row"><div class="form-group"><label>Customer Name *</label><input class="form-control" id="m_name" value="${esc(item.name)}"></div><div class="form-group"><label>Email</label><input class="form-control" id="m_email" type="email" value="${esc(item.email||'')}"></div></div><div class="form-row"><div class="form-group"><label>Credit Days</label><input class="form-control" id="m_credit_days" type="number" min="0" value="${num(item.credit_days)||30}"></div><div class="form-group"><label>Credit Limit (₹)</label><input class="form-control" id="m_credit_limit" type="number" min="0" value="${num(item.credit_limit)||0}"></div></div><div class="form-row"><div class="form-group"><label>GSTIN</label><input class="form-control" id="m_gst" value="${esc(item.gst)}"></div><div class="form-group"><label>Mobile</label><input class="form-control" id="m_mobile" value="${esc(item.mobile||'')}"></div></div><div class="form-group"><label>Address</label><input class="form-control" id="m_addr" value="${esc(item.addr)}"></div>`;
     UI.openModal(`${id?'Edit':'Add'} Customer`,html,()=>{
       const name=document.getElementById('m_name').value.trim(); if(!name)return toast('Customer name is required.','error');
-      const x=id?arr.find(a=>a.id===id):{id:Utils.id()}; x.name=name; x.email=document.getElementById('m_email').value.trim(); x.credit_days=Math.max(0, Math.floor(num(document.getElementById('m_credit_days').value))); x.credit_limit=Math.max(0,num(document.getElementById('m_credit_limit').value)); x.gst=document.getElementById('m_gst').value.trim(); x.mobile=document.getElementById('m_mobile').value.trim(); x.addr=document.getElementById('m_addr').value.trim(); if(!id)arr.push(x); DB.set('parties',arr); UI.closeModal(); toast('Customer saved.'); Router.go('masters');
+      const x=id?arr.find(a=>a.id===id):{id:Utils.id()}; x.name=name; x.email=document.getElementById('m_email').value.trim(); x.credit_days=Math.max(0,num(document.getElementById('m_credit_days').value)||30); x.credit_limit=Math.max(0,num(document.getElementById('m_credit_limit').value)); x.gst=document.getElementById('m_gst').value.trim(); x.mobile=document.getElementById('m_mobile').value.trim(); x.addr=document.getElementById('m_addr').value.trim(); if(!id)arr.push(x); DB.set('parties',arr); UI.closeModal(); toast('Customer saved.'); Router.go('masters');
     });
   };
 
@@ -4143,7 +4022,6 @@ window.ANORI_V217_RAWDATA=true;
   const STORE='handles';
   let folderHandle=null, fileHandle=null, timer=null;
   let backupFormat=localStorage.getItem('anori_backup_format')||'json';
-  if(backupFormat!=='json' && backupFormat!=='sqlite') backupFormat='json';
   const electronBackup=()=>window.anoriElectronBackup&&window.anoriElectronBackup.isAvailable===true;
   function electronFolderHandle(info){
     if(!info||!info.path)return null;
@@ -4155,7 +4033,7 @@ window.ANORI_V217_RAWDATA=true;
   }
 
   function dataSnapshot(){
-    const keys=['company_profile','vehicles','drivers','parties','trips','invoices','driver_settlements','payments','expense_master','followups','audit_log'];
+    const keys=['company_profile','vehicles','drivers','parties','vendors','trips','invoices','driver_settlements','vendor_settlements','payments','expense_master','followups','audit_log'];
     const out={};
     keys.forEach(k=>{
       const value=DB.get(k,k==='company_profile'?{}:[]);
@@ -4184,7 +4062,6 @@ window.ANORI_V217_RAWDATA=true;
   }
   function setFolderText(text){const el=document.getElementById('anoriBackupFolderName');if(el)el.textContent=text;}
   function setFormatText(text){const el=document.getElementById('anoriBackupFormatName');if(el)el.textContent=text;}
-  function setBackupFileText(text){const el=document.getElementById('anoriBackupFileName');if(el)el.textContent=text;}
   function idbOpen(){return new Promise((resolve,reject)=>{
     const r=indexedDB.open(IDB,1);
     r.onupgradeneeded=()=>{if(!r.result.objectStoreNames.contains(STORE))r.result.createObjectStore(STORE);};
@@ -4202,13 +4079,19 @@ window.ANORI_V217_RAWDATA=true;
     return false;
   }
   async function sqliteBytes(){
-    if(window.AnoriSQLite?.exportSnapshot) return window.AnoriSQLite.exportSnapshot(dataSnapshot());
-    if(typeof initSqlJs==='function'){
-      const SQL=await initSqlJs({locateFile:f=>window.__ANORI_SQL_LOCAL__?`libs/sqljs/${f}`:`https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${f}`});
-      const db=new SQL.Database();
-      try{const keys=['company_profile','vehicles','drivers','parties','trips','invoices','driver_settlements','payments','expense_master','followups','audit_log'];keys.forEach(k=>{const table=k.replace(/[^A-Za-z0-9_]/g,'_');db.run(`CREATE TABLE IF NOT EXISTS "${table}" (json TEXT NOT NULL)`);const value=DB.get(k,k==='company_profile'?{}:[]);(Array.isArray(value)?value:[value]).forEach(r=>db.run(`INSERT INTO "${table}" VALUES (?)`,[JSON.stringify(r??{})]));});return db.export();}finally{db.close();}
-    }
-    throw new Error('SQLite backup engine is unavailable.');
+    if(typeof initSqlJs!=='function')throw new Error('SQLite library is not loaded.');
+    const SQL=await initSqlJs({locateFile:f=>`https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${f}`});
+    const db=new SQL.Database();
+    try{
+      const keys=['company_profile','vehicles','drivers','parties','vendors','trips','invoices','driver_settlements','vendor_settlements','payments','expense_master','followups','audit_log'];
+      keys.forEach(k=>{
+        const table=k.replace(/[^A-Za-z0-9_]/g,'_');
+        db.run(`CREATE TABLE IF NOT EXISTS "${table}" (json TEXT NOT NULL)`);
+        const value=DB.get(k,k==='company_profile'?{}:[]);
+        (Array.isArray(value)?value:[value]).forEach(r=>db.run(`INSERT INTO "${table}" VALUES (?)`,[JSON.stringify(r??{})]));
+      });
+      return db.export();
+    }finally{db.close();}
   }
   function backupFilename(){return backupFormat==='sqlite'?FILE_SQLITE:FILE_JSON;}
   function pathJoin(dir,file){return String(dir).replace(/[\\\/]+$/,'')+'\\'+file;}
@@ -4230,7 +4113,7 @@ window.ANORI_V217_RAWDATA=true;
       await window.anoriElectronBackup.writeFile(target,data);
       localStorage.setItem('anori_backup_folder_name',folderHandle.name||'Selected Folder');
       localStorage.setItem('anori_backup_file_name',backupFilename());
-      setFolderText(folderHandle.name||'Selected Folder');setFormatText(backupFormat.toUpperCase());setBackupFileText(backupFilename());
+      setFolderText(folderHandle.name||'Selected Folder');setFormatText(backupFormat.toUpperCase());
       setStatus(`Last backup: ${new Date().toLocaleString()} (${backupFormat.toUpperCase()})`);
       return true;
     }
@@ -4239,7 +4122,7 @@ window.ANORI_V217_RAWDATA=true;
     try{const oldName=backupFormat==='sqlite'?FILE_JSON:FILE_SQLITE;if(typeof folderHandle.removeEntry==='function')await folderHandle.removeEntry(oldName).catch(()=>{});}catch(_){}
     localStorage.setItem('anori_backup_folder_name',folderHandle.name||'Selected Folder');
     localStorage.setItem('anori_backup_file_name',name);
-    setFolderText(folderHandle.name||'Selected Folder');setFormatText(backupFormat.toUpperCase());setBackupFileText(backupFilename());
+    setFolderText(folderHandle.name||'Selected Folder');setFormatText(backupFormat.toUpperCase());
     setStatus(`Last backup: ${new Date().toLocaleString()} (${backupFormat.toUpperCase()})`);
     return true;
   }
@@ -4251,13 +4134,13 @@ window.ANORI_V217_RAWDATA=true;
       await window.anoriElectronBackup.writeFile(fileHandle.__anoriElectronPath,data);
       const name=backupFilename();
       localStorage.setItem('anori_backup_file_name',name);
-      setFolderText('Selected backup file');setFormatText(backupFormat.toUpperCase());setBackupFileText(backupFilename());
+      setFolderText('Selected backup file');setFormatText(backupFormat.toUpperCase());
       setStatus(`Last backup: ${new Date().toLocaleString()} (${backupFormat.toUpperCase()})`);
       return true;
     }
     const name=await writePayload(fileHandle);
     localStorage.setItem('anori_backup_file_name',name);
-    setFolderText('Selected backup file');setFormatText(backupFormat.toUpperCase());setBackupFileText(backupFilename());
+    setFolderText('Selected backup file');setFormatText(backupFormat.toUpperCase());
     setStatus(`Last backup: ${new Date().toLocaleString()} (${backupFormat.toUpperCase()})`);
     return true;
   }
@@ -4279,13 +4162,12 @@ window.ANORI_V217_RAWDATA=true;
     if(!window.Swal){backupFormat=localStorage.getItem('anori_backup_format')||'json';return true;}
     const result=await Swal.fire({
       title:'SELECT BACKUP FORMAT',input:'select',
-      inputOptions:(window.AnoriSQLite?.isAvailable?.()||typeof initSqlJs==='function')?{json:'JSON',sqlite:'SQLITE'}:{json:'JSON'},inputValue:backupFormat,
+      inputOptions:{json:'JSON',sqlite:'SQLITE'},inputValue:backupFormat,
       text:'The selected backup file will be overwritten automatically every 2 minutes.',
       showCancelButton:true,confirmButtonText:'SAVE FORMAT',cancelButtonText:'CANCEL',allowOutsideClick:false
     });
     if(!result.isConfirmed)return false;
     backupFormat=String(result.value||'json').toLowerCase()==='sqlite'?'sqlite':'json';
-    if(backupFormat==='sqlite' && !(window.AnoriSQLite?.isAvailable?.()||typeof initSqlJs==='function')) backupFormat='json';
     localStorage.setItem('anori_backup_format',backupFormat);
     return true;
   }
@@ -4293,25 +4175,59 @@ window.ANORI_V217_RAWDATA=true;
     try{
       if(electronBackup()){
         const info=await window.anoriElectronBackup.selectFolder();
-        if(!info)return;
-        if(!(await chooseFormat()))return;
+        if(!info?.path)return false;
+        if(!(await chooseFormat()))return false;
+        folderHandle=electronFolderHandle(info);fileHandle=null;
+        await save('folderPath',info.path);await save('folder',null);await save('file',null);await save('format',backupFormat);
+        const ok=await write();
+        if(!ok){folderHandle=null;fileHandle=null;await save('folderPath',null);localStorage.removeItem('anori_backup_folder_path');localStorage.removeItem('anori_backup_folder_name');setFolderText('Backup destination not verified');start();return false;}
+        setFolderText(info.name||info.path);setFormatText(backupFormat.toUpperCase());
+        start();
+        notify(`${backupFormat.toUpperCase()} backup created and destination verified. Automatic backup runs every 2 minutes.`,'success');
+        return true;
+      }
+      if(typeof window.showDirectoryPicker!=='function'){notify('This browser cannot write directly to a selected folder. Use Chrome or Edge.','warning');return false;}
+      const h=await window.showDirectoryPicker({id:'anori-backup-v223',mode:'readwrite'});
+      if(!(await permission(h))){notify('Write permission was not granted. Backup folder was not selected.','error');return false;}
+      if(!(await chooseFormat()))return false;
+      folderHandle=h;fileHandle=null;await save('folder',h);await save('file',null);await save('format',backupFormat);
+      const ok=await write();
+      if(!ok){folderHandle=null;fileHandle=null;await save('folder',null);localStorage.removeItem('anori_backup_folder_path');localStorage.removeItem('anori_backup_folder_name');setFolderText('Backup destination not verified');start();return false;}
+      setFolderText(h.name||'Selected Folder');setFormatText(backupFormat.toUpperCase());
+      start();
+      notify(`${backupFormat.toUpperCase()} backup created and destination verified. Automatic backup runs every 2 minutes.`,'success');
+      return true;
+    }catch(e){
+      if(e.name!=='AbortError')notify('Folder selection failed: '+(e.message||'unknown error'),'error');
+      return false;
+    }
+  };
+  window.anoriSetBackupFolderPath=async function(targetPath){
+    const raw=String(targetPath||'').trim();
+    if(!raw) throw new Error('Backup folder path is empty.');
+    try{
+      if(window.anoriElectronBackup?.isAvailable && typeof window.anoriElectronBackup.ensureFolder==='function'){
+        const info=await window.anoriElectronBackup.ensureFolder(raw);
+        if(!info?.path) throw new Error('The selected backup folder could not be opened.');
+        if(!(await chooseFormat())) return false;
         folderHandle=electronFolderHandle(info);fileHandle=null;
         await save('folderPath',info.path);await save('folder',null);await save('file',null);await save('format',backupFormat);
         setFolderText(info.name||info.path);setFormatText(backupFormat.toUpperCase());
         const ok=await write();start();
-        if(ok)notify(`${backupFormat.toUpperCase()} backup selected. Automatic backup runs every 2 minutes.`,'success');
-        return;
+        if(ok) notify(`${backupFormat.toUpperCase()} backup path saved and verified.`,'success');
+        return !!ok;
       }
-      if(typeof window.showDirectoryPicker!=='function'){notify('This browser cannot write directly to a selected folder. Use Chrome or Edge.','warning');return;}
-      const h=await window.showDirectoryPicker({id:'anori-backup-v223',mode:'readwrite'});
-      if(!(await permission(h))){notify('Write permission was not granted. Backup folder was not selected.','error');return;}
-      if(!(await chooseFormat()))return;
-      folderHandle=h;fileHandle=null;await save('folder',h);await save('file',null);await save('format',backupFormat);
-      setFolderText(h.name||'Selected Folder');setFormatText(backupFormat.toUpperCase());
-      const ok=await write();start();
-      if(ok)notify(`${backupFormat.toUpperCase()} backup selected. Automatic backup runs every 2 minutes.`,'success');
-    }catch(e){if(e.name!=='AbortError')notify('Folder selection failed: '+(e.message||'unknown error'),'error');}
+      localStorage.setItem('anori_backup_folder_name',raw);
+      setFolderText(raw);
+      setStatus('Path saved for reference. Direct folder writing requires the desktop EXE or a supported browser folder picker.');
+      return false;
+    }catch(e){
+      console.error('Backup path validation failed:',e);
+      notify('Backup path could not be verified: '+(e.message||'invalid folder'),'error');
+      return false;
+    }
   };
+
   window.anoriSelectBackupFile=async function(){
     try{
       if(electronBackup()){
@@ -4319,7 +4235,7 @@ window.ANORI_V217_RAWDATA=true;
         const info=await window.anoriElectronBackup.selectFile({suggestedName:backupFilename(),filters:[{name:backupFormat==='sqlite'?'ANORI SQLite Backup':'ANORI JSON Backup',extensions:[backupFormat==='sqlite'?'sqlite':'json']}]});
         if(!info)return;
         fileHandle=electronFileHandle(info);folderHandle=null;await save('filePath',info.path);await save('file',null);await save('folder',null);await save('format',backupFormat);
-        setFolderText('Selected backup file');setFormatText(backupFormat.toUpperCase());setBackupFileText(backupFilename());
+        setFolderText('Selected backup file');setFormatText(backupFormat.toUpperCase());
         const ok=await write();start();
         if(ok)notify(`${backupFormat.toUpperCase()} backup file selected. Automatic backup runs every 2 minutes.`,'success');
         return;
@@ -4333,36 +4249,13 @@ window.ANORI_V217_RAWDATA=true;
       });
       if(!(await permission(h))){notify('Write permission was not granted. Backup file was not selected.','error');return;}
       fileHandle=h;folderHandle=null;await save('file',h);await save('folder',null);await save('format',backupFormat);
-      setFolderText('Selected backup file');setFormatText(backupFormat.toUpperCase());setBackupFileText(backupFilename());
+      setFolderText('Selected backup file');setFormatText(backupFormat.toUpperCase());
       const ok=await write();start();
       if(ok)notify(`${backupFormat.toUpperCase()} backup file selected. Automatic backup runs every 2 minutes.`,'success');
     }catch(e){if(e.name!=='AbortError')notify('Backup file selection failed: '+(e.message||'unknown error'),'error');}
   };
   window.anoriBackupNow=async function(){
-    // In a normal browser/file:// session there may be no writable folder handle.
-    // Manual Backup Now must still produce a real backup instead of failing silently.
-    if(!folderHandle&&!fileHandle){
-      try{
-        if(!(await chooseFormat()))return false;
-        const name=backupFilename();
-        const bytes=backupFormat==='sqlite'?await sqliteBytes():null;
-        const blob=backupFormat==='sqlite'
-          ?new Blob([bytes],{type:'application/x-sqlite3'})
-          :new Blob([JSON.stringify(dataSnapshot(),null,2)],{type:'application/json'});
-        const url=URL.createObjectURL(blob),a=document.createElement('a');
-        a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
-        setTimeout(()=>URL.revokeObjectURL(url),1500);
-        localStorage.setItem('anori_backup_file_name',name);
-        setFolderText('Browser download');setFormatText(backupFormat.toUpperCase());setBackupFileText(name);
-        setStatus(`Backup downloaded: ${new Date().toLocaleString()} (${backupFormat.toUpperCase()})`);
-        return true;
-      }catch(e){
-        console.error('ANORI manual backup failed:',e);
-        setStatus('Backup failed: '+(e.message||'unknown error'));
-        notify('Backup failed: '+(e.message||'unknown error'),'error');
-        return false;
-      }
-    }
+    if(!folderHandle&&!fileHandle){notify('Select a backup folder or backup file first.','warning');return false;}
     // Backup/data saving is intentionally silent. Status is updated in Settings instead.
     return await write(true);
   };
@@ -4377,18 +4270,18 @@ window.ANORI_V217_RAWDATA=true;
   };
   async function restore(){
     try{
-      const savedFormat=await load('format');if(savedFormat==='sqlite'||savedFormat==='json')backupFormat=savedFormat;if(backupFormat==='sqlite'&&!(window.AnoriSQLite?.isAvailable?.()||typeof initSqlJs==='function'))backupFormat='json';
+      const savedFormat=await load('format');if(savedFormat==='sqlite'||savedFormat==='json')backupFormat=savedFormat;
       localStorage.setItem('anori_backup_format',backupFormat);
       if(electronBackup()){
         const fp=await load('folderPath');
         const filePath=await load('filePath');
-        if(fp){folderHandle=electronFolderHandle({path:fp,name:localStorage.getItem('anori_backup_folder_name')||fp});fileHandle=null;setFolderText(folderHandle.name);setFormatText(backupFormat.toUpperCase());setBackupFileText(backupFilename());start();return;}
-        if(filePath){fileHandle=electronFileHandle({path:filePath,name:localStorage.getItem('anori_backup_file_name')||filePath});folderHandle=null;setFolderText('Selected backup file');setFormatText(backupFormat.toUpperCase());setBackupFileText(backupFilename());start();return;}
+        if(fp){folderHandle=electronFolderHandle({path:fp,name:localStorage.getItem('anori_backup_folder_name')||fp});fileHandle=null;setFolderText(folderHandle.name);setFormatText(backupFormat.toUpperCase());start();return;}
+        if(filePath){fileHandle=electronFileHandle({path:filePath,name:localStorage.getItem('anori_backup_file_name')||filePath});folderHandle=null;setFolderText('Selected backup file');setFormatText(backupFormat.toUpperCase());start();return;}
       }
       const h=await load('folder');
-      if(h&&await permission(h)){folderHandle=h;fileHandle=null;setFolderText(h.name||'Selected Folder');setFormatText(backupFormat.toUpperCase());setBackupFileText(backupFilename());start();return;}
+      if(h&&await permission(h)){folderHandle=h;fileHandle=null;setFolderText(h.name||'Selected Folder');setFormatText(backupFormat.toUpperCase());start();return;}
       const f=await load('file');
-      if(f&&await permission(f)){fileHandle=f;folderHandle=null;setFolderText('Selected backup file');setFormatText(backupFormat.toUpperCase());setBackupFileText(backupFilename());start();}
+      if(f&&await permission(f)){fileHandle=f;folderHandle=null;setFolderText('Selected backup file');setFormatText(backupFormat.toUpperCase());start();}
     }catch(e){console.warn('Backup handle restore failed',e);}
   }
   function patchSettings(){
@@ -4531,8 +4424,6 @@ window.ANORI_V217_RAWDATA=true;
     const folder=localStorage.getItem('anori_backup_folder_name')||'Not selected';
     const last=localStorage.getItem('anori_backup_last_time');
     const lastText=last?new Date(last).toLocaleString('en-IN'):'Not backed up yet';
-    const fmt=(localStorage.getItem('anori_backup_format')||'json').toUpperCase();
-    const file=localStorage.getItem('anori_backup_file_name')||`ANORI_TRANSPORT_BACKUP.${fmt.toLowerCase()}`;
     const supported=typeof window.showDirectoryPicker==='function';
     const fileSupported=typeof window.showSaveFilePicker==='function';
     container.innerHTML=`
@@ -4561,7 +4452,7 @@ window.ANORI_V217_RAWDATA=true;
       <div class="card anori-backup-panel">
         <h3 class="card-title"><i class="fas fa-shield-alt"></i> Automatic Backup</h3>
         <p><strong>Selected Folder:</strong> <span id="anoriBackupFolderName">${esc(folder)}</span></p>
-        <p><strong>Backup File:</strong> <span class="anori-folder-path" id="anoriBackupFileName">${esc(file)}</span></p>
+        <p><strong>Backup File:</strong> <span class="anori-folder-path">ANORI_TRANSPORT_BACKUP.json</span></p>
         <p><strong>Interval:</strong> Every 5 Minutes</p>
         <p><strong>Status:</strong> <span id="anoriBackupStatus">${esc(lastText)}</span></p>
         <div class="anori-action-bar">
@@ -4772,283 +4663,143 @@ window.ANORI_V217_RAWDATA=true;
 })();
 
 /* ============================================================
-   ANORI TRANSPORT — CREATE NEW TRIP V2.30
-   Editable + filterable inputs and automatic Market Vehicle logic.
-   - Master-backed inputs remain searchable/filterable.
-   - User may type values not present in Master Data.
-   - Unknown/manual vehicle numbers are automatically Market Vehicles.
-   - Exact Master Data vehicle match automatically returns to Company Vehicle.
+   ANORI TRANSPORT v2.25 — FINAL NEW TRIP FORM LAYOUT
+   User-approved order:
+   1) Date + Vehicle
+   2) Driver
+   3) Party / Customer
+   4) From + To
+   5) Freight + Trip Advance Amount
+   6) Driver Amount / Advance
+   7) Trip Advice
    ============================================================ */
-(function installAnoriTripV230(){
+(function installAnoriV225TripForm(){
   'use strict';
   const esc=v=>Sanitize.html(v==null?'':String(v));
   const num=v=>{const n=parseFloat(v);return Number.isFinite(n)?n:0;};
   const todayValue=()=>typeof Utils.today==='function'?Utils.today():(new Date()).toISOString().slice(0,10);
 
-  function getExpenseMaster(){
-    return DB.get('expense_master',[]).filter(x=>x.active!==false);
+  function uniqueLocations(){
+    const out=[];
+    (DB.get('trips',[])||[]).forEach(t=>{ if(t.from&&!out.includes(t.from))out.push(t.from); if(t.to&&!out.includes(t.to))out.push(t.to); });
+    return out.slice(0,100);
   }
-
-  function uniqueText(values){
-    const seen=new Set();
-    return values.map(v=>String(v==null?'':v).trim()).filter(v=>v&&!seen.has(v.toLowerCase())&&(seen.add(v.toLowerCase()),true));
-  }
-
-  function locationSuggestions(){
-    const trips=DB.get('trips',[]);
-    return uniqueText(trips.flatMap(t=>[t.from,t.to]));
-  }
-
-  function transporterSuggestions(){
-    const trips=DB.get('trips',[]);
-    const explicit=DB.get('transporters',[]).map(x=>x.name||x.transporter_name||x.title);
-    return uniqueText([...explicit,...trips.map(t=>t.transporter_name)]);
-  }
-
-  function comboMarkup({id,label,placeholder,items=[],value='',hiddenValue='',required=false,full=false,extraClass=''}){
-    const inputId=id+'_text', hiddenId=id+'_id';
-    return `<div class="form-group ${full?'trip-form-full ':''}${extraClass}">
-      <label>${esc(label)}${required?' *':''}</label>
-      <div class="anori-combobox" data-combo="${esc(id)}">
-        <input type="text" class="form-control anori-combo-input" id="${esc(inputId)}" value="${esc(value)}" placeholder="${esc(placeholder)}" autocomplete="off" ${required?'required':''} aria-autocomplete="list" aria-expanded="false" />
-        <input type="hidden" id="${esc(hiddenId)}" value="${esc(hiddenValue)}" />
-        <button type="button" class="anori-combo-toggle" aria-label="Show ${esc(label)} options" tabindex="-1">▾</button>
-        <div class="anori-combo-menu" role="listbox" hidden></div>
-      </div>
-    </div>`;
-  }
-
-  function installCombo(id,items,opts={}){
-    const root=document.querySelector(`[data-combo="${CSS.escape(id)}"]`);
-    if(!root)return;
-    const input=root.querySelector('.anori-combo-input');
-    const hidden=root.querySelector('input[type="hidden"]');
-    const menu=root.querySelector('.anori-combo-menu');
-    const toggle=root.querySelector('.anori-combo-toggle');
-    const values=uniqueText(items||[]);
-    const sourceMap=opts.sourceMap||new Map();
-    let open=false;
-
-    function render(filter=''){
-      const q=String(filter||'').trim().toLowerCase();
-      const matches=values.filter(v=>!q||v.toLowerCase().includes(q)).slice(0,80);
-      menu.innerHTML=matches.length?matches.map((v,i)=>`<div class="anori-combo-option" role="option" data-value="${esc(v)}" data-index="${i}">${esc(v)}</div>`).join(''):`<div class="anori-combo-empty">No matching option — press Enter to use manual value</div>`;
-      menu.hidden=false; open=true; input.setAttribute('aria-expanded','true');
-      root.classList.add('is-open');
-    }
-    function close(){menu.hidden=true;open=false;input.setAttribute('aria-expanded','false');root.classList.remove('is-open');}
-    function select(value){
-      input.value=value;
-      const mapped=sourceMap.get(String(value).toLowerCase());
-      hidden.value=mapped?.id||'';
-      input.dataset.masterMatch=mapped?.id||'';
-      input.dispatchEvent(new Event('change',{bubbles:true}));
-      close();
-    }
-    input.addEventListener('input',()=>{
-      hidden.value=''; input.dataset.masterMatch=''; render(input.value);
-      if(typeof opts.onInput==='function')opts.onInput(input.value);
-    });
-    input.addEventListener('focus',()=>render(input.value));
-    input.addEventListener('keydown',e=>{
-      if(e.key==='ArrowDown'){e.preventDefault();render(input.value);const first=menu.querySelector('.anori-combo-option');first?.focus?.();return;}
-      if(e.key==='Escape'){close();return;}
-      if(e.key==='Enter'){
-        if(open){const first=menu.querySelector('.anori-combo-option');if(first){e.preventDefault();select(first.dataset.value);return;}}
-        hidden.value=''; input.dataset.masterMatch=''; close();
-      }
-    });
-    toggle.addEventListener('click',e=>{e.preventDefault();open?close():render(input.value);input.focus();});
-    menu.addEventListener('mousedown',e=>{const option=e.target.closest('.anori-combo-option');if(option){e.preventDefault();select(option.dataset.value);}});
-    document.addEventListener('mousedown',e=>{if(!root.contains(e.target))close();},{once:false});
-  }
-
-  function vehicleLookup(value){
-    const q=String(value||'').trim().toLowerCase();
-    return DB.get('vehicles',[]).find(v=>String(v.number||'').trim().toLowerCase()===q)||null;
-  }
-
-  function setMarketState(isMarket){
-    const wrap=document.getElementById('marketVehicleSection');
-    const badge=document.getElementById('vehicleTypeBadge');
-    const typeInput=document.getElementById('t_vehicle_type');
-    if(typeInput)typeInput.value=isMarket?'market':'company';
-    if(wrap)wrap.hidden=!isMarket;
-    if(badge){badge.textContent=isMarket?'MARKET VEHICLE':'COMPANY VEHICLE';badge.className='anori-vehicle-type-badge '+(isMarket?'market':'company');}
-  }
-
-  function syncVehicleClassification(){
-    const input=document.getElementById('t_vehicle_text');
-    const hidden=document.getElementById('t_vehicle_id');
-    if(!input)return;
-    const vehicle=vehicleLookup(input.value);
-    if(vehicle){
-      hidden.value=vehicle.id;
-      input.dataset.masterMatch=vehicle.id;
-      setMarketState(false);
-      const da=document.getElementById('t_driver_amount');
-      if(da && Number(da.value||0)===0)da.value=Number(vehicle.driver_amount)||0;
-    }else{
-      hidden.value=''; input.dataset.masterMatch='';
-      setMarketState(Boolean(input.value.trim()));
-    }
-  }
-
-  function initialiseCombos(trip){
-    const vehicles=DB.get('vehicles',[]), drivers=DB.get('drivers',[]), parties=DB.get('parties',[]);
-    const vehicleMap=new Map(vehicles.map(v=>[String(v.number||'').trim().toLowerCase(),v]));
-    const driverMap=new Map(drivers.map(v=>[String(v.name||'').trim().toLowerCase(),v]));
-    const partyMap=new Map(parties.map(v=>[String(v.name||'').trim().toLowerCase(),v]));
-    const prevDrivers=DB.get('trips',[]).map(t=>t.driver_name).filter(Boolean);
-    const prevParties=DB.get('trips',[]).map(t=>t.party_name).filter(Boolean);
-    const expenseNames=getExpenseMaster().map(e=>e.name);
-    installCombo('t_vehicle',vehicles.map(v=>v.number),{sourceMap:vehicleMap,onInput:()=>syncVehicleClassification()});
-    installCombo('t_driver',uniqueText([...drivers.map(v=>v.name),...prevDrivers]),{sourceMap:driverMap});
-    installCombo('t_party',uniqueText([...parties.map(v=>v.name),...prevParties]),{sourceMap:partyMap});
-    installCombo('t_from',locationSuggestions());
-    installCombo('t_to',locationSuggestions());
-    installCombo('t_transporter',transporterSuggestions());
-    document.querySelectorAll('.exp-type-combo').forEach((root)=>{
-      const id=root.getAttribute('data-combo');
-      installCombo(id,expenseNames);
-    });
-    const vi=document.getElementById('t_vehicle_text');
-    if(vi){vi.addEventListener('change',syncVehicleClassification);vi.addEventListener('blur',()=>setTimeout(syncVehicleClassification,0));syncVehicleClassification();}
-  }
-
   function expenseRowsHtml(expenses){
+    const masters=typeof getExpenseMaster==='function'?getExpenseMaster():[];
     return (expenses||[]).map(e=>`<div class="form-row anori-trip-exp-row" style="margin-bottom:8px">
-      <div class="form-group exp-type-combo" data-combo="exp_${esc(e.id||Utils.id())}">${comboMarkup({id:'exp_'+String(e.id||Utils.id()),label:'Expense Type',placeholder:'Type / filter expense...',items:[],value:e.type||''}).replace(/^<div class="form-group ">|<\/div>$/g,'')}</div>
-      <div class="form-group"><label>Amount</label><input type="number" class="form-control exp-amt" min="0" placeholder="Amount" value="${num(e.amount)||''}"></div>
-      <div class="form-group"><label>&nbsp;</label><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.anori-trip-exp-row').remove()">Remove</button></div>
+      <div class="form-group"><select class="form-control exp-type"><option value="">Select Expense</option>${masters.map(m=>`<option value="${esc(m.name)}" ${m.name===e.type?'selected':''}>${esc(m.name)}</option>`).join('')}<option value="__manual__" ${!masters.some(m=>m.name===e.type)?'selected':''}>Manual Entry</option></select><input class="form-control exp-type-manual" style="margin-top:6px;display:${!masters.some(m=>m.name===e.type)?'block':'none'}" placeholder="Enter expense type manually" value="${!masters.some(m=>m.name===e.type)?esc(e.type):''}"></div>
+      <div class="form-group"><input type="number" class="form-control exp-amt" min="0" placeholder="Amount" value="${num(e.amount)||''}"></div>
+      <div class="form-group"><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.anori-trip-exp-row').remove()">Remove</button></div>
     </div>`).join('');
   }
-
-  // A simpler dedicated expense row renderer avoids nested combo wrappers.
-  function appendExpenseRow(type='',amount=''){
-    const rows=document.getElementById('expRows');if(!rows)return;
-    const id='exp_'+Utils.id();
-    const row=document.createElement('div');row.className='form-row anori-trip-exp-row';row.style.marginBottom='8px';
-    row.innerHTML=`<div class="form-group"><label>Expense Type</label><div class="anori-combobox" data-combo="${id}"><input type="text" class="form-control anori-combo-input exp-type" id="${id}_text" value="${esc(type)}" placeholder="Type / filter expense..." autocomplete="off"><input type="hidden" id="${id}_id"><button type="button" class="anori-combo-toggle" aria-label="Show expense types" tabindex="-1">▾</button><div class="anori-combo-menu" role="listbox" hidden></div></div></div><div class="form-group"><label>Amount</label><input type="number" class="form-control exp-amt" min="0" placeholder="Amount" value="${num(amount)||''}"></div><div class="form-group"><label>&nbsp;</label><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.anori-trip-exp-row').remove()">Remove</button></div>`;
-    rows.appendChild(row);
-    installCombo(id,getExpenseMaster().map(e=>e.name));
+  function hybridEntityField(label,id,items,labelKey,selectedId,manualValue,icon,placeholder){
+    return `<div class="form-group"><label>${label}</label><div class="trip-hybrid-field">
+      <div class="trip-hybrid-select trip-input-wrap"><i class="fas ${icon}"></i><select class="form-control" id="${id}"><option value="">Select from Master Data...</option>${items.map(x=>`<option value="${esc(x.id)}" ${x.id===selectedId?'selected':''}>${esc(x[labelKey])}</option>`).join('')}<option value="__manual__" ${manualValue?'selected':''}>Manual Entry</option></select></div>
+      <input class="form-control trip-manual-input" id="${id}_manual" value="${esc(manualValue||'')}" placeholder="${placeholder}">
+    </div><small class="anori-help">Dropdown + manual entry. Manual entry overrides the dropdown.</small></div>`;
+  }
+  function hybridLocationField(label,id,selectedValue,locations,icon){
+    const manual=selectedValue&&!locations.includes(selectedValue)?selectedValue:'';
+    return `<div class="form-group"><label>${label} *</label><div class="trip-hybrid-field">
+      <div class="trip-hybrid-select trip-input-wrap"><i class="fas ${icon}"></i><select class="form-control" id="${id}_select"><option value="">Select location...</option>${locations.map(x=>`<option value="${esc(x)}" ${x===selectedValue?'selected':''}>${esc(x)}</option>`).join('')}<option value="__manual__" ${manual?'selected':''}>Manual Entry</option></select></div>
+      <input class="form-control trip-manual-input" id="${id}" value="${esc(manual)}" placeholder="Type location manually...">
+    </div><small class="anori-help">Dropdown + manual entry. Manual value overrides the dropdown.</small></div>`;
   }
 
-  Trips.addExpRow=function(type='',amount=''){appendExpenseRow(type,amount);};
-
   function formHtml(trip){
-    const vehicles=DB.get('vehicles',[]),drivers=DB.get('drivers',[]),parties=DB.get('parties',[]);
-    const vehicle=vehicles.find(v=>v.id===trip?.vehicle_id);
-    const driver=drivers.find(v=>v.id===trip?.driver_id);
-    const party=parties.find(v=>v.id===trip?.party_id);
-    const vehicleText=vehicle?.number||trip?.vehicle_number||'';
-    const driverText=driver?.name||trip?.driver_name||'';
-    const partyText=party?.name||trip?.party_name||'';
-    const market=trip?.vehicle_type==='market' || (!vehicle && !!trip?.vehicle_number);
+    const vehicles=DB.get('vehicles',[]), drivers=DB.get('drivers',[]), parties=DB.get('parties',[]), locations=uniqueLocations();
     return `<div class="anori-simple-form trip-form-layout">
-      <div class="trip-form-grid">
-        <div class="form-group"><label>Date *</label><input type="date" class="form-control" id="t_date" value="${esc(trip?.date||todayValue())}" required></div>
-        ${comboMarkup({id:'t_vehicle',label:'Vehicle',placeholder:'Type / filter vehicle...',items:vehicles.map(v=>v.number),value:vehicleText,hiddenValue:trip?.vehicle_id||'',required:true})}
-        ${comboMarkup({id:'t_driver',label:'Driver',placeholder:'Type / filter driver...',items:drivers.map(v=>v.name),value:driverText,hiddenValue:trip?.driver_id||'',required:true})}
-        ${comboMarkup({id:'t_party',label:'Party / Customer',placeholder:'Type / filter customer...',items:parties.map(v=>v.name),value:partyText,hiddenValue:trip?.party_id||'',required:true})}
-        ${comboMarkup({id:'t_from',label:'From',placeholder:'Type / filter location...',items:locationSuggestions(),value:trip?.from||'',required:true})}
-        ${comboMarkup({id:'t_to',label:'To',placeholder:'Type / filter location...',items:locationSuggestions(),value:trip?.to||'',required:true})}
-        <div class="form-group"><label>Freight (₹) *</label><input type="number" class="form-control" id="t_freight" min="0" value="${num(trip?.freight)||''}" required></div>
-        <div class="form-group"><label>Trip Advance Amount (₹)</label><input type="number" class="form-control" id="t_trip_advance" min="0" value="${num(trip?.trip_advance_amount)||0}"><small class="anori-help">Separate Trip advance amount.</small></div>
-        <div class="form-group"><label>Driver Amount / Advance (₹)</label><input type="number" class="form-control" id="t_driver_amount" min="0" value="${num(trip?.driver_amount)||0}"><small class="anori-help">This automatically appears in Driver Settlement.</small></div>
-        <div class="form-group trip-form-full"><label>Vehicle Classification</label><div id="vehicleTypeBadge" class="anori-vehicle-type-badge ${market?'market':'company'}">${market?'MARKET VEHICLE':'COMPANY VEHICLE'}</div><input type="hidden" id="t_vehicle_type" value="${market?'market':'company'}"></div>
-        <div id="marketVehicleSection" class="trip-market-section trip-form-full" ${market?'':'hidden'}>
-          <div class="trip-market-grid">
-            ${comboMarkup({id:'t_transporter',label:'Transporter Name',placeholder:'Type / filter transporter...',items:transporterSuggestions(),value:trip?.transporter_name||'',required:true})}
-            <div class="form-group"><label>Market Purchase (₹) *</label><input type="number" class="form-control" id="t_market_purchase" min="0" value="${num(trip?.market_purchase_amount)||0}" ${market?'required':''}><small class="anori-help">Purchase / cost paid to the outside transporter.</small></div>
-          </div>
-        </div>
-        <div class="form-group trip-form-full"><label>Trip Advice</label><textarea class="form-control trip-advice-box" id="t_trip_advice" rows="3" placeholder="Enter trip advice / instructions...">${esc(trip?.trip_advice||'')}</textarea></div>
-      </div>
-      <div class="anori-subtitle trip-form-section-title">Trip Expenses</div>
-      <div id="expRows" class="trip-expenses-list"></div>
-      <button type="button" class="btn btn-outline btn-sm trip-add-expense" onclick="Trips.addExpRow()">＋ Add Expense</button>
-      <div class="form-group trip-form-full trip-notes-field"><label>Notes</label><textarea class="form-control" id="t_notes" rows="2">${esc(trip?.notes||'')}</textarea></div>
+      <section class="trip-form-section"><div class="trip-form-section-head"><i class="fas fa-calendar-alt"></i><span>Trip Details</span></div><div class="trip-form-grid">
+        <div class="form-group"><label>Date *</label><div class="trip-input-wrap"><i class="fas fa-calendar-alt"></i><input type="date" class="form-control" id="t_date" value="${esc(trip?.date||todayValue())}"></div></div>
+        ${hybridEntityField('Vehicle *','t_vehicle',vehicles,'number',trip?.vehicle_id,trip?.vehicle_manual||'','fa-truck','Type vehicle manually...')}
+        ${hybridEntityField('Driver *','t_driver',drivers,'name',trip?.driver_id,trip?.driver_manual||'','fa-user','Type driver name manually...')}
+      </div></section>
+
+      <section class="trip-form-section"><div class="trip-form-section-head"><i class="fas fa-users"></i><span>Customer &amp; Route</span></div><div class="trip-form-grid">
+        ${hybridEntityField('Party / Customer *','t_party',parties,'name',trip?.party_id,trip?.party_manual||'','fa-user','Type customer manually...')}
+        ${hybridLocationField('From','t_from',trip?.from||'',locations,'fa-map-marker-alt')}
+        ${hybridLocationField('To','t_to',trip?.to||'',locations,'fa-map-marker-alt')}
+      </div></section>
+
+      <section class="trip-form-section"><div class="trip-form-section-head"><i class="fas fa-rupee-sign"></i><span>Freight &amp; Advance</span></div><div class="trip-form-grid">
+        <div class="form-group"><label>Freight (₹) *</label><div class="trip-input-wrap"><span class="trip-input-prefix">₹</span><input type="number" class="form-control" id="t_freight" min="0" value="${num(trip?.freight)||''}" required></div></div>
+        <div class="form-group"><label>Trip Advance Amount (₹)</label><div class="trip-input-wrap"><span class="trip-input-prefix">₹</span><input type="number" class="form-control" id="t_trip_advance" min="0" value="${num(trip?.trip_advance_amount)||0}"></div><small class="anori-help">Separate Trip advance amount.</small></div>
+        <div class="form-group"><label>Driver Amount / Advance (₹)</label><div class="trip-input-wrap"><span class="trip-input-prefix">₹</span><input type="number" class="form-control" id="t_driver_amount" min="0" value="${num(trip?.driver_amount)||0}"></div><small class="anori-help">This automatically appears in Driver Settlement.</small></div>
+      </div></section>
+
+      <section class="trip-form-section trip-classification-section"><div class="trip-form-section-head"><i class="fas fa-truck"></i><span>Vehicle Classification</span></div><div class="trip-classification-pill"><i class="fas fa-building"></i> COMPANY VEHICLE</div></section>
+      <section class="trip-form-section"><div class="trip-form-section-head"><i class="fas fa-file-alt"></i><span>Trip Advice</span></div><div class="form-group trip-form-full"><div class="trip-input-wrap trip-textarea-wrap"><i class="fas fa-file-alt"></i><textarea class="form-control trip-advice-box" id="t_trip_advice" rows="3" placeholder="Enter trip advice / instructions...">${esc(trip?.trip_advice||'')}</textarea></div></div></section>
+      <section class="trip-form-section"><div class="trip-form-section-head"><i class="fas fa-clipboard-list"></i><span>Trip Expenses</span></div><div id="expRows" class="trip-expenses-list">${expenseRowsHtml(trip?.expenses||[])}</div><button type="button" class="btn btn-outline btn-sm trip-add-expense" onclick="Trips.addExpRow()"><i class="fas fa-plus"></i> Add Expense</button></section>
+      <section class="trip-form-section trip-notes-section"><div class="trip-form-section-head"><i class="fas fa-sticky-note"></i><span>Notes</span></div><div class="form-group trip-form-full"><div class="trip-input-wrap trip-textarea-wrap"><i class="fas fa-list"></i><textarea class="form-control" id="t_notes" rows="2" placeholder="Enter notes...">${esc(trip?.notes||'')}</textarea></div></div></section>
     </div>`;
   }
 
   function readForm(){
-    const vehicleInput=document.getElementById('t_vehicle_text');
-    const vehicleText=vehicleInput?.value.trim()||'';
-    const vehicleId=document.getElementById('t_vehicle_id')?.value||'';
-    const driverInput=document.getElementById('t_driver_text');
-    const driverText=driverInput?.value.trim()||'';
-    const driverId=document.getElementById('t_driver_id')?.value||'';
-    const partyInput=document.getElementById('t_party_text');
-    const partyText=partyInput?.value.trim()||'';
-    const partyId=document.getElementById('t_party_id')?.value||'';
-    const from=document.getElementById('t_from_text')?.value.trim()||'';
-    const to=document.getElementById('t_to_text')?.value.trim()||'';
-    const freight=num(document.getElementById('t_freight')?.value);
-    const tripAdvance=num(document.getElementById('t_trip_advance')?.value);
-    const driverAmount=num(document.getElementById('t_driver_amount')?.value);
-    const vehicle=vehicleLookup(vehicleText);
-    const isMarket=!vehicle;
-    const transporter=document.getElementById('t_transporter_text')?.value.trim()||'';
-    const marketPurchase=num(document.getElementById('t_market_purchase')?.value);
-    if(!vehicleText||!driverText||!partyText||!from||!to){Utils.toast('Please enter Vehicle, Driver, Customer and From / To.','error');return null;}
+    const vehicleSelect=document.getElementById('t_vehicle')?.value||'', driverSelect=document.getElementById('t_driver')?.value||'', partySelect=document.getElementById('t_party')?.value||'';
+    const vehicleManual=document.getElementById('t_vehicle_manual')?.value.trim()||'', driverManual=document.getElementById('t_driver_manual')?.value.trim()||'', partyManual=document.getElementById('t_party_manual')?.value.trim()||'';
+    const vehicle=vehicleManual||vehicleSelect==='__manual__'?'':vehicleSelect;
+    const driver=driverManual||driverSelect==='__manual__'?'':driverSelect;
+    const party=partyManual||partySelect==='__manual__'?'':partySelect;
+    const fromSelect=document.getElementById('t_from_select')?.value||'', toSelect=document.getElementById('t_to_select')?.value||'';
+    const fromManual=document.getElementById('t_from')?.value.trim()||'', toManual=document.getElementById('t_to')?.value.trim()||'';
+    const from=fromManual||(fromSelect&&fromSelect!=='__manual__'?fromSelect:'');
+    const to=toManual||(toSelect&&toSelect!=='__manual__'?toSelect:'');
+    const freight=num(document.getElementById('t_freight')?.value), tripAdvance=num(document.getElementById('t_trip_advance')?.value), driverAmount=num(document.getElementById('t_driver_amount')?.value);
+    if((!vehicle&&!vehicleManual)||(!driver&&!driverManual)||(!party&&!partyManual)||!from||!to){Utils.toast('Please select or manually enter Vehicle, Driver, Customer, From and To.','error');return null;}
     if(freight<=0){Utils.toast('Freight amount must be greater than zero.','error');return null;}
     if(tripAdvance<0||driverAmount<0){Utils.toast('Amounts cannot be negative.','error');return null;}
-    if(isMarket && !transporter){Utils.toast('Transporter Name is required for a Market Vehicle.','error');return null;}
-    if(isMarket && marketPurchase<0){Utils.toast('Market Purchase cannot be negative.','error');return null;}
     const expenses=[];
-    document.querySelectorAll('#expRows .anori-trip-exp-row').forEach(r=>{
-      const type=r.querySelector('.exp-type')?.value.trim()||'';
-      const amount=num(r.querySelector('.exp-amt')?.value);
-      if(type&&amount>0)expenses.push({type,amount});
-    });
-    return {
-      date:document.getElementById('t_date')?.value||todayValue(),
-      vehicle_id:vehicle?.id||vehicleId||'', vehicle_number:vehicleText, vehicle_type:isMarket?'market':'company',
-      driver_id:driverId, driver_name:driverText, party_id:partyId, party_name:partyText,
-      from,to,freight,trip_advance_amount:tripAdvance,driver_amount:driverAmount,
-      transporter_name:isMarket?transporter:'',market_purchase_amount:isMarket?marketPurchase:0,
-      expenses,notes:document.getElementById('t_notes')?.value||'',trip_advice:document.getElementById('t_trip_advice')?.value||''
-    };
-  }
-
-  function afterModalOpen(trip){
-    initialiseCombos(trip);
-    const expenses=trip?.expenses||[];
-    expenses.forEach(e=>appendExpenseRow(e.type,e.amount));
-    if(!expenses.length)appendExpenseRow();
-    const vehicleInput=document.getElementById('t_vehicle_text');
-    const marketPurchase=document.getElementById('t_market_purchase');
-    if(vehicleInput)vehicleInput.addEventListener('change',()=>{syncVehicleClassification();});
-    if(marketPurchase)marketPurchase.addEventListener('input',()=>{
-      const market=document.getElementById('t_vehicle_type')?.value==='market';
-      marketPurchase.required=market;
-    });
+    document.querySelectorAll('#expRows .anori-trip-exp-row').forEach(r=>{const select=r.querySelector('.exp-type')?.value||'',manual=r.querySelector('.exp-type-manual')?.value.trim()||'',type=(select==='__manual__'||manual)?manual:select,amount=num(r.querySelector('.exp-amt')?.value);if(type&&amount>0)expenses.push({type,amount});});
+    return {date:document.getElementById('t_date')?.value||Utils.today(),vehicle_id:vehicle,driver_id:driver,party_id:party,vehicle_manual:vehicleManual,driver_manual:driverManual,party_manual:partyManual,from,to,freight,driver_amount:driverAmount,trip_advance_amount:tripAdvance,expenses,notes:document.getElementById('t_notes')?.value||'',trip_advice:document.getElementById('t_trip_advice')?.value||''};
   }
 
   Trips.openForm=function(){
     UI.openModal('Create New Trip',formHtml(null),()=>{
-      const form=readForm();if(!form)return;
+      const form=readForm(); if(!form)return;
       const trip={id:Utils.id(),trip_no:Utils.generateTripNo(form.date),...form,status:'completed',invoice_status:'pending',is_gst:true};
-      const data=DB.get('trips',[]);data.push(trip);DB.set('trips',data);
+      const data=DB.get('trips',[]); data.push(trip); DB.set('trips',data);
       if(typeof syncDriverTripEntry==='function')syncDriverTripEntry(trip);
-      UI.closeModal();Utils.toast('Trip created successfully.','success');Router.go('trips');
+      UI.closeModal(); Utils.toast('Trip created successfully.','success'); Router.go('trips');
     },true);
-    afterModalOpen(null);
+    if(!document.querySelector('#expRows .anori-trip-exp-row'))Trips.addExpRow();
+    document.querySelectorAll('#expRows .exp-type').forEach(sel=>sel.addEventListener('change',()=>{const m=sel.closest('.anori-trip-exp-row')?.querySelector('.exp-type-manual');if(m)m.style.display=sel.value==='__manual__'?'block':'none';}));
+    ['t_vehicle','t_driver','t_party'].forEach(id=>{const s=document.getElementById(id),m=document.getElementById(id+'_manual');if(s&&m)s.addEventListener('change',()=>{if(s.value!=='__manual__')m.value='';});});
+    ['t_from_select','t_to_select'].forEach(id=>{const s=document.getElementById(id),m=document.getElementById(id.replace('_select',''));if(s&&m)s.addEventListener('change',()=>{if(s.value!=='__manual__'&&s.value)m.value='';});});
+    const vehicleSelect=document.getElementById('t_vehicle');
+    const driverAmountInput=document.getElementById('t_driver_amount');
+    if(vehicleSelect&&driverAmountInput){
+      vehicleSelect.addEventListener('change',()=>{
+        const vehicle=DB.get('vehicles',[]).find(v=>v.id===vehicleSelect.value);
+        driverAmountInput.value=vehicle ? (Number(vehicle.driver_amount)||0) : 0;
+      });
+    }
   };
 
   Trips.showEditModal=function(id){
-    const trip=DB.get('trips',[]).find(t=>t.id===id);if(!trip)return;
-    if(typeof activeInvoiceForTrip==='function'&&activeInvoiceForTrip(id))return Swal.fire({icon:'warning',title:'Trip Locked',text:'Cancel the active invoice before editing this trip.',confirmButtonText:'OK'});
+    const trip=DB.get('trips',[]).find(t=>t.id===id); if(!trip)return;
+    if(typeof activeInvoiceForTrip==='function'&&activeInvoiceForTrip(id)){
+      return Swal.fire({icon:'warning',title:'Trip Locked',text:'Cancel the active invoice before editing this trip.',confirmButtonText:'OK'});
+    }
     UI.openModal('Edit Trip',formHtml(trip),()=>{
       if(typeof activeInvoiceForTrip==='function'&&activeInvoiceForTrip(id))return Swal.fire({icon:'warning',title:'Trip Locked',text:'Cancel the active invoice before editing this trip.',confirmButtonText:'OK'});
-      const form=readForm();if(!form)return;
-      const data=DB.get('trips',[]),idx=data.findIndex(t=>t.id===id);if(idx<0)return Utils.toast('Trip not found.','error');
-      data[idx]={...data[idx],...form};DB.set('trips',data);
+      const form=readForm(); if(!form)return;
+      const data=DB.get('trips',[]),idx=data.findIndex(t=>t.id===id); if(idx<0)return Utils.toast('Trip not found.','error');
+      data[idx]={...data[idx],...form}; DB.set('trips',data);
       if(typeof syncDriverTripEntry==='function')syncDriverTripEntry(data[idx]);
-      UI.closeModal();Utils.toast('Trip updated successfully.','success');Router.go('trips');
+      UI.closeModal(); Utils.toast('Trip updated successfully.','success'); Router.go('trips');
     },true);
-    afterModalOpen(trip);
+    if(!document.querySelector('#expRows .anori-trip-exp-row'))Trips.addExpRow();
+    document.querySelectorAll('#expRows .exp-type').forEach(sel=>sel.addEventListener('change',()=>{const m=sel.closest('.anori-trip-exp-row')?.querySelector('.exp-type-manual');if(m)m.style.display=sel.value==='__manual__'?'block':'none';}));
+    ['t_vehicle','t_driver','t_party'].forEach(id=>{const s=document.getElementById(id),m=document.getElementById(id+'_manual');if(s&&m)s.addEventListener('change',()=>{if(s.value!=='__manual__')m.value='';});});
+    ['t_from_select','t_to_select'].forEach(id=>{const s=document.getElementById(id),m=document.getElementById(id.replace('_select',''));if(s&&m)s.addEventListener('change',()=>{if(s.value!=='__manual__'&&s.value)m.value='';});});
+    const vehicleSelect=document.getElementById('t_vehicle');
+    const driverAmountInput=document.getElementById('t_driver_amount');
+    if(vehicleSelect&&driverAmountInput){
+      vehicleSelect.addEventListener('change',()=>{
+        const vehicle=DB.get('vehicles',[]).find(v=>v.id===vehicleSelect.value);
+        driverAmountInput.value=vehicle ? (Number(vehicle.driver_amount)||0) : 0;
+      });
+    }
   };
 
   Trips.openEditForm=function(id){Trips.showEditModal(id);};
@@ -5099,7 +4850,77 @@ Invoices.fitPreviewToScreen = function(){
   page.style.zoom=String(scale);
 };
 
-Invoices.downloadInvoice = function(invoice) { return (window.__ANORI_PDF_FINAL_FUNCTION ? window.__ANORI_PDF_FINAL_FUNCTION(invoice) : Promise.reject(new Error('PDF engine is initializing.'))); };
+Invoices.downloadInvoice = async function(invoice){
+  const host=document.getElementById('previewContent');
+  if(!host) return toast('Invoice Preview area is not available.','error');
+  const normalized=typeof this.normalizeInvoice==='function'?this.normalizeInvoice(invoice):invoice;
+  let page=host.dataset.invoiceId===normalized.id?host.querySelector('.invoice-page'):null;
+  if(!page) page=this.mountInvoiceDocument(normalized);
+  if(!page) return toast('Invoice Preview could not be prepared.','error');
+
+  const stage=page.parentElement;
+  const old={
+    transform:page.style.transform,transformOrigin:page.style.transformOrigin,position:page.style.position,left:page.style.left,top:page.style.top,margin:page.style.margin,
+    overflow:page.style.overflow,stageWidth:stage.style.width,stageHeight:stage.style.height,
+    stageMinHeight:stage.style.minHeight,stageOverflow:stage.style.overflow,stagePadding:stage.style.padding,
+    stageJustify:stage.style.justifyContent,stageAlign:stage.style.alignItems,
+    hostWidth:host.style.width,hostHeight:host.style.height,hostOverflow:host.style.overflow
+  };
+
+  try{
+    if(typeof window.html2canvas!=='function') throw new Error('PDF image renderer is not loaded. Please reopen the application with internet access.');
+    if(!window.jspdf?.jsPDF) throw new Error('PDF engine is not loaded. Please reopen the application with internet access.');
+
+    // Capture the same complete invoice DOM used by Preview, without screen scaling.
+    page.style.transform='none';
+    page.style.transformOrigin='top center';
+    page.style.position='static';
+    page.style.left='auto';
+    page.style.top='auto';
+    page.style.margin='0';
+    page.style.overflow='visible';
+    stage.style.width='210mm';
+    stage.style.height='auto';
+    stage.style.minHeight='0';
+    stage.style.overflow='visible';
+    stage.style.padding='0';
+    stage.style.justifyContent='flex-start';
+    stage.style.alignItems='flex-start';
+    host.style.width='210mm';
+    host.style.height='auto';
+    host.style.overflow='visible';
+
+    if(document.fonts?.ready) await document.fonts.ready;
+    await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+
+    const canvas=await window.html2canvas(page,{
+      scale:2,useCORS:true,allowTaint:false,backgroundColor:'#fff',logging:false,
+      scrollX:0,scrollY:0,windowWidth:Math.max(794,Math.ceil(page.getBoundingClientRect().width)),
+      windowHeight:Math.max(1123,Math.ceil(page.scrollHeight||page.getBoundingClientRect().height))
+    });
+
+    const {jsPDF}=window.jspdf;
+    const pdf=new jsPDF({unit:'mm',format:'a4',orientation:'portrait',compress:true});
+    const margin=5, maxW=200, maxH=287;
+    const ratio=canvas.width/canvas.height;
+    let w=maxW, h=w/ratio;
+    if(h>maxH){h=maxH;w=h*ratio;}
+    const x=(210-w)/2, y=(297-h)/2;
+    pdf.addImage(canvas.toDataURL('image/jpeg',0.98),'JPEG',x,y,w,h,undefined,'FAST');
+    pdf.save(`${normalized.invoice_no}.pdf`);
+    toast('PDF downloaded successfully with the complete Invoice Preview.','success');
+  }catch(e){
+    console.error('Single-page PDF generation failed',e);
+    await Swal.fire({icon:'error',title:'PDF Generation Failed',text:e?.message||'Unable to generate the PDF.'});
+  }finally{
+    page.style.transform=old.transform;page.style.transformOrigin=old.transformOrigin;page.style.position=old.position;page.style.left=old.left;page.style.top=old.top;page.style.margin=old.margin;
+    page.style.overflow=old.overflow;stage.style.width=old.stageWidth;stage.style.height=old.stageHeight;
+    stage.style.minHeight=old.stageMinHeight;stage.style.overflow=old.stageOverflow;stage.style.padding=old.stagePadding;
+    stage.style.justifyContent=old.stageJustify;stage.style.alignItems=old.stageAlign;
+    host.style.width=old.hostWidth;host.style.height=old.hostHeight;host.style.overflow=old.hostOverflow;
+    if(document.getElementById('previewModal')?.classList.contains('active')) this.fitPreviewToScreen();
+  }
+};
 
 window.addEventListener('resize',()=>{
   if(document.getElementById('previewModal')?.classList.contains('active')) Invoices.fitPreviewToScreen();
@@ -5197,8 +5018,8 @@ window.addEventListener('resize',()=>{
 
     const rowsHtml=rows.map((t,idx)=>{
       const inv=activeInvoice(t.id);
-      const vehicleNo=vehicle(t.vehicle_id)?.number||'-';
-      const customer=party(t.party_id)?.name||'-';
+      const vehicleNo=vehicle(t.vehicle_id)?.number||t.vehicle_manual||'-';
+      const customer=party(t.party_id)?.name||t.party_manual||'-';
       const profit=num(t.freight)-((t.expenses||[]).reduce((s,e)=>s+num(e.amount),0));
       return `<tr class="anori-trip-row ${idx%2===1?'anori-trip-alt-row':''}">
         <td><input type="checkbox" class="trip-row-check" value="${esc(t.id)}" ${Trips.__selectedIds.has(String(t.id))?'checked':''} onchange="Trips.__toggleRow('${esc(t.id)}',this.checked)"></td>
@@ -5322,7 +5143,7 @@ window.addEventListener('resize',()=>{
       is_gst: !!isGst,
       status: 'draft',
       expense_lines: expenseLines,
-      credit_days: window.anoriResolvePartyCreditDays(party),
+      credit_days: Math.max(0, num(party?.credit_days) || 30),
       trips_data: trips.map(t => ({...t, vehicle:vehicles.find(v => v.id === t.vehicle_id)})),
       payments: []
     };
@@ -5659,7 +5480,7 @@ window.addEventListener('resize',()=>{
       const lines=(Array.isArray(expenseLines)?expenseLines:[]).filter(e=>e.manual||billable.has(e.masterId)).map(e=>({masterId:e.masterId,name:e.name,amount:num(e.amount),manual:!!e.manual})).filter(e=>e.amount>0);
       const subtotal=ts.reduce((s,t)=>s+num(t.freight),0)+lines.reduce((s,e)=>s+e.amount,0),mode=isGst?(taxType||'cgst_sgst'):'none',cgst=mode==='cgst_sgst'?subtotal*.09:0,sgst=mode==='cgst_sgst'?subtotal*.09:0,igst=mode==='igst'?subtotal*.18:0,total=subtotal+cgst+sgst+igst;
       if(advance<0||advance>total)throw new Error(advance<0?'Advance cannot be negative.':`Advance cannot exceed ${money(total)}.`);
-      const invoice={id:Utils.id(),invoice_no:Utils.generateInvoiceNo(),date:invoiceDateForTrips(ts),party_id:party.id,trip_ids:ts.map(t=>t.id),trip_count:ts.length,subtotal,cgst,sgst,igst,total_amount:total,advance,balance_due:total-advance,paid_amount:advance,is_gst:!!isGst,tax_type:mode,status:advance>=total?'paid':'issued',expense_lines:lines,credit_days:window.anoriResolvePartyCreditDays(party),trips_data:ts.map(t=>({...t,vehicle:DB.get('vehicles',[]).find(v=>v.id===t.vehicle_id)})),payments:[]};
+      const invoice={id:Utils.id(),invoice_no:Utils.generateInvoiceNo(),date:invoiceDateForTrips(ts),party_id:party.id,trip_ids:ts.map(t=>t.id),trip_count:ts.length,subtotal,cgst,sgst,igst,total_amount:total,advance,balance_due:total-advance,paid_amount:advance,is_gst:!!isGst,tax_type:mode,status:advance>=total?'paid':'issued',expense_lines:lines,credit_days:Math.max(0,num(party.credit_days)||30),trips_data:ts.map(t=>({...t,vehicle:DB.get('vehicles',[]).find(v=>v.id===t.vehicle_id)})),payments:[]};
       const invs=DB.get('invoices',[]);if(invs.some(i=>String(i.status||'').toLowerCase()!=='cancelled'&&Array.isArray(i.trip_ids)&&i.trip_ids.some(id=>invoice.trip_ids.includes(id))))throw new Error('Duplicate active invoice detected.');
       DB.set('invoices',[...invs,invoice]);const all=tripsStore();ts.forEach(t=>{const x=all.find(a=>a.id===t.id);if(x)x.invoice_status='invoiced';});DB.set('trips',all,true);return invoice;
     }
@@ -5943,12 +5764,9 @@ window.addEventListener('resize',()=>{
       });
     });
   }
-  window.anoriInstallTableUX=()=>prepare(document.getElementById('mainContent')||document.body||document.documentElement);
-  const tableUxTarget=document.getElementById('mainContent')||document.body||document.documentElement;
-  if (tableUxTarget && window.MutationObserver) {
-    const observer=new MutationObserver(()=>{ clearTimeout(observer._t); observer._t=setTimeout(()=>prepare(document.getElementById('mainContent')||document.body||document.documentElement),25); });
-    observer.observe(tableUxTarget,{childList:true,subtree:true});
-  }
+  window.anoriInstallTableUX=()=>prepare(document.getElementById('mainContent')||document);
+  const observer=new MutationObserver(()=>{ clearTimeout(observer._t); observer._t=setTimeout(()=>prepare(document.getElementById('mainContent')||document),25); });
+  observer.observe(document.getElementById('mainContent')||document.body,{childList:true,subtree:true});
   setTimeout(()=>prepare(document),0);
 })();
 
@@ -6263,7 +6081,69 @@ window.addEventListener('resize',()=>{
    jsPDF.addImage coordinate calculations are used here. */
 (function(){
   if(!window.Invoices) return;
-  Invoices.downloadInvoice = function(invoice) { return (window.__ANORI_PDF_FINAL_FUNCTION ? window.__ANORI_PDF_FINAL_FUNCTION(invoice) : Promise.reject(new Error('PDF engine is initializing.'))); };
+  Invoices.downloadInvoice = async function(invoice){
+    const host=document.getElementById('previewContent');
+    if(!host) return Utils.toast('Invoice Preview area is not available.','error');
+    const normalized=typeof this.normalizeInvoice==='function' ? this.normalizeInvoice(invoice) : invoice;
+    if(!normalized) return Utils.toast('Invoice not found.','error');
+
+    let page = host.dataset.invoiceId===normalized.id ? host.querySelector('.invoice-page') : null;
+    if(!page && typeof this.mountInvoiceDocument==='function'){
+      host.innerHTML='';
+      page=this.mountInvoiceDocument(normalized);
+      host.dataset.invoiceId=normalized.id;
+    }
+    if(!page) return Utils.toast('Invoice Preview could not be prepared.','error');
+    if(typeof window.html2pdf!=='function'){
+      return Swal.fire({icon:'error',title:'PDF Generation Failed',text:'PDF library is not loaded.',confirmButtonText:'OK'});
+    }
+
+    const stage=page.parentElement;
+    const old={
+      page:{transform:page.style.transform,transformOrigin:page.style.transformOrigin,zoom:page.style.zoom,position:page.style.position,left:page.style.left,top:page.style.top,margin:page.style.margin,width:page.style.width,minWidth:page.style.minWidth,overflow:page.style.overflow},
+      stage:{width:stage?.style.width||'',height:stage?.style.height||'',minHeight:stage?.style.minHeight||'',overflow:stage?.style.overflow||'',padding:stage?.style.padding||'',display:stage?.style.display||'',justifyContent:stage?.style.justifyContent||'',alignItems:stage?.style.alignItems||''},
+      host:{width:host.style.width,height:host.style.height,overflow:host.style.overflow}
+    };
+
+    try{
+      // Same invoice DOM as Preview; only viewer scaling is removed for capture.
+      Object.assign(page.style,{transform:'none',transformOrigin:'top center',zoom:'1',position:'static',left:'auto',top:'auto',margin:'0',width:'210mm',minWidth:'210mm',overflow:'visible'});
+      if(stage) Object.assign(stage.style,{width:'210mm',height:'auto',minHeight:'0',overflow:'visible',padding:'0',display:'block',justifyContent:'flex-start',alignItems:'flex-start'});
+      Object.assign(host.style,{width:'210mm',height:'auto',overflow:'visible'});
+
+      if(document.fonts?.ready) await document.fonts.ready;
+      await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+
+      await window.html2pdf().set({
+        margin:0,
+        filename:`${normalized.invoice_no}.pdf`,
+        image:{type:'jpeg',quality:.98},
+        html2canvas:{
+          scale:2,
+          useCORS:true,
+          allowTaint:false,
+          backgroundColor:'#ffffff',
+          logging:false,
+          scrollX:0,
+          scrollY:0,
+          windowWidth:794,
+          windowHeight:Math.max(1123,page.scrollHeight||1123)
+        },
+        pagebreak:{mode:['css','legacy'],avoid:['.avoid']},
+        jsPDF:{unit:'mm',format:'a4',orientation:'portrait',compress:true}
+      }).from(page).save();
+
+      Utils.toast('PDF downloaded using the same Invoice Preview layout.','success');
+    }catch(e){
+      console.error('Invoice PDF generation failed:',e);
+      await Swal.fire({icon:'error',title:'PDF Generation Failed',text:e?.message||'Unable to generate the PDF.',confirmButtonText:'OK'});
+    }finally{
+      Object.assign(page.style,old.page);
+      if(stage) Object.assign(stage.style,old.stage);
+      Object.assign(host.style,old.host);
+      if(document.getElementById('previewModal')?.classList.contains('active')) this.fitPreviewToScreen?.();
+    }
+  };
 
   // Invoices & Billing table/action-bar PDF button routes through the same
   // function above, which is also used by Invoice Preview's PDF button.
@@ -6288,7 +6168,79 @@ window.addEventListener('resize',()=>{
   'use strict';
   if(!window.Invoices) return;
 
-  Invoices.downloadInvoice = function(invoice) { return (window.__ANORI_PDF_FINAL_FUNCTION ? window.__ANORI_PDF_FINAL_FUNCTION(invoice) : Promise.reject(new Error('PDF engine is initializing.'))); };
+  Invoices.downloadInvoice = async function(invoice){
+    const host=document.getElementById('previewContent');
+    if(!host) return Utils.toast('Invoice Preview area is not available.','error');
+
+    const normalized=typeof this.normalizeInvoice==='function' ? this.normalizeInvoice(invoice) : invoice;
+    if(!normalized) return Utils.toast('Invoice not found.','error');
+    if(typeof window.html2pdf!=='function'){
+      return Swal.fire({icon:'error',title:'PDF Generation Failed',text:'PDF library is not loaded.',confirmButtonText:'OK'});
+    }
+
+    let page=host.dataset.invoiceId===normalized.id ? host.querySelector('.invoice-page') : null;
+    if(!page && typeof this.mountInvoiceDocument==='function'){
+      host.innerHTML='';
+      page=this.mountInvoiceDocument(normalized);
+      host.dataset.invoiceId=normalized.id;
+    }
+    if(!page) return Utils.toast('Invoice Preview could not be prepared.','error');
+
+    const stage=page.parentElement;
+    const old={
+      page:{transform:page.style.transform,transformOrigin:page.style.transformOrigin,zoom:page.style.zoom,position:page.style.position,left:page.style.left,top:page.style.top,margin:page.style.margin,width:page.style.width,minWidth:page.style.minWidth,maxWidth:page.style.maxWidth,overflow:page.style.overflow},
+      stage:{width:stage?.style.width||'',height:stage?.style.height||'',minHeight:stage?.style.minHeight||'',overflow:stage?.style.overflow||'',padding:stage?.style.padding||'',display:stage?.style.display||'',justifyContent:stage?.style.justifyContent||'',alignItems:stage?.style.alignItems||''},
+      host:{width:host.style.width,height:host.style.height,overflow:host.style.overflow}
+    };
+
+    try{
+      // Capture exactly the same A4 invoice document used by Preview.
+      Object.assign(page.style,{
+        transform:'none',transformOrigin:'top left',zoom:'1',position:'static',left:'auto',top:'auto',
+        margin:'0',width:'210mm',minWidth:'210mm',maxWidth:'210mm',overflow:'visible'
+      });
+      if(stage) Object.assign(stage.style,{
+        width:'210mm',height:'auto',minHeight:'0',overflow:'visible',padding:'0',display:'block',
+        justifyContent:'flex-start',alignItems:'flex-start'
+      });
+      Object.assign(host.style,{width:'210mm',height:'auto',overflow:'visible'});
+
+      if(document.fonts?.ready) await document.fonts.ready;
+      await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+
+      await window.html2pdf().set({
+        margin:0,
+        filename:`${normalized.invoice_no || normalized.id || 'Invoice'}.pdf`,
+        image:{type:'jpeg',quality:0.98},
+        html2canvas:{
+          scale:2,
+          useCORS:true,
+          allowTaint:false,
+          backgroundColor:'#ffffff',
+          logging:false,
+          scrollX:0,
+          scrollY:0,
+          width:794,
+          windowWidth:794,
+          windowHeight:Math.max(1123,Math.ceil(page.scrollHeight||page.getBoundingClientRect().height||1123))
+        },
+        pagebreak:{mode:['css','legacy'],avoid:['.avoid']},
+        jsPDF:{unit:'mm',format:'a4',orientation:'portrait',compress:true}
+      }).from(page).save();
+
+      Utils.toast('PDF downloaded using the same Invoice Preview.','success');
+    }catch(e){
+      console.error('Invoice PDF generation error:',e);
+      await Swal.fire({icon:'error',title:'PDF Generation Failed',text:e?.message||'Unable to generate the PDF.',confirmButtonText:'OK'});
+    }finally{
+      Object.assign(page.style,old.page);
+      if(stage) Object.assign(stage.style,old.stage);
+      Object.assign(host.style,old.host);
+      if(document.getElementById('previewModal')?.classList.contains('active') && typeof this.fitPreviewToScreen==='function'){
+        this.fitPreviewToScreen();
+      }
+    }
+  };
 
   Invoices.downloadExisting=function(id){
     const invoice=(DB.get('invoices',[])||[]).find(i=>String(i.id)===String(id));
@@ -6302,6 +6254,329 @@ window.addEventListener('resize',()=>{
     return this.downloadExisting(ids[0]);
   };
 })();
+
+/* FINAL PDF SAFETY OVERRIDE — v2.31
+   Invoices & Billing PDF uses the same Invoice Preview DOM, but captures it in a
+   fixed A4-sized off-screen clone. jsPDF coordinates are always finite and fixed.
+   This prevents the recurring "Invalid coordinates passed to jsPDF.addImage" error.
+*/
+(function(){
+  if(!window.Invoices) return;
+  Invoices.downloadInvoice = async function(invoice){
+    const normalized = typeof this.normalizeInvoice==='function' ? this.normalizeInvoice(invoice) : invoice;
+    if(!normalized) return Swal.fire({icon:'error',title:'PDF Generation Failed',text:'Invoice not found.',confirmButtonText:'OK'});
+    if(typeof window.html2canvas!=='function' || !window.jspdf?.jsPDF){
+      return Swal.fire({icon:'error',title:'PDF Generation Failed',text:'PDF library is not loaded. Please reopen the application with internet access.',confirmButtonText:'OK'});
+    }
+
+    let source = document.getElementById('previewContent')?.querySelector('.invoice-page');
+    let temp = null;
+    try{
+      if(!source){
+        if(typeof this.mountInvoiceDocument!=='function') throw new Error('Invoice Preview renderer is unavailable.');
+        const host=document.getElementById('previewContent');
+        if(!host) throw new Error('Invoice Preview area is not available.');
+        source=this.mountInvoiceDocument(normalized);
+      }
+      if(!source) throw new Error('Invoice Preview could not be prepared.');
+
+      // Clone the exact preview invoice into a fixed A4 CSS viewport.
+      temp=document.createElement('div');
+      temp.setAttribute('data-anori-pdf-capture','1');
+      temp.style.cssText='position:fixed;left:-10000px;top:0;width:794px;min-width:794px;background:#fff;z-index:-1;overflow:visible;padding:0;margin:0;';
+      const clone=source.cloneNode(true);
+      clone.style.cssText += ';transform:none !important;zoom:1 !important;position:relative !important;left:auto !important;top:auto !important;margin:0 !important;width:794px !important;min-width:794px !important;max-width:none !important;overflow:visible !important;';
+      temp.appendChild(clone);
+      document.body.appendChild(temp);
+
+      if(document.fonts?.ready) await document.fonts.ready;
+      await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+
+      const rect=clone.getBoundingClientRect();
+      const width=Math.max(1,Math.ceil(rect.width || clone.scrollWidth || 794));
+      const height=Math.max(1,Math.ceil(clone.scrollHeight || rect.height || 1123));
+      if(!Number.isFinite(width)||!Number.isFinite(height)||width<=0||height<=0) throw new Error('Invoice Preview has an invalid size for PDF generation.');
+
+      const canvas=await window.html2canvas(clone,{
+        scale:2,
+        useCORS:true,
+        allowTaint:false,
+        backgroundColor:'#ffffff',
+        logging:false,
+        scrollX:0,
+        scrollY:0,
+        width,
+        height,
+        windowWidth:width,
+        windowHeight:Math.max(1123,height)
+      });
+
+      if(!canvas || !canvas.width || !canvas.height) throw new Error('Invoice Preview could not be rendered for PDF.');
+      if(!Number.isFinite(canvas.width)||!Number.isFinite(canvas.height)) throw new Error('Invalid rendered invoice dimensions.');
+
+      const {jsPDF}=window.jspdf;
+      const pdf=new jsPDF({unit:'mm',format:'a4',orientation:'portrait',compress:true});
+      const A4W=210, A4H=297, margin=5, drawW=200;
+      const pxToMm=drawW/canvas.width;
+      let totalH=canvas.height*pxToMm;
+      if(!Number.isFinite(totalH)||totalH<=0) throw new Error('Invalid rendered invoice height.');
+
+      const data=canvas.toDataURL('image/jpeg',0.98);
+      if(!data || data==='data:,') throw new Error('Invoice image could not be created.');
+
+      if(totalH<=A4H-10){
+        const drawH=Math.max(1,Math.min(A4H-10,totalH));
+        // Fixed, finite, in-page coordinates only.
+        pdf.addImage(data,'JPEG',margin,margin,drawW,drawH,undefined,'FAST');
+      }else{
+        const pagePxHeight=Math.max(1,Math.floor((A4H-10)/pxToMm));
+        let offset=0, pageNo=0;
+        while(offset<canvas.height){
+          if(pageNo>0) pdf.addPage();
+          const sliceH=Math.min(pagePxHeight,canvas.height-offset);
+          if(!Number.isFinite(sliceH)||sliceH<=0) throw new Error('Invalid PDF page slice.');
+          const slice=document.createElement('canvas');
+          slice.width=canvas.width;
+          slice.height=Math.max(1,Math.floor(sliceH));
+          const ctx=slice.getContext('2d');
+          if(!ctx) throw new Error('Unable to prepare PDF page.');
+          ctx.fillStyle='#fff';
+          ctx.fillRect(0,0,slice.width,slice.height);
+          ctx.drawImage(canvas,0,offset,canvas.width,slice.height,0,0,canvas.width,slice.height);
+          const sliceData=slice.toDataURL('image/jpeg',0.98);
+          const sliceMmH=Math.max(1,Math.min(A4H-10,slice.height*pxToMm));
+          pdf.addImage(sliceData,'JPEG',margin,margin,drawW,sliceMmH,undefined,'FAST');
+          offset += slice.height;
+          pageNo++;
+        }
+      }
+
+      pdf.save(`${normalized.invoice_no || normalized.id || 'invoice'}.pdf`);
+      if(window.Utils?.toast) Utils.toast('PDF downloaded with the same Invoice Preview layout.','success');
+    }catch(e){
+      console.error('ANORI PDF generation error:',e);
+      await Swal.fire({icon:'error',title:'PDF Generation Failed',text:e?.message||'Unable to generate the PDF.',confirmButtonText:'OK'});
+    }finally{
+      if(temp) temp.remove();
+    }
+  };
+
+  Invoices.downloadExisting=function(id){
+    const list=typeof DB!=='undefined' ? (DB.get('invoices',[])||[]) : [];
+    const invoice=list.find(i=>String(i.id)===String(id));
+    if(!invoice) return Utils.toast('Invoice not found.','error');
+    return this.downloadInvoice(invoice);
+  };
+})();
+
+/* ANORI TRANSPORT — FINAL PDF ENGINE v3.0
+   Root-cause fix: remove all dependency on jsPDF/html2pdf for invoice export.
+   The Invoice Preview DOM is rendered with html2canvas, then a standards-based
+   PDF is assembled directly from JPEG image objects. This prevents every
+   recurring jsPDF.addImage coordinate error, including errors originating
+   inside html2pdf's internal jsPDF calls.
+*/
+(function installFinalNativeInvoicePdf(){
+  'use strict';
+  if(!window.Invoices) return;
+
+  const concatBytes=(parts)=>{
+    const total=parts.reduce((n,p)=>n+p.length,0);
+    const out=new Uint8Array(total); let offset=0;
+    for(const p of parts){out.set(p,offset);offset+=p.length;}
+    return out;
+  };
+  const enc=new TextEncoder();
+  const ascii=(s)=>enc.encode(s);
+
+  function buildPdfFromJpegs(pages){
+    // Each page is a JPEG already sized/cropped for one A4 page.
+    const objects=[];
+    objects[1]=ascii('<< /Type /Catalog /Pages 2 0 R >>');
+    const pageRefs=[];
+    const pageObjects=[];
+    const contentObjects=[];
+    const imageObjects=[];
+    let objNo=3;
+
+    for(let i=0;i<pages.length;i++){
+      const imageObjNo=objNo++;
+      const contentObjNo=objNo++;
+      const pageObjNo=objNo++;
+      imageObjects.push({objNo:imageObjNo,jpeg:pages[i].jpeg,width:pages[i].width,height:pages[i].height});
+      contentObjects.push({objNo:contentObjNo,imageObjNo,drawW:pages[i].drawW,drawH:pages[i].drawH});
+      pageObjects.push({objNo:pageObjNo,contentObjNo,imageObjNo});
+      pageRefs.push(`${pageObjNo} 0 R`);
+    }
+
+    objects[2]=ascii(`<< /Type /Pages /Kids [${pageRefs.join(' ')}] /Count ${pages.length} >>`);
+
+    for(const img of imageObjects){
+      const header=ascii(`<< /Type /XObject /Subtype /Image /Width ${img.width} /Height ${img.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${img.jpeg.length} >>\nstream\n`);
+      const footer=ascii('\nendstream');
+      objects[img.objNo]=concatBytes([header,img.jpeg,footer]);
+    }
+
+    for(const c of contentObjects){
+      const stream=ascii(`q\n${c.drawW} 0 0 ${c.drawH} 5 ${5 + (287-c.drawH)} cm\n/Im${c.imageObjNo} Do\nQ`);
+      objects[c.objNo]=concatBytes([ascii(`<< /Length ${stream.length} >>\nstream\n`),stream,ascii('\nendstream')]);
+    }
+
+    for(const p of pageObjects){
+      objects[p.objNo]=ascii(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 210 297] /Resources << /XObject << /Im${p.imageObjNo} ${p.imageObjNo} 0 R >> >> /Contents ${p.contentObjNo} 0 R >>`);
+    }
+
+    const chunks=[ascii('%PDF-1.4\n%\xFF\xFF\xFF\xFF\n')];
+    const offsets=new Array(objects.length).fill(0);
+    let position=chunks[0].length;
+    for(let i=1;i<objects.length;i++){
+      const body=objects[i]||ascii('');
+      const head=ascii(`${i} 0 obj\n`);
+      const tail=ascii('\nendobj\n');
+      offsets[i]=position;
+      chunks.push(head,body,tail);
+      position+=head.length+body.length+tail.length;
+    }
+    const xrefPos=position;
+    let xref=`xref\n0 ${objects.length}\n0000000000 65535 f \n`;
+    for(let i=1;i<objects.length;i++)xref+=String(offsets[i]).padStart(10,'0')+' 00000 n \n';
+    xref+=`trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xrefPos}\n%%EOF`;
+    chunks.push(ascii(xref));
+    return concatBytes(chunks);
+  }
+
+  async function renderInvoiceToPdf(invoice){
+    const normalized=typeof Invoices.normalizeInvoice==='function' ? Invoices.normalizeInvoice(invoice) : invoice;
+    if(!normalized) throw new Error('Invoice not found.');
+    if(typeof window.html2canvas!=='function') throw new Error('PDF renderer is not loaded. Please reopen the application with internet access.');
+
+    const host=document.getElementById('previewContent');
+    if(!host) throw new Error('Invoice Preview area is not available.');
+
+    let source=host.querySelector('.invoice-page');
+    if(!source || host.dataset.invoiceId!==normalized.id){
+      if(typeof Invoices.mountInvoiceDocument!=='function') throw new Error('Invoice Preview renderer is unavailable.');
+      host.innerHTML='';
+      source=Invoices.mountInvoiceDocument(normalized);
+      host.dataset.invoiceId=normalized.id;
+    }
+    if(!source) throw new Error('Invoice Preview could not be prepared.');
+
+    // Capture an isolated, fixed A4-width clone. Screen zoom, flex centering,
+    // scroll containers and modal transforms cannot affect the capture.
+    const capture=document.createElement('div');
+    capture.style.cssText='position:fixed;left:-20000px;top:0;width:794px;background:#fff;margin:0;padding:0;overflow:visible;z-index:-2147483647;visibility:visible;';
+    const clone=source.cloneNode(true);
+    clone.style.cssText += ';display:block !important;position:relative !important;left:0 !important;top:0 !important;transform:none !important;zoom:1 !important;width:794px !important;min-width:794px !important;max-width:794px !important;height:auto !important;min-height:1123px !important;margin:0 !important;overflow:visible !important;box-sizing:border-box !important;';
+    capture.appendChild(clone);
+    document.body.appendChild(capture);
+
+    try{
+      if(document.fonts?.ready) await document.fonts.ready;
+      await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+
+      const rect=clone.getBoundingClientRect();
+      const width=Math.max(794,Math.ceil(clone.scrollWidth||rect.width||794));
+      const height=Math.max(1123,Math.ceil(clone.scrollHeight||rect.height||1123));
+      if(!Number.isFinite(width)||!Number.isFinite(height)) throw new Error('Invoice Preview has invalid dimensions.');
+
+      const canvas=await window.html2canvas(clone,{
+        scale:2,
+        width,
+        height,
+        windowWidth:width,
+        windowHeight:height,
+        backgroundColor:'#ffffff',
+        useCORS:true,
+        allowTaint:false,
+        logging:false,
+        scrollX:0,
+        scrollY:0
+      });
+      if(!canvas?.width||!canvas?.height) throw new Error('Invoice Preview could not be rendered.');
+
+      // A4 printable area: 200 x 287 mm (5 mm margins). At 794 px CSS width,
+      // one PDF page corresponds to 1123 CSS px. The 2x canvas is sliced without
+      // resizing the original image horizontally, preserving preview appearance.
+      const targetCssPageHeight=Math.floor(width*(287/200));
+      const scaleX=canvas.width/width;
+      const sliceCanvasHeight=Math.max(1,Math.floor(targetCssPageHeight*scaleX));
+      const pages=[];
+
+      for(let y=0;y<canvas.height;y+=sliceCanvasHeight){
+        const sliceH=Math.min(sliceCanvasHeight,canvas.height-y);
+        const slice=document.createElement('canvas');
+        slice.width=canvas.width;
+        slice.height=Math.max(1,sliceH);
+        const ctx=slice.getContext('2d');
+        if(!ctx) throw new Error('Unable to prepare PDF page.');
+        ctx.fillStyle='#ffffff';
+        ctx.fillRect(0,0,slice.width,slice.height);
+        ctx.drawImage(canvas,0,y,canvas.width,sliceH,0,0,canvas.width,sliceH);
+        const dataUrl=slice.toDataURL('image/jpeg',0.96);
+        const comma=dataUrl.indexOf(',');
+        if(comma<0) throw new Error('Invoice image could not be created.');
+        const raw=atob(dataUrl.slice(comma+1));
+        const jpeg=new Uint8Array(raw.length);
+        for(let i=0;i<raw.length;i++) jpeg[i]=raw.charCodeAt(i);
+        const drawW=200; const drawH=Math.min(287,drawW*(slice.height/slice.width));
+        pages.push({jpeg,width:slice.width,height:slice.height,drawW,drawH});
+      }
+
+      if(!pages.length) throw new Error('No invoice pages were generated.');
+      const pdfBytes=buildPdfFromJpegs(pages);
+      const blob=new Blob([pdfBytes],{type:'application/pdf'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url;
+      a.download=`${normalized.invoice_no || normalized.id || 'Invoice'}.pdf`;
+      a.style.display='none';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),15000);
+      if(window.Utils?.toast) Utils.toast('PDF downloaded using the Invoice Preview layout.','success');
+      return true;
+    }finally{
+      capture.remove();
+    }
+  }
+
+  // One and only active invoice PDF route. These assignments are deliberately
+  // placed at the end of app.js so all legacy PDF overrides are superseded.
+  Invoices.downloadInvoice=function(invoice){
+    return renderInvoiceToPdf(invoice).catch(async e=>{
+      console.error('ANORI FINAL PDF ENGINE ERROR:',e);
+      if(window.Swal) await Swal.fire({icon:'error',title:'PDF Generation Failed',text:e?.message||'Unable to generate the PDF.',confirmButtonText:'OK'});
+      else if(window.Utils?.toast) Utils.toast(e?.message||'Unable to generate the PDF.','error');
+      return false;
+    });
+  };
+
+  Invoices.downloadExisting=function(id){
+    const invoice=(DB.get('invoices',[])||[]).find(i=>String(i.id)===String(id));
+    if(!invoice) return Utils.toast('Invoice not found.','error');
+    return Invoices.downloadInvoice(invoice);
+  };
+
+  // FINAL ACTION-BAR PDF ROUTE: deliberately calls the exact same
+  // Invoices.downloadInvoice() used by the Invoice Preview -> Download PDF button.
+  // This bypasses every legacy jsPDF/html2pdf action handler.
+  Invoices.downloadSelectedPDF=function(){
+    const ids=typeof Invoices.getSelected==='function' ? Invoices.getSelected() : [];
+    if(ids.length!==1) return Utils.toast(ids.length ? 'SELECT ONLY ONE INVOICE.' : 'SELECT ONE INVOICE.','warning');
+    const invoice=(DB.get('invoices',[])||[]).find(i=>String(i.id)===String(ids[0]));
+    if(!invoice) return Utils.toast('Invoice not found.','error');
+    return Invoices.downloadInvoice(invoice);
+  };
+  Invoices.actionPDF=function(){ return Invoices.downloadSelectedPDF(); };
+
+  // Keep a stable public route so all dynamically-rendered Action bars use
+  // the same Preview PDF implementation.
+  window.__ANORI_DOWNLOAD_SELECTED_INVOICE_PDF='native-preview-pdf';
+  window.__ANORI_FINAL_PDF_ENGINE='native-jpeg-pdf-v3';
+})();
+
 
 /* FINAL NON-GST INVOICE DISPLAY GUARD
    A Non-GST invoice must never display CGST/SGST/IGST rows in either
@@ -6408,7 +6683,7 @@ window.addEventListener('resize',()=>{
 
   DriverSettlement.downloadPDF=async function(){
     try{
-      if(!window.jspdf?.jsPDF){ const printable=document.querySelector('#view-settlements .table-wrapper')||document.querySelector('#view-settlements'); if(window.anoriPrintElement&&printable){ window.anoriPrintElement(printable,'ANORI TRANSPORT DRIVER SETTLEMENT LEDGER'); return true; } throw new Error('Driver Settlement print view is not available.'); }
+      if(!window.jspdf?.jsPDF) throw new Error('PDF LIBRARY IS NOT LOADED.');
 
       const rows=getPdfRows();
       const company=DB.get('company_profile',{})||{};
@@ -6560,7 +6835,7 @@ window.addEventListener('resize',()=>{
       if(window.Utils?.toast)Utils.toast(`PDF ledger downloaded (${rows.length} entries).`,'success');
       return true;
     }catch(e){
-      console.warn('ANORI DRIVER LEDGER PDF FALLBACK:',e?.message||e);
+      console.error('ANORI DRIVER LEDGER PDF ERROR:',e);
       if(window.Swal)await Swal.fire({icon:'error',title:'PDF GENERATION FAILED',text:e?.message||'UNABLE TO GENERATE DRIVER SETTLEMENT LEDGER PDF.',confirmButtonText:'OK'});
       else if(window.Utils?.toast)Utils.toast(e?.message||'UNABLE TO GENERATE DRIVER SETTLEMENT LEDGER PDF.','error');
       return false;
@@ -6570,9 +6845,639 @@ window.addEventListener('resize',()=>{
   DriverSettlement.__finalPdfLedgerInstalled=true;
 })();
 
-/* ===== END app.js ===== */
+/* ============================================================
+   ANORI TRANSPORT — FINAL COMBINED REQUIREMENTS PASS
+   - Reference-style sidebar is visual-only.
+   - Settings Backup & Restore reference-style UI replaces old UI.
+   - New Trip master fields use ONE input with datalist suggestions + manual entry.
+   - Company / Outside Vehicle classification.
+   - Outside Vehicle Vendor Cost + separate Vendor Settlement.
+   - Existing Driver Settlement remains separate.
+   ============================================================ */
+(function installAnoriFinalRequirements(){
+  'use strict';
+  const esc=v=>Sanitize.html(v==null?'':String(v));
+  const num=v=>{const n=parseFloat(v);return Number.isFinite(n)?n:0;};
+  const text=v=>String(v==null?'':v).trim();
+  const norm=v=>text(v).toLowerCase();
 
-/* ===== BEGIN data-transfer.js ===== */
+  function ensureArrayKey(key){
+    const v=DB.get(key,[]);
+    return Array.isArray(v)?v:[];
+  }
+
+  function uniqueValues(values){
+    const seen=new Set(),out=[];
+    values.forEach(v=>{const s=text(v);if(!s)return;const k=norm(s);if(!seen.has(k)){seen.add(k);out.push(s);}});
+    return out;
+  }
+
+  function locations(){
+    const saved=ensureArrayKey('locations');
+    const fromSaved=saved.map(x=>typeof x==='string'?x:(x?.name||x?.location||''));
+    const fromTrips=[];
+    ensureArrayKey('trips').forEach(t=>{fromTrips.push(t.from,t.to);});
+    return uniqueValues(fromSaved.concat(fromTrips)).slice(0,250);
+  }
+
+  function vendors(){
+    const saved=ensureArrayKey('vendors').map(x=>typeof x==='string'?x:(x?.name||x?.vendor_name||''));
+    const fromTrips=ensureArrayKey('trips').map(t=>t.vendor_manual||t.vendor_name||'');
+    return uniqueValues(saved.concat(fromTrips)).slice(0,250);
+  }
+
+  function matchMaster(items,key,value){
+    const q=norm(value);
+    if(!q)return null;
+    return items.find(x=>norm(x?.[key])===q)||null;
+  }
+
+  function resolveMaster({items,key,value,dbKey,extra={}}){
+    const q=text(value);
+    if(!q)return {id:'',manual:''};
+    const existing=matchMaster(items,key,q);
+    if(existing)return {id:existing.id,manual:''};
+    const item={id:Utils.id(),[key]:q,...extra,source:'manual-trip'};
+    const data=ensureArrayKey(dbKey);data.push(item);DB.set(dbKey,data,true);
+    return {id:item.id,manual:q};
+  }
+
+  function datalist(id,items){
+    return `<datalist id="${id}">${items.map(x=>`<option value="${esc(x)}"></option>`).join('')}</datalist>`;
+  }
+
+  function combinedField(label,id,value,items,icon,listId,placeholder,required=true){
+    return `<div class="form-group">
+      <label>${esc(label)}${required?' *':''}</label>
+      <div class="trip-combined-wrap"><i class="fas ${icon}"></i>
+        <input class="trip-combined-input" id="${id}_input" list="${listId}" value="${esc(value||'')}" placeholder="${esc(placeholder)}" autocomplete="off" ${required?'required':''}>
+      </div>
+      ${datalist(listId,items)}
+      <small class="trip-combined-help">Select existing data or type a new value in the same box.</small>
+    </div>`;
+  }
+
+  function expenseRow(exp){
+    const masters=typeof getExpenseMaster==='function'?getExpenseMaster():[];
+    const values=uniqueValues(masters.map(x=>x.name).concat(ensureArrayKey('trips').flatMap(t=>(t.expenses||[]).map(e=>e.type))));
+    const type=text(exp?.type);
+    return `<div class="form-row anori-trip-exp-row" style="margin-bottom:8px">
+      <div class="form-group"><label>Expense Type</label>
+        <div class="trip-combined-wrap"><i class="fas fa-receipt"></i><input class="trip-combined-input exp-type" list="expenseTypeListFinal" value="${esc(type)}" placeholder="Type / filter expense..." autocomplete="off"></div>
+      </div>
+      <div class="form-group"><label>Amount</label><div class="trip-input-wrap"><span class="trip-input-prefix">₹</span><input type="number" class="form-control exp-amt" min="0" step="0.01" placeholder="Amount" value="${num(exp?.amount)||''}"></div></div>
+      <div class="form-group" style="align-self:end"><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.anori-trip-exp-row').remove()"><i class="fas fa-trash"></i> Remove</button></div>
+    </div>`;
+  }
+
+  function formHtml(trip){
+    const vehicleRecords=ensureArrayKey('vehicles');
+    const vehicles=vehicleRecords.map(v=>v.number).filter(Boolean);
+    const drivers=ensureArrayKey('drivers').map(d=>d.name).filter(Boolean);
+    const parties=ensureArrayKey('parties').map(p=>p.name).filter(Boolean);
+    const locs=locations(), vend=vendors();
+    const selectedVehicle=trip?.vehicle_id?vehicleRecords.find(v=>v.id===trip.vehicle_id):matchMaster(vehicleRecords,'number',trip?.vehicle_manual||'');
+    const vehicle=trip?.vehicle_manual||selectedVehicle?.number||'';
+    const driver=trip?.driver_manual||ensureArrayKey('drivers').find(d=>d.id===trip?.driver_id)?.name||'';
+    const party=trip?.party_manual||ensureArrayKey('parties').find(p=>p.id===trip?.party_id)?.name||'';
+    const vendor=trip?.vendor_manual||ensureArrayKey('vendors').find(v=>v.id===trip?.vendor_id)?.name||trip?.vendor_name||'';
+    const expenses=(trip?.expenses||[]);
+    const masterClass=String(selectedVehicle?.classification||selectedVehicle?.vehicle_classification||'').toLowerCase();
+    const masterOutside=['outside','outside vehicle','outside organization vehicle','outside organization','external','vendor'].includes(masterClass);
+    const cls=trip?.vehicle_classification==='outside'||(!trip?.id&&masterOutside)?'outside':'company';
+    return `<div class="anori-simple-form trip-form-layout">
+      <section class="trip-form-section"><div class="trip-form-section-head"><i class="fas fa-calendar-alt"></i><span>Trip Details</span></div><div class="trip-form-grid">
+        <div class="form-group"><label>Date *</label><div class="trip-input-wrap"><i class="fas fa-calendar-alt"></i><input type="date" class="form-control" id="t_date" value="${esc(trip?.date||Utils.today())}" required></div></div>
+        ${combinedField('Vehicle','t_vehicle',vehicle,vehicles,'fa-truck','vehicleList','Type / filter vehicle...',true)}
+        ${combinedField('Driver','t_driver',driver,drivers,'fa-user','driverList','Type / filter driver...',true)}
+      </div></section>
+
+      <section class="trip-form-section"><div class="trip-form-section-head"><i class="fas fa-users"></i><span>Customer &amp; Route</span></div><div class="trip-form-grid">
+        ${combinedField('Party / Customer','t_party',party,parties,'fa-user','partyList','Type / filter customer...',true)}
+        ${combinedField('From','t_from',trip?.from||'',locs,'fa-map-marker-alt','fromList','Type / filter location...',true)}
+        ${combinedField('To','t_to',trip?.to||'',locs,'fa-map-marker-alt','toList','Type / filter location...',true)}
+      </div></section>
+
+      <section class="trip-form-section"><div class="trip-form-section-head"><i class="fas fa-rupee-sign"></i><span>Freight &amp; Advance</span></div><div class="trip-form-grid">
+        <div class="form-group"><label>Freight (₹) *</label><div class="trip-input-wrap"><span class="trip-input-prefix">₹</span><input type="number" class="form-control" id="t_freight" min="0" step="0.01" value="${num(trip?.freight)||''}" required></div></div>
+        <div class="form-group"><label>Trip Advance Amount (₹)</label><div class="trip-input-wrap"><span class="trip-input-prefix">₹</span><input type="number" class="form-control" id="t_trip_advance" min="0" step="0.01" value="${num(trip?.trip_advance_amount)||0}"></div><small class="anori-help">Separate trip advance amount.</small></div>
+        <div class="form-group"><label>Driver Amount / Advance (₹)</label><div class="trip-input-wrap"><span class="trip-input-prefix">₹</span><input type="number" class="form-control" id="t_driver_amount" min="0" step="0.01" value="${num(trip?.driver_amount)||0}"></div><small class="anori-help">This automatically appears in Driver Settlement for a matched driver.</small></div>
+      </div></section>
+
+      <section class="trip-form-section trip-classification-section"><div class="trip-form-section-head"><i class="fas fa-truck"></i><span>Vehicle Classification</span></div><div class="form-group" style="padding:12px 14px 4px;margin:0"><div class="trip-classification-control"><select id="t_vehicle_classification" aria-label="Vehicle Classification"><option value="company" ${cls==='company'?'selected':''}>COMPANY VEHICLE</option><option value="outside" ${cls==='outside'?'selected':''}>OUTSIDE VEHICLE</option></select><span class="anori-help" style="margin:0">Outside Vehicle creates a separate vendor settlement.</span></div></div>
+        <div class="trip-outside-fields ${cls==='outside'?'is-visible':''}" id="tripOutsideFields" data-outside-section="true" style="padding:4px 14px 12px">
+          ${combinedField('Owner / Vendor','t_vendor',vendor,vend,'fa-building','vendorList','Type / filter vendor...',true)}
+          <div class="form-group"><label>Vehicle Hire / Vendor Cost (₹) *</label><div class="trip-input-wrap"><span class="trip-input-prefix">₹</span><input type="number" class="form-control" id="t_vendor_cost" min="0" step="0.01" value="${num(trip?.vendor_cost)||0}"></div><small class="anori-help">Separate outside-vehicle/vendor cost. Do not mix with Customer Freight.</small></div>
+          <div class="form-group"><label>Vendor Advance (₹)</label><div class="trip-input-wrap"><span class="trip-input-prefix">₹</span><input type="number" class="form-control" id="t_vendor_advance" min="0" step="0.01" value="${num(trip?.vendor_advance)||0}"></div></div>
+          <div class="form-group"><label>Vendor Contact</label><input class="form-control" id="t_vendor_contact" value="${esc(trip?.vendor_contact||'')}" placeholder="Vendor contact number"></div>
+        </div>
+      </section>
+
+      <section class="trip-form-section"><div class="trip-form-section-head"><i class="fas fa-file-alt"></i><span>Trip Advice</span></div><div class="form-group trip-form-full"><div class="trip-input-wrap trip-textarea-wrap"><i class="fas fa-file-alt"></i><textarea class="form-control trip-advice-box" id="t_trip_advice" rows="3" placeholder="Enter trip advice / instructions...">${esc(trip?.trip_advice||'')}</textarea></div></div></section>
+
+      <section class="trip-form-section"><div class="trip-form-section-head"><i class="fas fa-clipboard-list"></i><span>Trip Expenses</span></div><datalist id="expenseTypeListFinal">${uniqueValues((typeof getExpenseMaster==='function'?getExpenseMaster():[]).map(x=>x.name).concat(ensureArrayKey('trips').flatMap(t=>(t.expenses||[]).map(e=>e.type)))).map(v=>`<option value="${esc(v)}"></option>`).join('')}</datalist><div id="expRows" class="trip-expenses-list">${expenses.map(expenseRow).join('')}</div><button type="button" class="btn btn-outline btn-sm trip-add-expense" onclick="Trips.addExpRow()"><i class="fas fa-plus"></i> Add Expense</button></section>
+
+      <section class="trip-form-section trip-notes-section"><div class="trip-form-section-head"><i class="fas fa-sticky-note"></i><span>Notes</span></div><div class="form-group trip-form-full"><div class="trip-input-wrap trip-textarea-wrap"><i class="fas fa-list"></i><textarea class="form-control" id="t_notes" rows="2" placeholder="Enter notes...">${esc(trip?.notes||'')}</textarea></div></div></section>
+    </div>`;
+  }
+
+  function readForm(){
+    const vehicleText=text(document.getElementById('t_vehicle_input')?.value);
+    const driverText=text(document.getElementById('t_driver_input')?.value);
+    const partyText=text(document.getElementById('t_party_input')?.value);
+    const from=text(document.getElementById('t_from_input')?.value);
+    const to=text(document.getElementById('t_to_input')?.value);
+    const vendorText=text(document.getElementById('t_vendor_input')?.value);
+    const cls=document.getElementById('t_vehicle_classification')?.value==='outside'?'outside':'company';
+    if(!vehicleText||!driverText||!partyText||!from||!to){Utils.toast('Please select or manually enter Vehicle, Driver, Customer, From and To.','error');return null;}
+    const freight=num(document.getElementById('t_freight')?.value), tripAdvance=num(document.getElementById('t_trip_advance')?.value), driverAmount=num(document.getElementById('t_driver_amount')?.value);
+    if(freight<=0)return Utils.toast('Freight amount must be greater than zero.','error');
+    if(tripAdvance<0||driverAmount<0)return Utils.toast('Amounts cannot be negative.','error');
+    const vendorCost=cls==='outside'?num(document.getElementById('t_vendor_cost')?.value):0;
+    if(cls==='outside' && !vendorText){Utils.toast('Please select or manually enter Owner / Vendor for an Outside Vehicle.','error');return null;}
+    if(cls==='outside' && vendorCost<=0){Utils.toast('Enter Vehicle Hire / Vendor Cost for an Outside Vehicle.','error');return null;}
+
+    const vr=resolveMaster({items:ensureArrayKey('vehicles'),key:'number',value:vehicleText,dbKey:'vehicles',extra:{type:'Manual',driver_amount:0,classification:cls==='outside'?'OUTSIDE ORGANIZATION VEHICLE':'COMPANY VEHICLE',vehicle_classification:cls==='outside'?'OUTSIDE ORGANIZATION VEHICLE':'COMPANY VEHICLE'}});
+    const dr=resolveMaster({items:ensureArrayKey('drivers'),key:'name',value:driverText,dbKey:'drivers',extra:{mobile:''}});
+    const pr=resolveMaster({items:ensureArrayKey('parties'),key:'name',value:partyText,dbKey:'parties',extra:{gst:'',addr:''}});
+    const ven=cls==='outside'?resolveMaster({items:ensureArrayKey('vendors'),key:'name',value:vendorText,dbKey:'vendors',extra:{mobile:text(document.getElementById('t_vendor_contact')?.value)}}):{id:'',manual:''};
+    const expenses=[];
+    document.querySelectorAll('#expRows .anori-trip-exp-row').forEach(r=>{
+      const type=text(r.querySelector('.exp-type')?.value),amount=num(r.querySelector('.exp-amt')?.value);
+      if(type&&amount>0)expenses.push({type,amount});
+    });
+    return {
+      date:document.getElementById('t_date')?.value||Utils.today(),
+      vehicle_id:vr.id,driver_id:dr.id,party_id:pr.id,
+      vehicle_manual:vr.manual,driver_manual:dr.manual,party_manual:pr.manual,
+      from,to,freight,driver_amount:driverAmount,trip_advance_amount:tripAdvance,
+      vehicle_classification:cls,
+      vendor_id:ven.id,vendor_manual:ven.manual,vendor_name:vendorText,vendor_contact:text(document.getElementById('t_vendor_contact')?.value),vendor_cost:vendorCost,
+      vendor_advance:cls==='outside'?num(document.getElementById('t_vendor_advance')?.value):0,
+      expenses,notes:text(document.getElementById('t_notes')?.value),trip_advice:text(document.getElementById('t_trip_advice')?.value)
+    };
+  }
+
+  function syncVendorSettlement(trip){
+    let data=ensureArrayKey('vendor_settlements');
+    const idx=data.findIndex(x=>x.trip_id===trip.id);
+    if(trip.vehicle_classification!=='outside'||num(trip.vendor_cost)<=0){if(idx>=0)data.splice(idx,1);DB.set('vendor_settlements',data,true);return;}
+    const existing=idx>=0?data[idx]:null;
+    const row={id:existing?.id||Utils.id(),trip_id:trip.id,date:trip.date||Utils.today(),vehicle_id:trip.vehicle_id||'',vendor_id:trip.vendor_id||'',vendor_name:trip.vendor_name||'',vehicle_number:ensureArrayKey('vehicles').find(v=>v.id===trip.vehicle_id)?.number||trip.vehicle_manual||'',vendor_cost:num(trip.vendor_cost),vendor_advance:num(trip.vendor_advance||0),deductions:num(trip.vendor_deductions||0),balance_payable:Math.max(0,num(trip.vendor_cost)-num(trip.vendor_advance||0)-num(trip.vendor_deductions||0)),status:'pending'};
+    if(idx>=0)data[idx]=row;else data.push(row);DB.set('vendor_settlements',data,true);
+  }
+
+  window.anoriSyncVendorSettlement=syncVendorSettlement;
+
+  function bindTripForm(trip,isEdit,id){
+    const cls=document.getElementById('t_vehicle_classification'), outside=document.getElementById('tripOutsideFields');
+    const refreshOutside=(autoScroll=false)=>{
+      const on=cls?.value==='outside';
+      if(outside)outside.classList.toggle('is-visible',on);
+      if(!on){
+        const vc=document.getElementById('t_vendor_cost');if(vc)vc.value='0';
+        const va=document.getElementById('t_vendor_advance');if(va)va.value='0';
+      } else if(autoScroll){
+        setTimeout(()=>outside?.scrollIntoView({behavior:'smooth',block:'nearest'}),80);
+      }
+    };
+    cls?.addEventListener('change',()=>refreshOutside(true));
+    refreshOutside(false);
+
+    const vehicleInput=document.getElementById('t_vehicle_input');
+    vehicleInput?.addEventListener('change',()=>{
+      const v=matchMaster(ensureArrayKey('vehicles'),'number',vehicleInput.value);
+      const masterClass=String(v?.classification||v?.vehicle_classification||'').toLowerCase();
+      const outsideVehicle=['outside','outside vehicle','outside organization vehicle','outside organization','external','vendor'].includes(masterClass);
+      if(v&&cls){
+        cls.value=outsideVehicle?'outside':'company';
+        refreshOutside(true);
+      }
+      const driverAmount=document.getElementById('t_driver_amount');
+      if(v&&driverAmount&&num(trip?.driver_amount)===0)driverAmount.value=num(v.driver_amount)||0;
+    });
+    vehicleInput?.addEventListener('input',()=>{
+      const v=matchMaster(ensureArrayKey('vehicles'),'number',vehicleInput.value);
+      if(!v)return;
+      const masterClass=String(v.classification||v.vehicle_classification||'').toLowerCase();
+      if(cls){cls.value=['outside','outside vehicle','outside organization vehicle','outside organization','external','vendor'].includes(masterClass)?'outside':'company';refreshOutside(true);}
+    });
+
+    if(!document.querySelector('#expRows .anori-trip-exp-row'))Trips.addExpRow();
+  }
+
+  Trips.addExpRow=function(type='',amount=''){
+    const rows=document.getElementById('expRows');if(!rows)return;
+    const div=document.createElement('div');div.className='form-row anori-trip-exp-row';div.style.marginBottom='8px';
+    const values=uniqueValues((typeof getExpenseMaster==='function'?getExpenseMaster():[]).map(x=>x.name).concat(ensureArrayKey('trips').flatMap(t=>(t.expenses||[]).map(e=>e.type))));
+    div.innerHTML=`<div class="form-group"><label>Expense Type</label><div class="trip-combined-wrap"><i class="fas fa-receipt"></i><input class="trip-combined-input exp-type" list="expenseTypeListFinal" value="${esc(type)}" placeholder="Type / filter expense..." autocomplete="off"></div></div><div class="form-group"><label>Amount</label><div class="trip-input-wrap"><span class="trip-input-prefix">₹</span><input type="number" class="form-control exp-amt" min="0" step="0.01" placeholder="Amount" value="${num(amount)||''}"></div></div><div class="form-group" style="align-self:end"><button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.anori-trip-exp-row').remove()"><i class="fas fa-trash"></i> Remove</button></div>`;
+    rows.appendChild(div);
+    let dl=document.getElementById('expenseTypeListFinal');if(!dl){dl=document.createElement('datalist');dl.id='expenseTypeListFinal';document.body.appendChild(dl);}dl.innerHTML=values.map(v=>`<option value="${esc(v)}"></option>`).join('');
+  };
+
+  Trips.openForm=function(){
+    UI.openModal('Create New Trip',formHtml(null),()=>{
+      const form=readForm();if(!form)return;
+      const trip={id:Utils.id(),trip_no:Utils.generateTripNo(form.date),...form,status:'completed',invoice_status:'pending',is_gst:true};
+      const data=ensureArrayKey('trips');data.push(trip);if(!DB.set('trips',data))return;
+      if(typeof syncDriverTripEntry==='function')syncDriverTripEntry(trip);
+      syncVendorSettlement(trip);
+      UI.closeModal();Utils.toast('Trip created successfully.','success');Router.go('trips');
+    },true);
+    bindTripForm(null,false,null);
+  };
+
+  Trips.showEditModal=function(id){
+    const trip=ensureArrayKey('trips').find(t=>t.id===id);if(!trip)return;
+    if(typeof activeInvoiceForTrip==='function'&&activeInvoiceForTrip(id))return Swal.fire({icon:'warning',title:'Trip Locked',text:'Cancel the active invoice before editing this trip.',confirmButtonText:'OK'});
+    UI.openModal('Edit Trip',formHtml(trip),()=>{
+      if(typeof activeInvoiceForTrip==='function'&&activeInvoiceForTrip(id))return Swal.fire({icon:'warning',title:'Trip Locked',text:'Cancel the active invoice before editing this trip.',confirmButtonText:'OK'});
+      const form=readForm();if(!form)return;
+      const data=ensureArrayKey('trips'),idx=data.findIndex(t=>t.id===id);if(idx<0)return Utils.toast('Trip not found.','error');
+      data[idx]={...data[idx],...form};if(!DB.set('trips',data))return;
+      if(typeof syncDriverTripEntry==='function')syncDriverTripEntry(data[idx]);
+      syncVendorSettlement(data[idx]);
+      UI.closeModal();Utils.toast('Trip updated successfully.','success');Router.go('trips');
+    },true);
+    bindTripForm(trip,true,id);
+  };
+  Trips.openEditForm=function(id){Trips.showEditModal(id);};
+
+  /* Trip list: preserve existing columns while showing manual values and outside classification. */
+  const baseTripRender=Trips.render.bind(Trips);
+  Trips.render=function(container){
+    baseTripRender(container);
+    const table=container.querySelector('table');if(!table)return;
+    const trips=ensureArrayKey('trips'),vehicles=ensureArrayKey('vehicles'),drivers=ensureArrayKey('drivers'),parties=ensureArrayKey('parties');
+    table.querySelectorAll('tbody tr').forEach((tr,i)=>{
+      const check=tr.querySelector('.trip-row-check');if(!check)return;
+      const t=trips.find(x=>String(x.id)===String(check.value));if(!t)return;
+      const cells=tr.children;
+      const v=vehicles.find(x=>x.id===t.vehicle_id),d=drivers.find(x=>x.id===t.driver_id),p=parties.find(x=>x.id===t.party_id);
+      const map=[{idx:3,val:v?.number||t.vehicle_manual||'-'},{idx:4,val:d?.name||t.driver_manual||'-'},{idx:5,val:p?.name||t.party_manual||'-'}];
+      map.forEach(m=>{if(cells[m.idx])cells[m.idx].textContent=m.val;});
+      const routeIdx=6;if(cells[routeIdx])cells[routeIdx].textContent=`${t.from||'-'} → ${t.to||'-'}`;
+    });
+  };
+
+  /* Final settings UI: old backup/import cards are removed by replacing the page. */
+  Settings.render=function(container){
+    const company=DB.get('company_profile',{})||{};
+    const backupFolder=localStorage.getItem('anori_backup_folder_path')||localStorage.getItem('anori_backup_folder_name')||'';
+    const driveFolder=localStorage.getItem('anori_google_drive_folder')||'';
+    const last=localStorage.getItem('anori_backup_last_status')||localStorage.getItem('anori_backup_last_time')||'Not backed up yet';
+    const supported=typeof window.showDirectoryPicker==='function'||!!window.anoriElectronBackup?.isAvailable;
+    container.innerHTML=`
+      <div class="anori-settings-page">
+        <div class="anori-section-intro"><div><strong>Settings</strong><span>System, company and data protection controls.</span></div></div>
+
+        <div class="card">
+          <h3 class="card-title"><i class="fas fa-building"></i> Company Settings</h3>
+          <div class="form-row">
+            <div class="form-group"><label>Company Name</label><input class="form-control" id="sys_company_name" value="${esc(company.name||'ANORI TRANSPORT')}"></div>
+            <div class="form-group"><label>GSTIN</label><input class="form-control" id="sys_company_gstin" value="${esc(company.gstin||company.gst||'')}"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Phone</label><input class="form-control" id="sys_company_phone" value="${esc(company.phone||'')}"></div>
+            <div class="form-group"><label>Email</label><input class="form-control" id="sys_company_email" value="${esc(company.email||'')}"></div>
+          </div>
+          <div class="form-group"><label>Address</label><textarea class="form-control" id="sys_company_address" rows="2">${esc(company.address||company.addr||'')}</textarea></div>
+          <button class="btn btn-primary" type="button" onclick="window.anoriSaveFinalSystemSettings()"><i class="fas fa-save"></i> Save Settings</button>
+        </div>
+
+        <div class="anori-settings-card" id="anoriBackupRestoreReferenceCard">
+          <div class="anori-ref-head"><i class="fas fa-save"></i> Data Backup &amp; Restore</div>
+          <div class="anori-ref-body">
+            <div class="anori-backup-ref-row">
+              <div class="anori-backup-ref-label">Backup Folder Path</div>
+              <input class="anori-backup-ref-input" id="anoriBackupFolderPathInput" value="${esc(backupFolder)}" placeholder="Select backup folder or enter path">
+              <button class="anori-ref-btn anori-ref-btn-blue" type="button" onclick="window.anoriBrowseBackupFolderFinal()">📁 BROWSE FOLDER</button>
+              <button class="anori-ref-btn anori-ref-btn-green" type="button" onclick="window.anoriSaveBackupPathFinal()">💾 SAVE PATH</button>
+            </div>
+            <div class="anori-backup-ref-row">
+              <div class="anori-backup-ref-label">Google Drive Folder</div>
+              <input class="anori-backup-ref-input" id="anoriGoogleDriveFolderInput" value="${esc(driveFolder)}" placeholder="Google Drive Desktop synced folder">
+              <button class="anori-ref-btn anori-ref-btn-blue" type="button" onclick="window.anoriBrowseDriveFolderFinal()">☁ BROWSE DRIVE</button>
+              <button class="anori-ref-btn anori-ref-btn-green" type="button" onclick="window.anoriSaveDrivePathFinal()">💾 SAVE DRIVE</button>
+            </div>
+            <div class="anori-backup-ref-actions" style="border-top:0;padding-top:0">
+              <button class="anori-ref-btn anori-ref-btn-orange" type="button" onclick="window.anoriImportFile?.()">📥 IMPORT DATA</button>
+              <button class="anori-ref-btn anori-ref-btn-green" type="button" onclick="window.anoriExportJSON?.()">📤 EXPORT DATA</button>
+            </div>
+            <div class="anori-backup-ref-actions">
+              <button class="anori-ref-btn anori-ref-btn-green" type="button" onclick="window.anoriExportXLSX?.()">📊 EXPORT TO EXCEL</button>
+              <button class="anori-ref-btn anori-ref-btn-green" type="button" onclick="window.anoriExportSQLite?.()">🗄 EXPORT TO SQLITE</button>
+              <button class="anori-ref-btn anori-ref-btn-orange" type="button" onclick="window.anoriImportByFormat?.('sqlite')">📥 IMPORT SQLITE</button>
+              <button class="anori-ref-btn anori-ref-btn-orange" type="button" onclick="window.anoriImportByFormat?.('json')">📥 IMPORT JSON</button>
+              <button class="anori-ref-btn anori-ref-btn-blue" type="button" onclick="window.anoriBackupNowFinal?.()">💾 AUTO BACKUP NOW</button>
+              <button class="anori-ref-btn anori-ref-btn-outline" type="button" onclick="window.anoriBackupStatus?.()">🟢 ONLINE / STATUS</button>
+            </div>
+            <div class="anori-backup-ref-status">
+              <div class="anori-ref-status-line success">📁 ${esc(backupFolder||'Backup folder not selected')} — backup controls ready.</div>
+              <div class="anori-ref-status-line info">☁ Google Drive: ${esc(driveFolder||'Not configured')}</div>
+              <div class="anori-ref-status-line">⏰ Auto backup status: ${esc(last)}</div>
+            </div>
+            <div class="anori-backup-ref-note">${supported?'Direct folder access is available in this environment.':'Browser folder access depends on Chrome/Edge; the Windows EXE can use the native folder picker.'} Google Drive must be a locally synced folder; no fake cloud connection is created.</div>
+          </div>
+        </div>
+      </div>`;
+  };
+
+  window.anoriSaveFinalSystemSettings=function(){
+    const c=DB.get('company_profile',{})||{};
+    DB.set('company_profile',{...c,name:text(document.getElementById('sys_company_name')?.value)||'ANORI TRANSPORT',gstin:text(document.getElementById('sys_company_gstin')?.value),gst:text(document.getElementById('sys_company_gstin')?.value),phone:text(document.getElementById('sys_company_phone')?.value),email:text(document.getElementById('sys_company_email')?.value),address:text(document.getElementById('sys_company_address')?.value),addr:text(document.getElementById('sys_company_address')?.value)},true);
+    Utils.toast('Settings saved successfully.','success');
+  };
+
+  window.anoriSaveBackupPathFinal=async function(){
+    const v=text(document.getElementById('anoriBackupFolderPathInput')?.value);
+    if(!v){localStorage.removeItem('anori_backup_folder_name');localStorage.removeItem('anori_backup_folder_path');Utils.toast('Backup path cleared.','success');return;}
+    if(typeof window.anoriSetBackupFolderPath==='function'){
+      const ok=await window.anoriSetBackupFolderPath(v);
+      if(ok)return;
+    }
+    localStorage.setItem('anori_backup_folder_name',v);
+    Utils.toast('Backup path saved as a reference. Use BROWSE FOLDER to grant write access.','info');
+  };
+  window.anoriSaveDrivePathFinal=function(){
+    const v=text(document.getElementById('anoriGoogleDriveFolderInput')?.value);
+    localStorage.setItem('anori_google_drive_folder',v);
+    Utils.toast(v?'Google Drive synced-folder path saved.':'Google Drive path cleared.','success');
+  };
+  async function pickFolder(kind){
+    try{
+      if(window.anoriElectronBackup?.isAvailable && typeof window.anoriElectronBackup.selectFolder==='function'){
+        const info=await window.anoriElectronBackup.selectFolder();
+        if(info?.path){
+          if(kind==='drive'){localStorage.setItem('anori_google_drive_folder',info.path);const el=document.getElementById('anoriGoogleDriveFolderInput');if(el)el.value=info.path;}
+          else {localStorage.setItem('anori_backup_folder_name',info.path);const el=document.getElementById('anoriBackupFolderPathInput');if(el)el.value=info.path;}
+          Utils.toast('Folder selected successfully.','success');return;
+        }
+      }
+      if(typeof window.showDirectoryPicker!=='function'){Utils.toast('Folder picker is not available in this browser.','warning');return;}
+      const h=await window.showDirectoryPicker({mode:'readwrite'});
+      if(kind==='drive'){localStorage.setItem('anori_google_drive_folder',h.name||'Selected Folder');const el=document.getElementById('anoriGoogleDriveFolderInput');if(el)el.value=h.name||'Selected Folder';}
+      else {localStorage.setItem('anori_backup_folder_name',h.name||'Selected Folder');const el=document.getElementById('anoriBackupFolderPathInput');if(el)el.value=h.name||'Selected Folder';}
+      Utils.toast('Folder selected successfully.','success');
+    }catch(e){if(e?.name!=='AbortError')Utils.toast('Folder selection failed.','error');}
+  }
+  // Use the application's real backup controller so Browse Folder creates a
+  // writable folder handle used by AUTO BACKUP NOW / scheduled backup.
+  window.anoriBrowseBackupFolderFinal=async()=>{
+    if(typeof window.anoriSelectBackupFolder==='function') {
+      try {
+        if(window.anoriElectronBackup?.isAvailable || typeof window.showDirectoryPicker==='function') return window.anoriSelectBackupFolder();
+      } catch (_) {}
+    }
+    if(typeof window.showDirectoryPicker==='function') return pickFolder('backup');
+    if(typeof window.showSaveFilePicker==='function' && typeof window.anoriSelectBackupFile==='function'){
+      Utils.toast('This browser does not expose folder access here. Select the backup file location instead.','info');
+      return window.anoriSelectBackupFile();
+    }
+    Utils.toast('Folder selection is unavailable in this browser/file mode. Use the ANORI TRANSPORT desktop EXE for native folder selection.','warning');
+  };
+  window.anoriBrowseDriveFolderFinal=async()=>{
+    if(window.anoriElectronBackup?.isAvailable || typeof window.showDirectoryPicker==='function') return pickFolder('drive');
+    Utils.toast('Drive folder selection is unavailable in this browser/file mode. Use the desktop EXE or type the synced folder path manually.','warning');
+  };
+  window.anoriBackupNowFinal=async()=>{
+    if(typeof window.anoriBackupNow==='function'){
+      const result=await window.anoriBackupNow();
+      if(result!==false)return result;
+    }
+    if(typeof window.anoriSelectBackupFolder==='function') return window.anoriSelectBackupFolder();
+    return false;
+  };
+
+  /* Keep data-transfer/backup exports complete for new vendor records. */
+  try{
+    const patchKeys=()=>{
+      const files=[window.__ANORI_DATA_TRANSFER_KEYS__];
+      void files;
+    };
+    patchKeys();
+  }catch(_){ }
+
+  try{localStorage.setItem('anori_app_version','2.30.0');}catch(_){ }
+  window.ANORI_V230_FINAL=true;
+})();
+
+/* ============================================================
+   OUTSIDE VEHICLE — VENDOR SETTLEMENT UI
+   Kept inside the existing Settlement area so no new navigation/data
+   module is introduced.
+   ============================================================ */
+(function installOutsideVendorSettlementView(){
+  'use strict';
+  const esc=v=>Sanitize.html(v==null?'':String(v));
+  const num=v=>{const n=parseFloat(v);return Number.isFinite(n)?n:0;};
+  const previousRender=DriverSettlement.render.bind(DriverSettlement);
+  DriverSettlement.render=function(container){
+    previousRender(container);
+    const rows=DB.get('vendor_settlements',[])||[];
+    const trips=DB.get('trips',[])||[];
+    const vehicles=DB.get('vehicles',[])||[];
+    const body=rows.length?rows.slice().reverse().map(r=>{
+      const t=trips.find(x=>x.id===r.trip_id),v=vehicles.find(x=>x.id===r.vehicle_id);
+      return `<tr><td>${esc(r.date||t?.date||'-')}</td><td><strong>${esc(t?.trip_no||r.trip_id||'-')}</strong></td><td>${esc(v?.number||r.vehicle_number||t?.vehicle_manual||'-')}</td><td>${esc(r.vendor_name||'-')}</td><td>${Utils.fmt(r.vendor_cost)}</td><td>${Utils.fmt(r.vendor_advance)}</td><td>${Utils.fmt(r.deductions)}</td><td><strong>${Utils.fmt(r.balance_payable)}</strong></td><td><span class="status-badge ${r.status==='paid'?'status-paid':'status-pending'}">${esc(String(r.status||'pending').toUpperCase())}</span></td><td><button type="button" class="btn btn-outline btn-sm" onclick="window.anoriEditVendorSettlement?.('${esc(r.id)}')"><i class="fas fa-edit"></i> Edit</button></td></tr>`;
+    }).join(''):'<tr><td colspan="10" class="empty-state">No outside vehicle vendor settlements yet.</td></tr>';
+    container.insertAdjacentHTML('beforeend',`<div class="card anori-vendor-settlement-card"><div style="display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px"><div><h3 class="card-title"><i class="fas fa-truck-loading"></i> Outside Vehicle / Vendor Settlement</h3><span class="anori-help">Vendor vehicle costs are tracked separately from Driver Settlement.</span></div></div><div class="table-wrapper"><table><thead><tr><th>Date</th><th>Trip</th><th>Vehicle</th><th>Vendor</th><th>Vehicle Cost</th><th>Vendor Advance</th><th>Deductions</th><th>Balance Payable</th><th>Status</th><th>Action</th></tr></thead><tbody>${body}</tbody></table></div></div>`);
+  };
+
+  window.anoriEditVendorSettlement=function(id){
+    const rows=DB.get('vendor_settlements',[])||[],r=rows.find(x=>x.id===id);if(!r)return;
+    const html=`<div class="form-row"><div class="form-group"><label>Vendor Advance (₹)</label><input class="form-control" id="vs_advance" type="number" min="0" step="0.01" value="${num(r.vendor_advance)}"></div><div class="form-group"><label>Deductions (₹)</label><input class="form-control" id="vs_deductions" type="number" min="0" step="0.01" value="${num(r.deductions)}"></div></div><div class="form-group"><label>Status</label><select class="form-control" id="vs_status"><option value="pending" ${r.status==='pending'?'selected':''}>Pending</option><option value="paid" ${r.status==='paid'?'selected':''}>Paid</option></select></div>`;
+    UI.openModal('Edit Vendor Settlement',html,()=>{
+      const advance=num(document.getElementById('vs_advance')?.value),deductions=num(document.getElementById('vs_deductions')?.value),status=document.getElementById('vs_status')?.value||'pending';
+      const data=DB.get('vendor_settlements',[])||[],idx=data.findIndex(x=>x.id===id);if(idx<0)return;
+      data[idx]={...data[idx],vendor_advance:advance,deductions, status,balance_payable:Math.max(0,num(data[idx].vendor_cost)-advance-deductions)};
+      DB.set('vendor_settlements',data,true);UI.closeModal();Utils.toast('Vendor settlement updated.','success');Router.go('settlements');
+    });
+  };
+})();
+
+
+/* ============================================================
+   ANORI TRANSPORT — AMENDMENT HOTFIX 2026-10-04
+   Scope only:
+   1) Master Vehicle -> New Trip automatic classification
+   2) Backup folder picker/path UI synchronization
+   3) No unrelated workflow changes
+   ============================================================ */
+(function installAmendmentHotfix_20261004(){
+  'use strict';
+  if(window.__ANORI_AMENDMENT_HOTFIX_20261004__) return;
+  window.__ANORI_AMENDMENT_HOTFIX_20261004__=true;
+
+  const txt=v=>String(v==null?'':v).trim();
+  const key=v=>txt(v).toLowerCase().replace(/[._-]+/g,' ').replace(/\s+/g,' ');
+  const arr=k=>{const v=DB.get(k,[]);return Array.isArray(v)?v:[];};
+  const isOutside=v=>{
+    const k=key(v?.classification||v?.vehicle_classification||v||'');
+    return ['outside','outside vehicle','outside organization vehicle','outside organization','external','vendor'].includes(k);
+  };
+  const findVehicle=value=>{
+    const q=key(value);
+    if(!q) return null;
+    return arr('vehicles').find(v=>key(v?.number)===q)||null;
+  };
+
+  // Re-evaluate the selected vehicle from the actual Master Data record.
+  // This fixes both new-trip selection and edit-trip opening.
+  function syncVehicleClassification(forceFromMaster=true, scrollOutside=false){
+    const input=document.getElementById('t_vehicle_input');
+    const select=document.getElementById('t_vehicle_classification');
+    const outside=document.getElementById('tripOutsideFields');
+    if(!select) return false;
+
+    const vehicle=input ? findVehicle(input.value) : null;
+    if(vehicle && (forceFromMaster || vehicle.classification || vehicle.vehicle_classification)){
+      // Existing Master Data vehicles always use their saved classification.
+      select.value=isOutside(vehicle)?'outside':'company';
+      select.disabled=true;
+      select.title='Vehicle Classification is controlled by the selected Master Data vehicle.';
+    } else {
+      // A manually entered vehicle must remain classifiable by the user.
+      select.disabled=false;
+      select.removeAttribute('title');
+      if(!select.value) select.value='company';
+    }
+
+    // Apply visibility from the current control value on every path, including
+    // manual vehicle entry and direct classification changes.
+    const outsideVehicle=select.value==='outside';
+    if(outside) outside.classList.toggle('is-visible',outsideVehicle);
+    if(outsideVehicle){
+      if(scrollOutside) setTimeout(()=>outside?.scrollIntoView({behavior:'smooth',block:'nearest'}),80);
+      setTimeout(()=>{
+        const vendor=document.getElementById('t_vendor_input');
+        if(vendor && !vendor.value && outsideVehicle) vendor.focus({preventScroll:true});
+      },40);
+    }
+
+    if(vehicle){
+      const driverAmount=document.getElementById('t_driver_amount');
+      if(driverAmount && Number(driverAmount.value||0)===0 && Number(vehicle.driver_amount||0)>0){
+        driverAmount.value=Number(vehicle.driver_amount)||0;
+      }
+    }
+    return !!vehicle;
+  }
+
+  // Patch the existing trip-form binder without replacing the trip workflow.
+  if(window.Trips && typeof Trips.showEditModal==='function' && !Trips.__vehicleClassificationHotfix){
+    const originalShowEdit=Trips.showEditModal;
+    Trips.showEditModal=function(id){
+      const result=originalShowEdit.apply(this,arguments);
+      setTimeout(()=>syncVehicleClassification(true),60);
+      return result;
+    };
+    Trips.__vehicleClassificationHotfix=true;
+  }
+
+  // Capture dynamically rendered New Trip vehicle input changes.
+  document.addEventListener('input',e=>{
+    if(e.target?.id==='t_vehicle_input') syncVehicleClassification(true);
+  },true);
+  document.addEventListener('change',e=>{
+    if(e.target?.id==='t_vehicle_input') syncVehicleClassification(true);
+    else if(e.target?.id==='t_vehicle_classification') syncVehicleClassification(false,true);
+  },true);
+  document.addEventListener('input',e=>{
+    if(e.target?.id==='t_vehicle_classification') syncVehicleClassification(false,false);
+  },true);
+  document.addEventListener('blur',e=>{
+    if(e.target?.id==='t_vehicle_input') syncVehicleClassification(true);
+  },true);
+
+  // Backup UI helpers: use the existing native/Electron controller, but also
+  // synchronize the visible path field with the real selected path.
+  function setBackupInput(value){
+    const el=document.getElementById('anoriBackupFolderPathInput');
+    if(el && value) el.value=value;
+  }
+
+  const originalSetBackupPath=window.anoriSetBackupFolderPath;
+  if(typeof originalSetBackupPath==='function' && !window.__ANORI_BACKUP_PATH_WRAPPED__){
+    window.anoriSetBackupFolderPath=async function(pathValue){
+      const result=await originalSetBackupPath(pathValue);
+      if(result){
+        try{localStorage.setItem('anori_backup_folder_path',txt(pathValue));}catch(_){ }
+        setBackupInput(txt(pathValue));
+      }
+      return result;
+    };
+    window.__ANORI_BACKUP_PATH_WRAPPED__=true;
+  }
+
+  const originalBrowse=window.anoriBrowseBackupFolderFinal;
+  window.anoriBrowseBackupFolderFinal=async function(){
+    try{
+      // Electron/EXE: use the real native Windows folder picker and persist the
+      // actual path through the application's existing backup controller.
+      if(window.anoriElectronBackup?.isAvailable && typeof window.anoriElectronBackup.selectFolder==='function'){
+        const info=await window.anoriElectronBackup.selectFolder();
+        if(!info?.path) return false;
+        if(typeof window.anoriSetBackupFolderPath!=='function') return false;
+        const ok=await window.anoriSetBackupFolderPath(info.path);
+        if(!ok) return false;
+        try{localStorage.setItem('anori_backup_folder_path',info.path);localStorage.setItem('anori_backup_folder_name',info.name||info.path);}catch(_){ }
+        setBackupInput(info.path);
+        if(window.Utils?.toast) Utils.toast('Backup folder selected, initial backup written, and destination verified.','success');
+        return true;
+      }
+
+      // Browser: let the existing controller open the directory picker once.
+      if(typeof window.showDirectoryPicker==='function' && typeof window.anoriSelectBackupFolder==='function'){
+        const ok=await window.anoriSelectBackupFolder();
+        if(ok!==true) return false;
+        const saved=localStorage.getItem('anori_backup_folder_name')||'';
+        if(saved) setBackupInput(saved);
+        return true;
+      }
+
+      if(typeof originalBrowse==='function') return originalBrowse();
+      if(window.Utils?.toast) Utils.toast('Folder selection is unavailable in this runtime. Use the ANORI TRANSPORT desktop EXE for native folder selection.','warning');
+      return false;
+    }catch(e){
+      if(e?.name!=='AbortError'){
+        console.error('Backup folder selection failed:',e);
+        if(window.Utils?.toast) Utils.toast('Backup folder selection failed: '+(e.message||'unknown error'),'error');
+      }
+      return false;
+    }
+  };
+
+  const originalBackupNowFinal=window.anoriBackupNowFinal;
+  window.anoriBackupNowFinal=async function(){
+    if(typeof window.anoriBackupNow==='function'){
+      const result=await window.anoriBackupNow();
+      if(result!==false) return result;
+    }
+    if(typeof originalBackupNowFinal==='function') return originalBackupNowFinal();
+    return false;
+  };
+
+  // Restore the actual saved path into the Settings field whenever Settings
+  // is opened/re-rendered.
+  const originalSettingsRender=window.Settings?.render;
+  if(window.Settings && typeof originalSettingsRender==='function' && !window.Settings.__backupPathUiHotfix){
+    window.Settings.render=function(container){
+      const result=originalSettingsRender.apply(this,arguments);
+      setTimeout(()=>{
+        const saved=localStorage.getItem('anori_backup_folder_path')||'';
+        if(saved) setBackupInput(saved);
+      },0);
+      return result;
+    };
+    window.Settings.__backupPathUiHotfix=true;
+  }
+})();
+
+/* ===== END js/app.js ===== */
+
+
+/* ===== BEGIN js/data-transfer.js ===== */
 /* ANORI TRANSPORT - Global Data Import / Export Center
  * Full-fidelity JSON / Excel / SQLite / CSV transfers.
  * Uses browser-safe download and File System Access APIs when available.
@@ -6582,7 +7487,7 @@ window.addEventListener('resize',()=>{
   if(window.__ANORI_DATA_TRANSFER_V1__) return;
   window.__ANORI_DATA_TRANSFER_V1__=true;
 
-  const DATA_KEYS=['company_profile','vehicles','drivers','parties','trips','invoices','driver_settlements','payments','expense_master','followups','audit_log'];
+  const DATA_KEYS=['company_profile','vehicles','drivers','parties','vendors','trips','invoices','driver_settlements','vendor_settlements','payments','expense_master','followups','audit_log'];
   const todaySafe=()=>typeof today==='function'?today():new Date().toISOString().slice(0,10);
   const esc=v=>typeof Sanitize!=='undefined'&&Sanitize.html?Sanitize.html(v==null?'':String(v)):String(v==null?'':v).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]));
   const snapshot=()=>{
@@ -6595,9 +7500,7 @@ window.addEventListener('resize',()=>{
     a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();
     setTimeout(()=>URL.revokeObjectURL(url),1000);
   };
-  const notify=(m,t='info')=>{try{Utils.toast(m,t)}catch(_){if(t==='error')console.warn('[ANORI]',m);else console.log(m)}};
-  const sqliteReady=()=>!!(window.AnoriSQLite?.exportSnapshot||typeof initSqlJs==='function');
-  const sqliteUnavailable=()=>false;
+  const notify=(m,t='info')=>{try{Utils.toast(m,t)}catch(_){console.log(m)}};
   const confirmImport=async present=>{
     if(window.Swal){
       const r=await Swal.fire({icon:'warning',title:'IMPORT DATA?',html:`<div style="text-align:left"><p><strong>${present.length}</strong> supported data sections found.</p><p>This will replace the matching data in ANORI TRANSPORT.</p><p>Your existing data will be protected by an internal rollback snapshot. No file will be downloaded unless you explicitly choose an Export option.</p></div>`,showCancelButton:true,confirmButtonText:'IMPORT DATA',cancelButtonText:'CANCEL'});
@@ -6652,8 +7555,24 @@ window.addEventListener('resize',()=>{
 
   // ---------- SQLite ----------
   window.anoriExportSQLite=async()=>{
-    if(!sqliteReady())return notify('SQLite backup engine unavailable.','error');
-    try{const bytes=window.AnoriSQLite?.exportSnapshot?window.AnoriSQLite.exportSnapshot(snapshot()):await (async()=>{const SQL=await initSqlJs({locateFile:f=>window.__ANORI_SQL_LOCAL__?`libs/sqljs/${f}`:`https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${f}`});const db=new SQL.Database();DATA_KEYS.forEach(k=>{const t=k.replace(/[^A-Za-z0-9_]/g,'_');db.run(`CREATE TABLE IF NOT EXISTS "${t}" (json TEXT NOT NULL)`);const v=DB.get(k,k==='company_profile'?{}:[]);(Array.isArray(v)?v:[v]).forEach(r=>db.run(`INSERT INTO "${t}" VALUES (?)`,[JSON.stringify(r??{})]));});const x=db.export();db.close();return x;})();download(new Blob([bytes],{type:'application/x-sqlite3'}),`anori-data-${todaySafe()}.sqlite`);notify('SQLite export downloaded.','success');}catch(e){console.error(e);notify('SQLite export failed: '+(e.message||'unknown error'),'error');}
+    if(typeof initSqlJs!=='function')return notify('SQLite library unavailable.','error');
+    try{
+      const SQL=await initSqlJs({locateFile:f=>`https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${f}`});
+      const db=new SQL.Database();
+      db.run('CREATE TABLE IF NOT EXISTS anori_meta (key TEXT PRIMARY KEY, value TEXT)');
+      db.run('INSERT INTO anori_meta VALUES (?,?)',['application','ANORI TRANSPORT']);
+      db.run('INSERT INTO anori_meta VALUES (?,?)',['exported_at',new Date().toISOString()]);
+      DATA_KEYS.forEach(k=>{
+        const table=k.replace(/[^A-Za-z0-9_]/g,'_');
+        db.run(`CREATE TABLE IF NOT EXISTS "${table}" (json TEXT NOT NULL)`);
+        const v=DB.get(k,k==='company_profile'?{}:[]);
+        const rows=Array.isArray(v)?v:[v];
+        rows.forEach(r=>db.run(`INSERT INTO "${table}" (json) VALUES (?)`,[JSON.stringify(r??{})]));
+      });
+      const bytes=db.export();db.close();
+      download(new Blob([bytes],{type:'application/x-sqlite3'}),`anori-data-${todaySafe()}.sqlite`);
+      notify('SQLite export downloaded.','success');
+    }catch(e){console.error(e);notify('SQLite export failed: '+(e.message||'unknown error'),'error');}
   };
 
   // ---------- CSV (one file containing every table/section) ----------
@@ -6731,10 +7650,20 @@ window.addEventListener('resize',()=>{
     return normalizeImportedPayload(d);
   };
   const readSqlite=async f=>{
-    const bytes=await f.arrayBuffer();
-    if(window.AnoriSQLite?.importBytes)return normalizeImportedPayload(window.AnoriSQLite.importBytes(bytes));
-    if(!sqliteReady())throw new Error('SQLite import engine unavailable.');
-    const SQL=await initSqlJs({locateFile:x=>window.__ANORI_SQL_LOCAL__?`libs/sqljs/${x}`:`https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${x}`});const db=new SQL.Database(new Uint8Array(bytes)),d={};DATA_KEYS.forEach(k=>{const t=k.replace(/[^A-Za-z0-9_]/g,'_');try{const q=db.exec(`SELECT json FROM "${t}"`);if(q[0]){const vals=q[0].values.map(r=>JSON.parse(r[0]));d[k]=k==='company_profile'?(vals[0]||{}):vals;}}catch(_){}});db.close();return normalizeImportedPayload(d);
+    if(typeof initSqlJs!=='function')throw new Error('SQLite library unavailable.');
+    const SQL=await initSqlJs({locateFile:x=>`https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${x}`});
+    const db=new SQL.Database(new Uint8Array(await f.arrayBuffer())),d={};
+    DATA_KEYS.forEach(k=>{
+      const table=k.replace(/[^A-Za-z0-9_]/g,'_');
+      try{
+        const q=db.exec(`SELECT json FROM "${table}"`);
+        if(q[0]){
+          const vals=q[0].values.map(r=>JSON.parse(r[0]));
+          d[k]=k==='company_profile'?(vals[0]||{}):vals;
+        }
+      }catch(_){ }
+    });
+    db.close();return normalizeImportedPayload(d);
   };
   const readCsv=async f=>{
     const text=(await f.text()).replace(/^\uFEFF/,'');
@@ -6766,14 +7695,14 @@ window.addEventListener('resize',()=>{
         if(!format)throw new Error('Unsupported import format. Use JSON, XLSX, CSV or SQLite.');
         let d;if(format==='json')d=await readJson(f);else if(format==='xlsx')d=await readXlsx(f);else if(format==='sqlite')d=await readSqlite(f);else d=await readCsv(f);
         return await applyImport(d);
-      }catch(e){if(/SQLite is not available/i.test(e?.message||'')){return;} console.error(e);if(window.Swal)await Swal.fire({icon:'error',title:'IMPORT FAILED',text:e.message||'Unable to import file.'});else notify(e.message||'Import failed.','error');}
+      }catch(e){console.error(e);if(window.Swal)await Swal.fire({icon:'error',title:'IMPORT FAILED',text:e.message||'Unable to import file.'});else notify(e.message||'Import failed.','error');}
     };i.click();
   };
 
   window.anoriImportByFormat=async format=>{
     const accept={json:'.json',xlsx:'.xlsx',sqlite:'.sqlite,.db',csv:'.csv'}[format]||'.json';
     const i=document.createElement('input');i.type='file';i.accept=accept;
-    i.onchange=async()=>{try{const f=i.files?.[0];if(!f)return;let d;if(format==='json')d=await readJson(f);else if(format==='xlsx')d=await readXlsx(f);else if(format==='sqlite')d=await readSqlite(f);else d=await readCsv(f);await applyImport(d);}catch(e){if(/SQLite is not available/i.test(e?.message||'')){return;} console.error(e);if(window.Swal)Swal.fire({icon:'error',title:'IMPORT FAILED',text:e.message||'Unable to import file.'});else notify(e.message||'Import failed.','error');}};
+    i.onchange=async()=>{try{const f=i.files?.[0];if(!f)return;let d;if(format==='json')d=await readJson(f);else if(format==='xlsx')d=await readXlsx(f);else if(format==='sqlite')d=await readSqlite(f);else d=await readCsv(f);await applyImport(d);}catch(e){console.error(e);if(window.Swal)Swal.fire({icon:'error',title:'IMPORT FAILED',text:e.message||'Unable to import file.'});else notify(e.message||'Import failed.','error');}};
     i.click();
   };
 
@@ -6799,8 +7728,10 @@ window.addEventListener('resize',()=>{
       let bytes,name,type;
       if(format==='json'){bytes=new TextEncoder().encode(JSON.stringify(snapshot(),null,2));name=`anori-data-${todaySafe()}.json`;type='application/json';}
       else if(format==='sqlite'){
-        if(!sqliteReady())throw new Error('SQLite export engine unavailable.');
-        bytes=window.AnoriSQLite.exportSnapshot(snapshot());name=`anori-data-${todaySafe()}.sqlite`;type='application/x-sqlite3';
+        if(typeof initSqlJs!=='function')throw new Error('SQLite library unavailable.');
+        const SQL=await initSqlJs({locateFile:f=>`https://cdnjs.cloudflare.com/ajax/libs/sql.js/1.10.3/${f}`}),db=new SQL.Database();
+        DATA_KEYS.forEach(k=>{const t=k.replace(/[^A-Za-z0-9_]/g,'_');db.run(`CREATE TABLE "${t}" (json TEXT NOT NULL)`);const v=DB.get(k,k==='company_profile'?{}:[]);(Array.isArray(v)?v:[v]).forEach(r=>db.run(`INSERT INTO "${t}" VALUES (?)`,[JSON.stringify(r??{})]));});
+        bytes=db.export();db.close();name=`anori-data-${todaySafe()}.sqlite`;type='application/x-sqlite3';
       }else throw new Error('Select JSON or SQLite.');
       const fh=await exportFolder.getFileHandle(name,{create:true}),w=await fh.createWritable();await w.write(new Blob([bytes],{type}));await w.close();notify(`${format.toUpperCase()} exported to selected folder.`,'success');
     }catch(e){console.error(e);notify('Export failed: '+(e.message||'unknown error'),'error');}
@@ -6831,9 +7762,251 @@ window.addEventListener('resize',()=>{
   }
 })();
 
-/* ===== END data-transfer.js ===== */
+/* ===== END js/data-transfer.js ===== */
 
-/* ===== BEGIN anori-data-safety.js ===== */
+
+/* ===== BEGIN js/invoice-pdf-final-v4.js ===== */
+
+/* ANORI TRANSPORT — FINAL PDF ENGINE v3.0
+   Root-cause fix: remove all dependency on jsPDF/html2pdf for invoice export.
+   The Invoice Preview DOM is rendered with html2canvas, then a standards-based
+   PDF is assembled directly from JPEG image objects. This prevents every
+   recurring jsPDF.addImage coordinate error, including errors originating
+   inside html2pdf's internal jsPDF calls.
+*/
+(function installFinalNativeInvoicePdf(){
+  'use strict';
+  if(!window.Invoices) return;
+
+  const concatBytes=(parts)=>{
+    const total=parts.reduce((n,p)=>n+p.length,0);
+    const out=new Uint8Array(total); let offset=0;
+    for(const p of parts){out.set(p,offset);offset+=p.length;}
+    return out;
+  };
+  const enc=new TextEncoder();
+  const ascii=(s)=>enc.encode(s);
+
+  function buildPdfFromJpegs(pages){
+    // Each page is a JPEG already sized/cropped for one A4 page.
+    const objects=[];
+    objects[1]=ascii('<< /Type /Catalog /Pages 2 0 R >>');
+    const pageRefs=[];
+    const pageObjects=[];
+    const contentObjects=[];
+    const imageObjects=[];
+    let objNo=3;
+
+    for(let i=0;i<pages.length;i++){
+      const imageObjNo=objNo++;
+      const contentObjNo=objNo++;
+      const pageObjNo=objNo++;
+      imageObjects.push({objNo:imageObjNo,jpeg:pages[i].jpeg,width:pages[i].width,height:pages[i].height});
+      contentObjects.push({objNo:contentObjNo,imageObjNo,drawW:pages[i].drawW,drawH:pages[i].drawH});
+      pageObjects.push({objNo:pageObjNo,contentObjNo,imageObjNo});
+      pageRefs.push(`${pageObjNo} 0 R`);
+    }
+
+    objects[2]=ascii(`<< /Type /Pages /Kids [${pageRefs.join(' ')}] /Count ${pages.length} >>`);
+
+    for(const img of imageObjects){
+      const header=ascii(`<< /Type /XObject /Subtype /Image /Width ${img.width} /Height ${img.height} /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ${img.jpeg.length} >>\nstream\n`);
+      const footer=ascii('\nendstream');
+      objects[img.objNo]=concatBytes([header,img.jpeg,footer]);
+    }
+
+    for(const c of contentObjects){
+      const stream=ascii(`q\n${c.drawW} 0 0 ${c.drawH} 5 ${5 + (287-c.drawH)} cm\n/Im${c.imageObjNo} Do\nQ`);
+      objects[c.objNo]=concatBytes([ascii(`<< /Length ${stream.length} >>\nstream\n`),stream,ascii('\nendstream')]);
+    }
+
+    for(const p of pageObjects){
+      objects[p.objNo]=ascii(`<< /Type /Page /Parent 2 0 R /MediaBox [0 0 210 297] /Resources << /XObject << /Im${p.imageObjNo} ${p.imageObjNo} 0 R >> >> /Contents ${p.contentObjNo} 0 R >>`);
+    }
+
+    const chunks=[ascii('%PDF-1.4\n%\xFF\xFF\xFF\xFF\n')];
+    const offsets=new Array(objects.length).fill(0);
+    let position=chunks[0].length;
+    for(let i=1;i<objects.length;i++){
+      const body=objects[i]||ascii('');
+      const head=ascii(`${i} 0 obj\n`);
+      const tail=ascii('\nendobj\n');
+      offsets[i]=position;
+      chunks.push(head,body,tail);
+      position+=head.length+body.length+tail.length;
+    }
+    const xrefPos=position;
+    let xref=`xref\n0 ${objects.length}\n0000000000 65535 f \n`;
+    for(let i=1;i<objects.length;i++)xref+=String(offsets[i]).padStart(10,'0')+' 00000 n \n';
+    xref+=`trailer\n<< /Size ${objects.length} /Root 1 0 R >>\nstartxref\n${xrefPos}\n%%EOF`;
+    chunks.push(ascii(xref));
+    return concatBytes(chunks);
+  }
+
+  async function renderInvoiceToPdf(invoice){
+    const normalized=typeof Invoices.normalizeInvoice==='function' ? Invoices.normalizeInvoice(invoice) : invoice;
+    if(!normalized) throw new Error('Invoice not found.');
+    if(typeof window.html2canvas!=='function') throw new Error('PDF renderer is not loaded. Please reopen the application with internet access.');
+
+    const host=document.getElementById('previewContent');
+    if(!host) throw new Error('Invoice Preview area is not available.');
+
+    let source=host.querySelector('.invoice-page');
+    if(!source || host.dataset.invoiceId!==normalized.id){
+      if(typeof Invoices.mountInvoiceDocument!=='function') throw new Error('Invoice Preview renderer is unavailable.');
+      host.innerHTML='';
+      source=Invoices.mountInvoiceDocument(normalized);
+      host.dataset.invoiceId=normalized.id;
+    }
+    if(!source) throw new Error('Invoice Preview could not be prepared.');
+
+    // Capture an isolated, fixed A4-width clone. Screen zoom, flex centering,
+    // scroll containers and modal transforms cannot affect the capture.
+    const capture=document.createElement('div');
+    capture.style.cssText='position:fixed;left:-20000px;top:0;width:794px;background:#fff;margin:0;padding:0;overflow:visible;z-index:-2147483647;visibility:visible;';
+    const clone=source.cloneNode(true);
+    clone.style.cssText += ';display:block !important;position:relative !important;left:0 !important;top:0 !important;transform:none !important;zoom:1 !important;width:794px !important;min-width:794px !important;max-width:794px !important;height:auto !important;min-height:1123px !important;margin:0 !important;overflow:visible !important;box-sizing:border-box !important;';
+    capture.appendChild(clone);
+    document.body.appendChild(capture);
+
+    try{
+      if(document.fonts?.ready) await document.fonts.ready;
+      await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));
+
+      const rect=clone.getBoundingClientRect();
+      const width=Math.max(794,Math.ceil(clone.scrollWidth||rect.width||794));
+      const height=Math.max(1123,Math.ceil(clone.scrollHeight||rect.height||1123));
+      if(!Number.isFinite(width)||!Number.isFinite(height)) throw new Error('Invoice Preview has invalid dimensions.');
+
+      const canvas=await window.html2canvas(clone,{
+        scale:2,
+        width,
+        height,
+        windowWidth:width,
+        windowHeight:height,
+        backgroundColor:'#ffffff',
+        useCORS:true,
+        allowTaint:false,
+        logging:false,
+        scrollX:0,
+        scrollY:0
+      });
+      if(!canvas?.width||!canvas?.height) throw new Error('Invoice Preview could not be rendered.');
+
+      // A4 printable area: 200 x 287 mm (5 mm margins). At 794 px CSS width,
+      // one PDF page corresponds to 1123 CSS px. The 2x canvas is sliced without
+      // resizing the original image horizontally, preserving preview appearance.
+      const targetCssPageHeight=Math.floor(width*(287/200));
+      const scaleX=canvas.width/width;
+      const sliceCanvasHeight=Math.max(1,Math.floor(targetCssPageHeight*scaleX));
+      const pages=[];
+
+      for(let y=0;y<canvas.height;y+=sliceCanvasHeight){
+        const sliceH=Math.min(sliceCanvasHeight,canvas.height-y);
+        const slice=document.createElement('canvas');
+        slice.width=canvas.width;
+        slice.height=Math.max(1,sliceH);
+        const ctx=slice.getContext('2d');
+        if(!ctx) throw new Error('Unable to prepare PDF page.');
+        ctx.fillStyle='#ffffff';
+        ctx.fillRect(0,0,slice.width,slice.height);
+        ctx.drawImage(canvas,0,y,canvas.width,sliceH,0,0,canvas.width,sliceH);
+        const dataUrl=slice.toDataURL('image/jpeg',0.96);
+        const comma=dataUrl.indexOf(',');
+        if(comma<0) throw new Error('Invoice image could not be created.');
+        const raw=atob(dataUrl.slice(comma+1));
+        const jpeg=new Uint8Array(raw.length);
+        for(let i=0;i<raw.length;i++) jpeg[i]=raw.charCodeAt(i);
+        const drawW=200; const drawH=Math.min(287,drawW*(slice.height/slice.width));
+        pages.push({jpeg,width:slice.width,height:slice.height,drawW,drawH});
+      }
+
+      if(!pages.length) throw new Error('No invoice pages were generated.');
+      const pdfBytes=buildPdfFromJpegs(pages);
+      const blob=new Blob([pdfBytes],{type:'application/pdf'});
+      const url=URL.createObjectURL(blob);
+      const a=document.createElement('a');
+      a.href=url;
+      a.download=`${normalized.invoice_no || normalized.id || 'Invoice'}.pdf`;
+      a.style.display='none';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      setTimeout(()=>URL.revokeObjectURL(url),15000);
+      if(window.Utils?.toast) Utils.toast('PDF downloaded using the Invoice Preview layout.','success');
+      return true;
+    }finally{
+      capture.remove();
+    }
+  }
+
+  // One and only active invoice PDF route. These assignments are deliberately
+  // placed at the end of app.js so all legacy PDF overrides are superseded.
+  Invoices.downloadInvoice=function(invoice){
+    return renderInvoiceToPdf(invoice).catch(async e=>{
+      console.error('ANORI FINAL PDF ENGINE ERROR:',e);
+      if(window.Swal) await Swal.fire({icon:'error',title:'PDF Generation Failed',text:e?.message||'Unable to generate the PDF.',confirmButtonText:'OK'});
+      else if(window.Utils?.toast) Utils.toast(e?.message||'Unable to generate the PDF.','error');
+      return false;
+    });
+  };
+
+  Invoices.downloadExisting=function(id){
+    const invoice=(DB.get('invoices',[])||[]).find(i=>String(i.id)===String(id));
+    if(!invoice) return Utils.toast('Invoice not found.','error');
+    return Invoices.downloadInvoice(invoice);
+  };
+
+  // FINAL ACTION-BAR PDF ROUTE: deliberately calls the exact same
+  // Invoices.downloadInvoice() used by the Invoice Preview -> Download PDF button.
+  // This bypasses every legacy jsPDF/html2pdf action handler.
+  Invoices.downloadSelectedPDF=function(){
+    const ids=typeof Invoices.getSelected==='function' ? Invoices.getSelected() : [];
+    if(ids.length!==1) return Utils.toast(ids.length ? 'SELECT ONLY ONE INVOICE.' : 'SELECT ONE INVOICE.','warning');
+    const invoice=(DB.get('invoices',[])||[]).find(i=>String(i.id)===String(ids[0]));
+    if(!invoice) return Utils.toast('Invoice not found.','error');
+    return Invoices.downloadInvoice(invoice);
+  };
+  Invoices.actionPDF=function(){ return Invoices.downloadSelectedPDF(); };
+
+  // Keep a stable public route so all dynamically-rendered Action bars use
+  // the same Preview PDF implementation.
+  window.__ANORI_DOWNLOAD_SELECTED_INVOICE_PDF='native-preview-pdf';
+  window.__ANORI_FINAL_PDF_ENGINE='native-jpeg-pdf-v3';
+})();
+
+/* FINAL ACTION HARD-WIRE v4
+   Invoices & Billing PDF button and Invoice Preview PDF button both use this exact route. */
+(function hardWireInvoicePdfAction(){
+  'use strict';
+  if(!window.Invoices) return;
+  const getInvoiceById=id => (window.DB?.get('invoices',[])||[]).find(i=>String(i.id)===String(id));
+  window.__ANORI_PDF_ACTION_READY=true;
+  window.__ANORI_DOWNLOAD_INVOICE_PDF = function(invoice){
+    return window.Invoices.downloadInvoice(invoice);
+  };
+  window.Invoices.downloadExisting = function(id){
+    const invoice=getInvoiceById(id);
+    if(!invoice) return window.Utils?.toast ? Utils.toast('Invoice not found.','error') : false;
+    return window.__ANORI_DOWNLOAD_INVOICE_PDF(invoice);
+  };
+  window.Invoices.downloadSelectedPDF = function(){
+    const ids=typeof window.Invoices.getSelected==='function' ? window.Invoices.getSelected() : [];
+    if(ids.length!==1){
+      const msg=ids.length ? 'SELECT ONLY ONE INVOICE.' : 'SELECT ONE INVOICE.';
+      return window.Utils?.toast ? Utils.toast(msg,'warning') : false;
+    }
+    const invoice=getInvoiceById(ids[0]);
+    if(!invoice) return window.Utils?.toast ? Utils.toast('Invoice not found.','error') : false;
+    return window.__ANORI_DOWNLOAD_INVOICE_PDF(invoice);
+  };
+  window.Invoices.actionPDF = function(){ return window.Invoices.downloadSelectedPDF(); };
+})();
+
+/* ===== END js/invoice-pdf-final-v4.js ===== */
+
+
+/* ===== BEGIN js/anori-data-safety.js ===== */
 /* ANORI TRANSPORT — Persistent Data Safety Layer v2.25
    Internal snapshots only. Never downloads a file automatically. */
 (function(){
@@ -6858,270 +8031,4 @@ window.addEventListener('resize',()=>{
   };
 })();
 
-/* ===== END anori-data-safety.js ===== */
-
-/* ===== BEGIN bootstrap.js ===== */
-/* ANORI TRANSPORT bootstrap helpers. Keep startup-only logic in the JS folder. */
-(function () {
-  'use strict';
-  try {
-    window.__ANORI_LOCAL_SAFE__ = true;
-  } catch (_) {}
-
-  try {
-    var el = document.getElementById('offlineStatus');
-    function updateOfflineStatus() {
-      if (el) el.style.display = navigator.onLine ? 'none' : 'block';
-    }
-    window.addEventListener('online', updateOfflineStatus);
-    window.addEventListener('offline', updateOfflineStatus);
-    updateOfflineStatus();
-  } catch (_) {}
-})();
-
-/* ===== END bootstrap.js ===== */
-
-/* ===== BEGIN pdf-engine-final.js ===== */
-/* ANORI TRANSPORT — FINAL PDF ENGINE
-   Single source of truth for Invoice PDF generation.
-   Desktop: Electron webContents.printToPDF() in a dedicated hidden renderer using the existing Invoice Preview DOM.
-   Browser/file: native print dialog fallback (Save as PDF).
-   No html2canvas/html2pdf/jsPDF dependency.
-*/
-(function(){
-  'use strict';
-
-  const ENGINE = 'electron-native-print-preview-v1';
-
-  function toast(message, type){
-    try { if (window.Utils && typeof window.Utils.toast === 'function') window.Utils.toast(message, type || 'info'); } catch (_) {}
-  }
-
-  function normalize(invoice){
-    if (!invoice) return null;
-    try {
-      if (window.Invoices && typeof window.Invoices.normalizeInvoice === 'function') {
-        return window.Invoices.normalizeInvoice(invoice);
-      }
-    } catch (_) {}
-    return invoice;
-  }
-
-  function getInvoice(id){
-    try {
-      const rows = window.DB && typeof window.DB.get === 'function' ? window.DB.get('invoices', []) : [];
-      return (rows || []).find(x => String(x.id) === String(id)) || null;
-    } catch (_) { return null; }
-  }
-
-  function ensurePage(invoice){
-    const host = document.getElementById('previewContent');
-    if (!host) throw new Error('Invoice Preview area is not available.');
-    const item = normalize(invoice);
-    if (!item) throw new Error('Invoice not found.');
-
-    let page = host.querySelector('.invoice-page');
-    if (String(host.dataset.invoiceId || '') !== String(item.id) || !page) {
-      if (!window.Invoices || typeof window.Invoices.mountInvoiceDocument !== 'function') {
-        throw new Error('Invoice Preview renderer is not available.');
-      }
-      host.innerHTML = '';
-      page = window.Invoices.mountInvoiceDocument(item);
-      host.dataset.invoiceId = String(item.id);
-    }
-    if (!page) throw new Error('Invoice Preview could not be prepared.');
-    return { host, page, invoice: item };
-  }
-
-  function ensurePrintCss(){
-    if (document.getElementById('anori-final-pdf-engine-css')) return;
-    const style = document.createElement('style');
-    style.id = 'anori-final-pdf-engine-css';
-    style.textContent = `
-      @page { size: A4 portrait; margin: 0; }
-      @media print {
-        html, body { margin:0 !important; padding:0 !important; background:#fff !important; }
-        body.anori-pdf-print-mode > *:not(#anoriPdfPrintHost) { display:none !important; }
-        body.anori-pdf-print-mode #anoriPdfPrintHost {
-          display:block !important; position:static !important; width:210mm !important;
-          min-width:210mm !important; max-width:210mm !important; margin:0 !important;
-          padding:0 !important; background:#fff !important;
-        }
-        body.anori-pdf-print-mode #anoriPdfPrintHost .invoice-page {
-          display:block !important; position:relative !important;
-          width:210mm !important; min-width:210mm !important; max-width:210mm !important;
-          min-height:297mm !important; height:auto !important;
-          margin:0 !important; padding:5mm !important; box-sizing:border-box !important;
-          transform:none !important; box-shadow:none !important; background:#fff !important;
-          overflow:visible !important;
-        }
-        body.anori-pdf-print-mode #anoriPdfPrintHost .no-print,
-        body.anori-pdf-print-mode #anoriPdfPrintHost button { display:none !important; }
-      }
-    `;
-    document.head.appendChild(style);
-  }
-
-  function makePrintHost(invoice){
-    const prepared = ensurePage(invoice);
-    ensurePrintCss();
-
-    let host = document.getElementById('anoriPdfPrintHost');
-    if (!host) {
-      host = document.createElement('div');
-      host.id = 'anoriPdfPrintHost';
-      document.body.appendChild(host);
-    }
-    host.innerHTML = '';
-
-    const clone = prepared.page.cloneNode(true);
-    clone.removeAttribute('id');
-    clone.style.cssText += [
-      'display:block!important',
-      'position:relative!important',
-      'width:210mm!important',
-      'min-width:210mm!important',
-      'max-width:210mm!important',
-      'min-height:297mm!important',
-      'height:auto!important',
-      'margin:0!important',
-      'padding:5mm!important',
-      'box-sizing:border-box!important',
-      'transform:none!important',
-      'box-shadow:none!important',
-      'background:#fff!important',
-      'overflow:visible!important'
-    ].join(';') + ';';
-    host.appendChild(clone);
-    return host;
-  }
-
-  function buildStandaloneHtml(invoice){
-    const prepared = ensurePage(invoice);
-    const clone = prepared.page.cloneNode(true);
-    clone.querySelectorAll('button, .no-print').forEach(el => el.remove());
-
-    const css = [];
-    for (const sheet of Array.from(document.styleSheets || [])) {
-      try {
-        for (const rule of Array.from(sheet.cssRules || [])) css.push(rule.cssText);
-      } catch (_) {}
-    }
-    css.push(`@page{size:A4 portrait;margin:0}html,body{margin:0!important;padding:0!important;background:#fff!important;width:210mm!important}body{font-family:Arial,Helvetica,sans-serif}.invoice-page{width:210mm!important;min-width:210mm!important;max-width:210mm!important;min-height:297mm!important;height:auto!important;margin:0!important;padding:5mm!important;box-sizing:border-box!important;transform:none!important;box-shadow:none!important;background:#fff!important;overflow:visible!important}@media print{html,body{width:210mm!important;background:#fff!important}.invoice-page{break-inside:avoid;page-break-inside:avoid}}`);
-
-    return `<!doctype html><html><head><meta charset=\"UTF-8\"><title>${String(invoice.invoice_no || 'ANORI TRANSPORT INVOICE').replace(/[<>&\"']/g, '')}</title><style>${css.join('\n')}</style></head><body>${clone.outerHTML}</body></html>`;
-  }
-
-  async function electronPdf(invoice){
-    const bridge = window.anoriElectronBackup;
-    if (!bridge || typeof bridge.printInvoicePdf !== 'function') return false;
-
-    const html = buildStandaloneHtml(invoice);
-    const safeName = String(invoice.invoice_no || invoice.id || 'ANORI_TRANSPORT_INVOICE')
-      .replace(/[<>:"/\\|?*\x00-\x1F]/g, '_') + '.pdf';
-    const result = await bridge.printInvoicePdf({ suggestedName: safeName, html });
-    if (!result || !result.ok) throw new Error((result && result.error) || 'Unable to save the PDF.');
-    toast('Invoice PDF downloaded to your Windows Downloads folder.', 'success');
-    return true;
-  }
-
-  async function browserPdf(invoice){
-    const host = makePrintHost(invoice);
-    document.body.classList.add('anori-pdf-print-mode');
-    try {
-      if (document.fonts && document.fonts.ready) await document.fonts.ready;
-      await new Promise(resolve => requestAnimationFrame(() => requestAnimationFrame(resolve)));
-      window.print();
-      return true;
-    } finally {
-      setTimeout(() => {
-        document.body.classList.remove('anori-pdf-print-mode');
-        host.remove();
-      }, 1500);
-    }
-  }
-
-  async function downloadInvoice(invoice){
-    const item = normalize(invoice);
-    if (!item) { toast('Invoice not found.', 'error'); return false; }
-    try {
-      if (await electronPdf(item)) return true;
-      return await browserPdf(item);
-    } catch (error) {
-      console.error('ANORI PDF ENGINE ERROR:', error);
-      const message = error && error.message ? error.message : 'Unable to generate the invoice PDF.';
-      try {
-        if (window.Swal && typeof window.Swal.fire === 'function') {
-          await window.Swal.fire({ icon:'error', title:'PDF GENERATION FAILED', text:message, confirmButtonText:'OK' });
-        } else toast(message, 'error');
-      } catch (_) { toast(message, 'error'); }
-      return false;
-    }
-  }
-
-  function downloadExisting(id){
-    const invoice = getInvoice(id);
-    if (!invoice) { toast('Invoice not found.', 'error'); return false; }
-    return downloadInvoice(invoice);
-  }
-
-  function downloadSelected(){
-    let ids = [];
-    try {
-      if (window.Invoices && typeof window.Invoices.getSelected === 'function') ids = window.Invoices.getSelected() || [];
-    } catch (_) {}
-    if (ids.length !== 1) {
-      toast(ids.length ? 'SELECT ONLY ONE INVOICE.' : 'SELECT ONE INVOICE.', 'warning');
-      return false;
-    }
-    return downloadExisting(ids[0]);
-  }
-
-  window.__ANORI_PDF_FINAL_FUNCTION = downloadInvoice;
-
-  function install(){
-    if (!window.Invoices) return false;
-
-    // Make this the only writable path during installation; after installation
-    // the public methods are locked so legacy assignments cannot take control.
-    try {
-      Object.defineProperty(window.Invoices, 'downloadInvoice', {
-        value: downloadInvoice, writable: false, configurable: false, enumerable: true
-      });
-      Object.defineProperty(window.Invoices, 'downloadExisting', {
-        value: downloadExisting, writable: false, configurable: false, enumerable: true
-      });
-      Object.defineProperty(window.Invoices, 'downloadSelectedPDF', {
-        value: downloadSelected, writable: false, configurable: false, enumerable: true
-      });
-      Object.defineProperty(window.Invoices, 'actionPDF', {
-        value: downloadSelected, writable: false, configurable: false, enumerable: true
-      });
-    } catch (error) {
-      // If a property is already non-configurable, assignment is still attempted
-      // only when it is writable; otherwise the existing locked route remains.
-      try { window.Invoices.downloadInvoice = downloadInvoice; } catch (_) {}
-      try { window.Invoices.downloadExisting = downloadExisting; } catch (_) {}
-      try { window.Invoices.downloadSelectedPDF = downloadSelected; } catch (_) {}
-      try { window.Invoices.actionPDF = downloadSelected; } catch (_) {}
-    }
-
-    window.__ANORI_FINAL_PDF_ENGINE = ENGINE;
-    window.__ANORI_PDF_READY = true;
-    return true;
-  }
-
-  function boot(){
-    if (install()) return;
-    let attempts = 0;
-    const timer = setInterval(() => {
-      attempts += 1;
-      if (install() || attempts >= 100) clearInterval(timer);
-    }, 100);
-  }
-
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot, { once:true });
-  else boot();
-})();
-
-/* ===== END pdf-engine-final.js ===== */
+/* ===== END js/anori-data-safety.js ===== */
